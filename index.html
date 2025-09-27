@@ -4,93 +4,489 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LMS360 Hack v4.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
-      padding: 20px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #F5F5DC 0%, #F0E68C 100%);
+      min-height: 100vh;
+      padding: 10px;
+      animation: fadeIn 0.8s ease-out;
+      box-sizing: border-box;
     }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .container {
+      max-width: 90vw;
+      width: 100%;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideUp 0.6s ease-out 0.2s both;
+      box-sizing: border-box;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
     h1 {
-      margin-bottom: 20px;
-      color: #222; 
-      font-size: 40px;
+      margin-bottom: 30px;
+      color: #8B4513;
+      font-size: 2.5rem;
+      font-weight: 700;
       text-align: center;
+      background: linear-gradient(135deg, #8B4513, #CD853F);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      animation: titleGlow 2s ease-in-out infinite alternate;
     }
-    input[type="file"], input[type="text"], button {
-      margin: 5px 0 15px;
-      padding: 8px;
-      font-size: 14px;
-      border-radius: 5px;
+    
+    @keyframes titleGlow {
+      from { filter: drop-shadow(0 0 5px rgba(139, 69, 19, 0.3)); }
+      to { filter: drop-shadow(0 0 15px rgba(139, 69, 19, 0.6)); }
     }
+    
+    .input-group {
+      margin-bottom: 25px;
+      animation: slideInLeft 0.6s ease-out 0.4s both;
+    }
+    
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .input-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #8B4513;
+      font-size: 1.1rem;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      max-width: 100%;
+      padding: 15px 20px;
+      font-size: 16px;
+      border: 2px solid #E6D7C3;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      box-sizing: border-box;
+    }
+    
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #D2B48C;
+      box-shadow: 0 0 0 4px rgba(210, 180, 140, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    input[type="text"]::placeholder {
+      color: #A0A0A0;
+      font-style: italic;
+    }
+    
     button {
-      background: #E4A370;
+      background: linear-gradient(135deg, #D2B48C, #BC9A6A);
       border: none;
       color: white;
-      border-radius: 5px;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
       cursor: pointer;
       position: relative;
       transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(210, 180, 140, 0.4);
+      overflow: hidden;
+      animation: slideInRight 0.6s ease-out 0.6s both;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
-    button:hover { background: #F0AA88; }
+    
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(210, 180, 140, 0.6);
+    }
+    
+    button:hover::before {
+      left: 100%;
+    }
+    
+    button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(210, 180, 140, 0.4);
+    }
+    
     button:disabled {
-      background: #ccc;
+      background: #D3D3D3;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
+    
+    button:disabled::before {
+      display: none;
+    }
+    
     .loading {
       position: relative;
       color: transparent;
     }
+    
     .loading::after {
       content: "";
       position: absolute;
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       top: 45%;
-      left: 47%;
-      margin-left: -8px;
-      margin-top: -8px;
-      border: 2px solid #ffffff;
+      left: 50%;
+      margin-left: -10px;
+      margin-top: -10px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
       border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 1s ease-in-out infinite;
+      border-top-color: #ffffff;
+      animation: spin 1s linear infinite;
     }
+    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+    
+    #questions {
+      margin-top: 30px;
+      animation: fadeInUp 0.8s ease-out 0.8s both;
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
     .question {
-      margin-bottom: 15px;
-      padding: 12px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 25px;
+      background: linear-gradient(135deg, #FFFFFF, #FEFEFE);
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(210, 180, 140, 0.2);
+      transition: all 0.3s ease;
+      animation: questionSlide 0.6s ease-out both;
+      animation-delay: calc(var(--index) * 0.1s);
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
+    
+    @keyframes questionSlide {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .question:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+    
     .question h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
-      color: #333;
+      margin: 0 0 15px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #8B4513;
+      position: relative;
+      padding-left: 20px;
     }
+    
+    .question h3::before {
+      content: '●';
+      position: absolute;
+      left: 0;
+      color: #D2B48C;
+      font-size: 16px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    
+    .question p {
+      color: #333;
+      line-height: 1.6;
+      margin: 0;
+    }
+    
     .highlight {
-      background-color: #F8E79F;
-      font-weight: bold;
-      padding: 0 3px;
-      border-radius: 4px;
+      background: linear-gradient(135deg, #F8E79F, #F4E4BC);
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #8B4513;
+      box-shadow: 0 2px 4px rgba(139, 69, 19, 0.2);
+    }
+    
+    .error-message {
+      background: linear-gradient(135deg, #FFE5E5, #FFCCCC);
+      border: 2px solid #FFB3B3;
+      border-radius: 12px;
+      padding: 20px;
+      color: #8B0000;
+      text-align: center;
+      font-weight: 500;
+      animation: shake 0.5s ease-in-out;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    .success-message {
+      background: linear-gradient(135deg, #E8F5E8, #D4F1D4);
+      border: 2px solid #A8E6A8;
+      border-radius: 12px;
+      padding: 20px;
+      color: #2E7D2E;
+      text-align: center;
+      font-weight: 500;
+      animation: bounceIn 0.6s ease-out;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.3); }
+      50% { opacity: 1; transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    
+    /* Mobile First Responsive Design */
+    @media (max-width: 1200px) {
+      .container {
+        max-width: 95vw;
+        padding: 30px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 5px;
+      }
+      
+      .container {
+        padding: 20px;
+        margin: 5px;
+        border-radius: 15px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+      }
+      
+      .input-group {
+        margin-bottom: 20px;
+      }
+      
+      .input-label {
+        font-size: 1rem;
+      }
+      
+      input[type="text"] {
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+      
+      button {
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+      
+      .question {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      
+      .question h3 {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      
+      .error-message,
+      .success-message {
+        padding: 15px;
+        font-size: 14px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 2px;
+      }
+      
+      .container {
+        padding: 15px;
+        margin: 2px;
+        border-radius: 12px;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+      }
+      
+      .input-group {
+        margin-bottom: 15px;
+      }
+      
+      input[type="text"] {
+        padding: 10px 12px;
+        font-size: 13px;
+        border-radius: 8px;
+      }
+      
+      button {
+        padding: 10px 15px;
+        font-size: 13px;
+        border-radius: 8px;
+      }
+      
+      .question {
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+      }
+      
+      .question h3 {
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      
+      .question p {
+        font-size: 13px;
+      }
+      
+      .error-message,
+      .success-message {
+        padding: 12px;
+        font-size: 13px;
+        border-radius: 8px;
+      }
+      
+      .highlight {
+        padding: 1px 4px;
+        font-size: 12px;
+      }
+    }
+    
+    @media (max-width: 320px) {
+      h1 {
+        font-size: 1.3rem;
+      }
+      
+      .container {
+        padding: 10px;
+      }
+      
+      input[type="text"] {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+      
+      button {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+      
+      .question {
+        padding: 10px;
+      }
+      
+      .question h3 {
+        font-size: 13px;
+      }
+      
+      .question p {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Hack toàn bộ đáp án trên LMS360 - LMS360 Hack v4.0beta</h1>
+  <div class="container">
+    <h1>LMS360 Hack v4.0</h1>
 
-  <br>
-  <!--
-  <p><strong>(For debugging) Upload file JSON của h5p:</strong></p>
-  <input type="file" id="h5p_content_json" accept=".json" />
-  -->
-
-  <p><strong>URL bài tập LMS360:</strong></p>
-  <input type="text" id="link_lms360" placeholder="https://lms360.vn/..." size="60" />
-  <button id="hecker_button">Heck</button>
-  <br>
-  <div id="questions"></div>
+    <div class="input-group">
+      <label class="input-label" for="link_lms360">🔗 URL bài tập LMS360:</label>
+      <input type="text" id="link_lms360" placeholder="https://lms360.vn/..." />
+    </div>
+    
+    <button id="hecker_button">
+      <span>🚀 Heck</span>
+    </button>
+    
+    <div id="questions"></div>
+    
+    <footer style="margin-top: 40px; padding: 20px; text-align: center; border-top: 2px solid rgba(210, 180, 140, 0.3);">
+      <p style="color: #8B4513; font-size: 14px; margin: 0;"> 
+        <a href="https://github.com/HiennNek/lms360hack" target="_blank" style="color: #D2B48C; text-decoration: none; font-weight: 600; transition: color 0.3s ease;" onmouseover="this.style.color='#8B4513'" onmouseout="this.style.color='#D2B48C'">
+          GitHub
+        </a>
+        <br><br>Bằng cách sử dụng lms360hack.pages.dev và các dịch vụ liên quan đến lms360hack/LMS360 Hack hoặc/và có nguồn gốc từ lms360hack/LMS360 Hack, bạn đã đồng ý tuân thủ <a href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">các chính sách sử dụng, các điều khoản phân phối và các tuyên bố từ chối trách nhiệm</a> của tôi.</p> 
+      </p>
+    </footer>
+  </div>
 
   <script>
     // const h5p_content_json = document.getElementById("h5p_content_json");
@@ -103,9 +499,9 @@
     // No ưorry, đã tìm đc cách bypass
     const bypass_that_fucking_CORS = "https://bypass-lms360-cors.trdahien2011.workers.dev/?url=";
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //  Thuật toán chuyển đổi JSON sang ngôn ngữ mà loài người có thể hiểu được :)
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // Thuật toán chuyển đổi JSON sang ngôn ngữ mà loài người có thể hiểu được :) //
+    ////////////////////////////////////////////////////////////////////////////////
 
     // Loại câu hỏi #1: Viết vào chỗ trống
     function question_type_1(jsonContent) {
@@ -286,8 +682,42 @@
       return results.length > 0 ? results : null;
     }
 
+    // Loại câu hỏi #7: Kéo thả văn bản trong InteractiveVideo
+    function question_type_7(jsonContent) {
+      const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
+      let results = [];
 
-    const question_type = [question_type_1, question_type_2, question_type_3, question_type_4, question_type_5, question_type_6];
+      interactions.forEach(interaction => {
+        if (interaction.action?.library?.startsWith("H5P.DragText")) {
+          const params = interaction.action.params || {};
+          const lines = (params.textField || "").split("\\n");
+
+          let text = lines.map(line => {
+            let clean = line.replace(/‾\t/g, "").trim();
+            return clean.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+          }).join("<br>");
+
+          if (params.distractors) {
+            const distractors = params.distractors
+              .match(/\*(.*?)\*/g)
+              ?.map(d => d.replace(/\*/g, ""))
+              .join(", ");
+            if (distractors) {
+              text += `<br><strong>Từ không có trong đáp án:</strong> ${distractors}`;
+            }
+          }
+
+          results.push({
+            index: results.length + 1,
+            text
+          });
+        }
+      });
+
+      return results.length > 0 ? results : null;
+    }
+
+    const question_type = [question_type_1, question_type_2, question_type_3, question_type_4, question_type_5, question_type_6, question_type_7];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -315,18 +745,23 @@
         container.innerHTML = "";
 
         if (results && results.length > 0) {
-          results.forEach(q => {
-            const div = document.createElement("div");
-            div.className = "question";
-            div.innerHTML = `<h3>Câu hỏi ${q.index}:</h3><p>${q.text}</p>`;
-            container.appendChild(div);
+          container.innerHTML = `<div class="success-message">🎉 Tìm thấy ${results.length} câu hỏi!</div><br>`;
+          
+          results.forEach((q, index) => {
+            setTimeout(() => {
+              const div = document.createElement("div");
+              div.className = "question";
+              div.style.setProperty('--index', index);
+              div.innerHTML = `<h3>Câu hỏi ${q.index}:</h3><p>${q.text}</p>`;
+              container.appendChild(div);
+            }, index * 100);
           });
         } else {
-          container.innerHTML = "<p><em>Loại câu hỏi này chưa được hỗ trợ, vui lòng tạo Issue trên Github Repo của LMS360 Hack v4.0 để yêu cầu thêm dạng này vào.</em></p>";
+          container.innerHTML = "<div class='error-message'>❌ Loại câu hỏi này chưa được hỗ trợ, vui lòng tạo Issue trên Github Repo của LMS360 Hack v4.0 để yêu cầu thêm dạng này vào.</div>";
         }
       } catch (err) {
         console.error("Lỗi khi phân tích câu hỏi:", err);
-        container.innerHTML = "<p style='color:red;'>Link không hợp lệ hoặc không đúng định dạng.</p>";
+        container.innerHTML = "<div class='error-message'>❌ Link không hợp lệ hoặc không đúng định dạng.</div>";
       }
     }
 
@@ -357,7 +792,7 @@
 
       hecker_button.disabled = true;
       hecker_button.classList.add("loading");
-      hecker_button.textContent = "Loading...";
+      hecker_button.innerHTML = "<span>⏳ Loading...</span>";
 
       try {
         const parsed = new URL(inputUrl);
@@ -367,7 +802,7 @@
           alert("Đây không phải URL bài tập!");
           hecker_button.disabled = false;
           hecker_button.classList.remove("loading");
-          hecker_button.textContent = "Heck";
+          hecker_button.innerHTML = "<span>🚀 Heck</span>";
           return;
         }
 
@@ -383,20 +818,20 @@
             render_quest(data);
             hecker_button.disabled = false;
             hecker_button.classList.remove("loading");
-            hecker_button.textContent = "Heck";
+            hecker_button.innerHTML = "<span>🚀 Heck</span>";
           })
           .catch(err => {
             console.error(err);
-            container.innerHTML = "<p style='color:red;'>Không thể tải hoặc phân tích JSON hệ thống bypass CORS.</p>";
+            container.innerHTML = "<div class='error-message'>❌ Không thể tải hoặc phân tích JSON hệ thống bypass CORS.</div>";
             hecker_button.disabled = false;
             hecker_button.classList.remove("loading");
-            hecker_button.textContent = "Heck";
+            hecker_button.innerHTML = "<span>🚀 Heck</span>";
           });
       } catch (err) {
         alert("Cái link gì đây? (URL không hợp lệ - có thể do thiếu https:// hoặc http://)");
         hecker_button.disabled = false;
         hecker_button.classList.remove("loading");
-        hecker_button.textContent = "Heck";
+        hecker_button.innerHTML = "<span>🚀 Heck</span>";
       }
     });
   </script>
