@@ -16,4 +16,5 @@
     III. Tuyên bố từ chối trách nhiệm
         - Tôi xin tuyên bố TỪ CHỐI TOÀN BỘ trách nhiệm về việc sử dụng phần mềm / website / công cụ này (Lms360hack / LMS360 Hack / lms360hack.pages.dev) cho việc không liêm chính / vi phạm pháp luật / gian lận / vi phạm nội quy thi cử, nhà trường / ...
         - TOÀN BỘ trách nhiệm nếu sử dụng phần mềm / website / công cụ này (Lms360hack / LMS360 Hack / lms360hack.pages.dev) sai mục đích sẽ do người sử dụng chịu trách nhiệm toàn bộ thiệt hại hay hình phạt.
-        - Tôi CÓ quyền sửa đổi các điều khoản phân phối và các tuyên bố từ chối trách nhiệm mà không có sự báo trước cho người sử dụng.
+        - Tôi CÓ quyền sửa đổi các điều khoản phân phối, các tuyên bố từ chối trách nhiệm và các chính sách sử dụng mà không có sự báo trước cho người sử dụng.
+
