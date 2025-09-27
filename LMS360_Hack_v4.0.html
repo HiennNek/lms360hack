@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>LMS360 Hack v4.0</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #222; 
+      font-size: 40px;
+      text-align: center;
+    }
+    input[type="file"], input[type="text"], button {
+      margin: 5px 0 15px;
+      padding: 8px;
+      font-size: 14px;
+    }
+    button {
+      background: #E4A370;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: #F0AA88; }
+    .question {
+      margin-bottom: 15px;
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .question h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: #333;
+    }
+    .highlight {
+      background-color: #F8E79F;
+      font-weight: bold;
+      padding: 0 3px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hack toàn bộ đáp án trên LMS360 - LMS360 Hack v4.0</h1>
+
+  <br>
+  <!--
+  <p><strong>(For debugging) Upload file JSON của h5p:</strong></p>
+  <input type="file" id="h5p_content_json" accept=".json" />
+  -->
+
+  <p><strong>URL bài tập LMS360:</strong></p>
+  <input type="text" id="link_lms360" placeholder="https://lms360.vn/..." size="60" />
+  <button id="hecker_button">Heck</button>
+  <br>
+  <div id="questions"></div>
+
+  <script>
+    // const h5p_content_json = document.getElementById("h5p_content_json");
+    const link_lms360 = document.getElementById("link_lms360");
+    const hecker_button = document.getElementById("hecker_button");
+    const container = document.getElementById("questions");
+
+    // Fuck you LMS360
+    // Script của tôi bị LMS360 chặn CORS :(
+    // No ưorry, đã tìm đc cách bypass
+    const bypass_that_fucking_CORS = "https://bypass-lms360-cors.trdahien2011.workers.dev/?url=";
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  Thuật toán chuyển đổi JSON sang ngôn ngữ mà loài người có thể hiểu được :)
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Loại câu hỏi #1: Viết vào chỗ trống
+    function question_type_1(jsonContent) {
+      const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
+      let questions = [];
+
+      interactions.forEach(interaction => {
+        if (interaction.action?.params?.questions) {
+          questions = questions.concat(interaction.action.params.questions);
+        }
+      });
+
+      if (questions.length > 0) {
+        return questions.map((q, index) => {
+          let text = q.replace(/<\/?p>/g, "").replace(/\\n/g, "");
+          text = text.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+          return { index: index + 1, text };
+        });
+      }
+      return null; // Nếu không cùng loại
+    }
+
+    // Loại câu hỏi #2: Trắc nghiệm có nút submit
+    function question_type_2(jsonContent) {
+      const mcqList = jsonContent.questions || [];
+      let results = [];
+
+      mcqList.forEach((q, idx) => {
+        if (q.library && q.library.startsWith("H5P.MultiChoice")) {
+          const questionText = q.params?.question || `Câu hỏi ${idx + 1}`;
+          const answers = q.params?.answers || [];
+
+          const optionsHtml = answers.map((ans, i) => {
+            const correctClass = ans.correct ? "highlight" : "";
+            return `<li class="${correctClass}">${ans.text}</li>`;
+          }).join("");
+
+          results.push({
+            index: idx + 1,
+            text: `${questionText}<ul>${optionsHtml}</ul>`
+          });
+        }
+      });
+
+      return results.length > 0 ? results : null;
+    }
+
+    const question_type = [question_type_1, question_type_2];
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    function render_quest(data) {
+      try {
+        const contentId = Object.keys(data.integration.contents)[0];
+        const jsonContent = JSON.parse(data.integration.contents[contentId].jsonContent);
+
+        let results = null;
+        for (let handler of question_type) {
+          results = handler(jsonContent);
+          if (results) break; // Dừng lại nếu đúng type
+        }
+
+        container.innerHTML = "";
+
+        if (results && results.length > 0) {
+          results.forEach(q => {
+            const div = document.createElement("div");
+            div.className = "question";
+            div.innerHTML = `<h3>Câu hỏi ${q.index}:</h3><p>${q.text}</p>`;
+            container.appendChild(div);
+          });
+        } else {
+          container.innerHTML = "<p><em>Loại câu hỏi này chưa được hỗ trợ, vui lòng tạo Issue trên Github Repo của LMS360 Hack v4.0 để yêu cầu thêm dạng này vào.</em></p>";
+        }
+      } catch (err) {
+        console.error("Lỗi khi phân tích câu hỏi:", err);
+        container.innerHTML = "<p style='color:red;'>Link không hợp lệ hoặc không đúng định dạng.</p>";
+      }
+    }
+
+    /*
+    h5p_content_json.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          render_quest(data);
+        } catch (err) {
+          container.innerHTML = "<p style='color:red;'>Không thể đọc câu hỏi.</p>";
+        }
+      };
+      reader.readAsText(file, "UTF-8");
+    });
+    */
+
+    hecker_button.addEventListener("click", () => {
+      const inputUrl = link_lms360.value.trim();
+      if (!inputUrl) {
+        alert("Tôi không thấy gì trong URL!.");
+        return;
+      }
+
+      try {
+        const parsed = new URL(inputUrl);
+        const questionId = parsed.searchParams.get("c");
+
+        if (!questionId) {
+          alert("Đây không phải URL bài tập!");
+          return;
+        }
+
+        const ur_homework_link_that_ur_lazy_to_do = `https://lms360.vn/h5p/${questionId}/play`;
+        const fuck_you_cors = bypass_that_fucking_CORS + encodeURIComponent(ur_homework_link_that_ur_lazy_to_do);
+
+        fetch(fuck_you_cors)
+          .then(res => {
+            if (!res.ok) throw new Error("Không thể load hệ thống bypass CORS.");
+            return res.json();
+          })
+          .then(data => render_quest(data))
+          .catch(err => {
+            console.error(err);
+            container.innerHTML = "<p style='color:red;'>Không thể tải hoặc phân tích JSON hệ thống bypass CORS.</p>";
+          });
+      } catch (err) {
+        alert("Cái link gì đây? (URL không hợp lệ - có thể do thiếu https:// hoặc http://)");
+      }
+    });
+  </script>
+</body>
+</html>
