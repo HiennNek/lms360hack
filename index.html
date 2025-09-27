@@ -555,7 +555,7 @@
       return results.length > 0 ? results : null;
     }
 
-    // Loại câu hỏi #3: Trắc nghiệm không có nút submit
+    // Loại câu hỏi #3: Trắc nghiệm không có nút submit (InteractiveVideo)
     function question_type_3(jsonContent) {
       const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
       let results = [];
@@ -593,7 +593,7 @@
       return results.length > 0 ? results : null;
     }
 
-    // Loại câu hỏi #4: Cau hỏi trắc nghiệm trong InteractiveVideo
+    // Loại câu hỏi #4: Câu hỏi trắc nghiệm trong InteractiveVideo
     function question_type_4(jsonContent) {
       const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
       let results = [];
@@ -717,7 +717,66 @@
       return results.length > 0 ? results : null;
     }
 
-    const question_type = [question_type_1, question_type_2, question_type_3, question_type_4, question_type_5, question_type_6, question_type_7];
+    // Loại câu hỏi #8: Câu hỏi tự luận không có đáp án sẵn
+    function question_type_8(jsonContent) {
+      const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
+      let results = [];
+
+      interactions.forEach(interaction => {
+        if (interaction.action?.library?.startsWith("H5P.FreeTextQuestion")) {
+          const params = interaction.action.params || {};
+          const questionText = params.question?.replace(/<\/?p>/g, "") || "Câu hỏi tự luận";
+          const placeholder = params.placeholder || "";
+
+          let text = `${questionText}<br><em>(Đây là dạng câu hỏi tự luận không có đáp án sẵn)</em>`;
+          if (placeholder) {
+            text += `<br><small>Gợi ý: ${placeholder}</small>`;
+          }
+
+          results.push({
+            index: results.length + 1,
+            text
+          });
+        }
+      });
+
+      return results.length > 0 ? results : null;
+    }
+
+    // Loại câu hỏi #9: Trắc nghiệm không có nút submit
+    function question_type_9(jsonContent) {
+      const choices = jsonContent.choices || [];
+      let results = [];
+
+      choices.forEach((choice, idx) => {
+        const questionText = choice.question?.replace(/<\/?p>/g, "").trim();
+        const answers = choice.answers || [];
+
+        if (!questionText || answers.length === 0) {
+          results.push({
+            index: idx + 1,
+            text: `<em style="color:gray;">Câu hỏi trống (không có nội dung hoặc đáp án)</em>`
+          });
+          return;
+        }
+
+        const optionsHtml = answers.map((a, i) => {
+          const cleanText = a.replace(/<\/?p>/g, "").trim();
+          const correctClass = i === 0 ? "highlight" : "";
+          return `<li class="${correctClass}">${cleanText}</li>`;
+        }).join("");
+
+        results.push({
+          index: idx + 1,
+          text: `${questionText}<ul>${optionsHtml}</ul>`
+        });
+      });
+
+      return results.length > 0 ? results : null;
+    }
+
+
+    const question_type = [question_type_1, question_type_2, question_type_3, question_type_4, question_type_5, question_type_6, question_type_7, question_type_8, question_type_9];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
