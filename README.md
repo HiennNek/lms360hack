@@ -2,7 +2,7 @@
 #### Version hiện tại: v4.0
 #
 
-<img width="830" height="527" alt="image" src="https://github.com/user-attachments/assets/1a9913fb-94dd-4a9e-b38c-4d5b4ae78695" />
+<img width="822" height="467" alt="image" src="https://github.com/user-attachments/assets/02a93f6b-4c55-4798-8414-bbf9de9abfbe" />
 
 #### Hướng dẫn sử dụng:
 - LƯU Ý: LMS360 Hack hiện tại đã không sử dụng Tampermonkey.
