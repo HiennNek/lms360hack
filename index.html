@@ -20,6 +20,7 @@
       margin: 5px 0 15px;
       padding: 8px;
       font-size: 14px;
+      border-radius: 5px;
     }
     button {
       background: #E4A370;
@@ -27,8 +28,35 @@
       color: white;
       border-radius: 5px;
       cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
     }
     button:hover { background: #F0AA88; }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .loading {
+      position: relative;
+      color: transparent;
+    }
+    .loading::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 45%;
+      left: 47%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
     .question {
       margin-bottom: 15px;
       padding: 12px;
@@ -110,14 +138,20 @@
           const questionText = q.params?.question || `Câu hỏi ${idx + 1}`;
           const answers = q.params?.answers || [];
 
+          let hasCorrect = false;
           const optionsHtml = answers.map((ans, i) => {
+            if (ans.correct) hasCorrect = true;
             const correctClass = ans.correct ? "highlight" : "";
             return `<li class="${correctClass}">${ans.text}</li>`;
           }).join("");
 
+          const finalHtml = hasCorrect 
+            ? `${questionText}<ul>${optionsHtml}</ul>` 
+            : `${questionText}<ul>${optionsHtml}</ul><p style="color:gray;"><em>Câu hỏi này không có đáp án đúng</em></p>`;
+
           results.push({
             index: idx + 1,
-            text: `${questionText}<ul>${optionsHtml}</ul>`
+            text: finalHtml
           });
         }
       });
@@ -125,7 +159,135 @@
       return results.length > 0 ? results : null;
     }
 
-    const question_type = [question_type_1, question_type_2];
+    // Loại câu hỏi #3: Trắc nghiệm không có nút submit
+    function question_type_3(jsonContent) {
+      const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
+      let results = [];
+
+      interactions.forEach(interaction => {
+        if (interaction.action?.library?.startsWith("H5P.SingleChoiceSet")) {
+          const choices = interaction.action.params?.choices || [];
+
+          choices.forEach((choice, idx) => {
+            const questionText = choice.question?.replace(/<\/?p>/g, "").trim();
+            const answers = choice.answers || [];
+
+            if (!questionText || answers.length === 0) {
+              results.push({
+                index: idx + 1,
+                text: `<em style="color:gray;">Câu hỏi trống (không có nội dung hoặc đáp án)</em>`
+              });
+              return;
+            }
+
+            const optionsHtml = answers.map((a, i) => {
+              const cleanText = a.replace(/<\/?p>/g, "").trim();
+              const correctClass = i === 0 ? "highlight" : "";
+              return `<li class="${correctClass}">${cleanText}</li>`;
+            }).join("");
+
+            results.push({
+              index: idx + 1,
+              text: `${questionText}<ul>${optionsHtml}</ul>`
+            });
+          });
+        }
+      });
+
+      return results.length > 0 ? results : null;
+    }
+
+    // Loại câu hỏi #4: Cau hỏi trắc nghiệm trong InteractiveVideo
+    function question_type_4(jsonContent) {
+      const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
+      let results = [];
+
+      interactions.forEach(interaction => {
+        if (interaction.action?.library?.startsWith("H5P.MultiChoice")) {
+          const params = interaction.action.params || {};
+          const questionText = params.question?.replace(/<\/?p>/g, "") || "Câu hỏi trắc nghiệm";
+          const answers = params.answers || [];
+
+          let hasCorrect = false;
+          const optionsHtml = answers.map((ans, i) => {
+            const cleanText = ans.text.replace(/<\/?p>/g, "");
+            if (ans.correct) hasCorrect = true;
+            const correctClass = ans.correct ? "highlight" : "";
+            return `<li class="${correctClass}">${cleanText}</li>`;
+          }).join("");
+
+          const finalHtml = hasCorrect 
+            ? `${questionText}<ul>${optionsHtml}</ul>` 
+            : `${questionText}<ul>${optionsHtml}</ul><p style="color:gray;"><em>Câu hỏi này không có đáp án đúng</em></p>`;
+
+          results.push({
+            index: results.length + 1,
+            text: finalHtml
+          });
+        }
+      });
+
+      return results.length > 0 ? results : null;
+    }
+
+    // Loại câu hỏi #5: Kéo thả văn bản
+    function question_type_5(jsonContent) {
+      if (jsonContent.library?.startsWith("H5P.DragText") || jsonContent.textField) {
+        const lines = (jsonContent.textField || "").split("\\n");
+        let text = lines.map(line => {
+          let clean = line.replace(/‾\t/g, "").trim();
+          return clean.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+        }).join("<br>");
+
+        if (jsonContent.distractors) {
+          const distractors = jsonContent.distractors
+            .match(/\*(.*?)\*/g)
+            ?.map(d => d.replace(/\*/g, ""))
+            .join(", ");
+          if (distractors) {
+            text += `<br><br><strong>Từ không có trong đáp án:</strong> ${distractors}`;
+          }
+        }
+
+        return [{ index: 1, text }];
+      }
+      return null;
+    }
+
+    // Loại câu hỏi #6: Đúng/Sai trong InteractiveVideo
+    function question_type_6(jsonContent) {
+      const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
+      let results = [];
+
+      interactions.forEach(interaction => {
+        if (interaction.action?.library?.startsWith("H5P.TrueFalse")) {
+          const params = interaction.action.params || {};
+          const questionText = params.question?.replace(/<\/?p>/g, "") || "Câu hỏi Đúng/Sai";
+
+          const trueLabel = params.l10n?.trueText || "Đúng";
+          const falseLabel = params.l10n?.falseText || "Sai";
+
+          const correctAnswer = params.correct === "true" ? trueLabel : falseLabel;
+
+          const optionsHtml = `
+            <ul>
+              <li class="${params.correct === "true" ? "highlight" : ""}">${trueLabel}</li>
+              <li class="${params.correct === "false" ? "highlight" : ""}">${falseLabel}</li>
+            </ul>
+          `;
+
+          results.push({
+            index: results.length + 1,
+            text: `${questionText}${optionsHtml}<p><em>Đáp án đúng: ${correctAnswer}</em></p>`
+          });
+        }
+      });
+
+      return results.length > 0 ? results : null;
+    }
+
+
+    const question_type = [question_type_1, question_type_2, question_type_3, question_type_4, question_type_5, question_type_6];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,10 +296,20 @@
         const contentId = Object.keys(data.integration.contents)[0];
         const jsonContent = JSON.parse(data.integration.contents[contentId].jsonContent);
 
+        /*
         let results = null;
         for (let handler of question_type) {
           results = handler(jsonContent);
           if (results) break; // Dừng lại nếu đúng type
+        }
+        */
+
+        let results = [];
+        for (let handler of question_type) {
+          const output = handler(jsonContent);
+          if (output) {
+            results = results.concat(output);
+          }
         }
 
         container.innerHTML = "";
@@ -183,12 +355,19 @@
         return;
       }
 
+      hecker_button.disabled = true;
+      hecker_button.classList.add("loading");
+      hecker_button.textContent = "Loading...";
+
       try {
         const parsed = new URL(inputUrl);
         const questionId = parsed.searchParams.get("c");
 
         if (!questionId) {
           alert("Đây không phải URL bài tập!");
+          hecker_button.disabled = false;
+          hecker_button.classList.remove("loading");
+          hecker_button.textContent = "Heck";
           return;
         }
 
@@ -200,13 +379,24 @@
             if (!res.ok) throw new Error("Không thể load hệ thống bypass CORS.");
             return res.json();
           })
-          .then(data => render_quest(data))
+          .then(data => {
+            render_quest(data);
+            hecker_button.disabled = false;
+            hecker_button.classList.remove("loading");
+            hecker_button.textContent = "Heck";
+          })
           .catch(err => {
             console.error(err);
             container.innerHTML = "<p style='color:red;'>Không thể tải hoặc phân tích JSON hệ thống bypass CORS.</p>";
+            hecker_button.disabled = false;
+            hecker_button.classList.remove("loading");
+            hecker_button.textContent = "Heck";
           });
       } catch (err) {
         alert("Cái link gì đây? (URL không hợp lệ - có thể do thiếu https:// hoặc http://)");
+        hecker_button.disabled = false;
+        hecker_button.classList.remove("loading");
+        hecker_button.textContent = "Heck";
       }
     });
   </script>
