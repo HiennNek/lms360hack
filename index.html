@@ -788,7 +788,7 @@
 
       return results.length > 0 ? results : null;
     }
-
+    //#10: Sắp xếp câu
     function question_type_10(jsonContent) {
       const lib = (jsonContent.library || jsonContent.__containerLibrary || "").toString();
     
@@ -806,6 +806,49 @@
     
       return null;
     }
+
+    //#11: Some fucking random multiple choice question
+    function question_type_11(jsonContent) {
+      const lib = (jsonContent.library || jsonContent.__containerLibrary || "").toString();
+    
+      if (lib.startsWith("H5P.Summary") && jsonContent.intro) {
+        const intro = jsonContent.intro.replace(/<\/?p>/g, "");
+        const groups = jsonContent.summaries || [];
+    
+        const groupHtml = groups.map((g, gi) => {
+          const items = (g.summary || [])
+            .map(i => `<li>${i.replace(/<\/?p>/g, "").trim()}</li>`)
+            .join("");
+          return `<ul>${items}</ul>`;
+        }).join("");
+    
+        return [{
+          index: 1,
+          text: `<strong>${intro}</strong><br>${groupHtml}`
+        }];
+      }
+    
+      const summary = jsonContent.interactiveVideo?.summary?.task;
+      if (summary && summary.library?.startsWith("H5P.Summary")) {
+        const intro = summary.params?.intro?.replace(/<\/?p>/g, "") || "Chọn câu đúng:";
+        const groups = summary.params?.summaries || [];
+    
+        const groupHtml = groups.map((g, gi) => {
+          const items = (g.summary || [])
+            .map(i => `<li>${i.replace(/<\/?p>/g, "").trim()}</li>`)
+            .join("");
+          return `<ul>${items}</ul>`;
+        }).join("");
+    
+        return [{
+          index: 1,
+          text: `<strong>${intro}</strong><br>${groupHtml}<p><em>(Chọn câu đúng)</em></p>`
+        }];
+      }
+    
+      return null;
+    }
+
     
     const question_type = [
       question_type_1,
@@ -817,7 +860,8 @@
       question_type_7,
       question_type_8,
       question_type_9,
-      question_type_10
+      question_type_10,
+      question_type_11
     ];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
