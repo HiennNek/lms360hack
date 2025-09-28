@@ -789,6 +789,24 @@
       return results.length > 0 ? results : null;
     }
 
+    function question_type_10(jsonContent) {
+      const lib = (jsonContent.library || jsonContent.__containerLibrary || "").toString();
+    
+      if (lib.startsWith("H5P.SortParagraphs") && Array.isArray(jsonContent.paragraphs)) {
+        const taskDesc = jsonContent.taskDescription?.replace(/<\/?p>/g, "") || "Sắp xếp các đoạn sau:";
+        const itemsHtml = jsonContent.paragraphs
+          .map((p, i) => `<li>${p.replace(/<\/?p>/g, "").trim()}</li>`)
+          .join("");
+    
+        return [{
+          index: 1,
+          text: `<strong>${taskDesc}</strong><ul>${itemsHtml}</ul><p><em>(Người học cần sắp xếp theo đúng thứ tự)</em></p>`
+        }];
+      }
+    
+      return null;
+    }
+    
     const question_type = [
       question_type_1,
       question_type_2,
@@ -798,7 +816,8 @@
       question_type_6,
       question_type_7,
       question_type_8,
-      question_type_9
+      question_type_9,
+      question_type_10
     ];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
