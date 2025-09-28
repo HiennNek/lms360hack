@@ -511,7 +511,7 @@
     // Thuật toán chuyển đổi JSON sang ngôn ngữ mà loài người có thể hiểu được :) //
     ////////////////////////////////////////////////////////////////////////////////
 
-    // Loại câu hỏi #1: Viết vào chỗ trống
+    // Loại câu hỏi #1: Viết vào chỗ trống (InteractiveVideo)
     function question_type_1(jsonContent) {
       const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
       let questions = [];
@@ -783,8 +783,21 @@
       return results.length > 0 ? results : null;
     }
 
+    // Loại câu hỏi #10: Viết vào chỗ trống
+    function question_type_10(jsonContent) {
+      if (jsonContent.library?.startsWith("H5P.Blanks") && Array.isArray(jsonContent.questions)) {
+        const questions = jsonContent.questions || [];
+        const results = questions.map((q, index) => {
+          let text = q.replace(/<\/?p>/g, "").replace(/\\n/g, "");
+          text = text.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+          return { index: index + 1, text };
+        });
+        return results.length > 0 ? results : null;
+      }
+      return null;
+    }
 
-    const question_type = [question_type_1, question_type_2, question_type_3, question_type_4, question_type_5, question_type_6, question_type_7, question_type_8, question_type_9];
+    const question_type = [question_type_1, question_type_2, question_type_3, question_type_4, question_type_5, question_type_6, question_type_7, question_type_8, question_type_9, question_type_10];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
