@@ -842,7 +842,7 @@
     });
     */
 
-    hecker_button.addEventListener("click", () => {
+    function hack_da_answer() {
       const inputUrl = link_lms360.value.trim();
       if (!inputUrl) {
         alert("Tôi không thấy gì trong URL!.");
@@ -891,6 +891,16 @@
         hecker_button.disabled = false;
         hecker_button.classList.remove("loading");
         hecker_button.innerHTML = "<span>🚀 Heck</span>";
+      }
+    }
+
+    hecker_button.addEventListener("click", hack_da_answer);
+
+    // Allow pressing Enter in the URL input to trigger the hack
+    link_lms360.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        hack_da_answer();
       }
     });
   </script>
