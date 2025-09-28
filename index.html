@@ -511,25 +511,32 @@
     // Thuật toán chuyển đổi JSON sang ngôn ngữ mà loài người có thể hiểu được :) //
     ////////////////////////////////////////////////////////////////////////////////
 
-    // Loại câu hỏi #1: Viết vào chỗ trống (InteractiveVideo)
+    // Loại câu hỏi #1: Viết vào chỗ trống
     function question_type_1(jsonContent) {
-      const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
-      let questions = [];
+      const lib = (jsonContent.library || jsonContent.__containerLibrary || "").toString();
+      let results = [];
 
+      const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
       interactions.forEach(interaction => {
-        if (interaction.action?.params?.questions) {
-          questions = questions.concat(interaction.action.params.questions);
+        if ((interaction.action?.library || "").startsWith("H5P.Blanks")) {
+          const questions = interaction.action.params?.questions || [];
+          questions.forEach(q => {
+            const clean = q.replace(/<\/?p>/g, "")
+                          .replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+            results.push({ index: results.length + 1, text: clean });
+          });
         }
       });
 
-      if (questions.length > 0) {
-        return questions.map((q, index) => {
-          let text = q.replace(/<\/?p>/g, "").replace(/\\n/g, "");
-          text = text.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
-          return { index: index + 1, text };
+      if (lib.startsWith("H5P.Blanks") && Array.isArray(jsonContent.questions)) {
+        jsonContent.questions.forEach(q => {
+          const clean = q.replace(/<\/?p>/g, "")
+                        .replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+          results.push({ index: results.length + 1, text: clean });
         });
       }
-      return null; // Nếu không cùng loại
+
+      return results.length > 0 ? results : null;
     }
 
     // Loại câu hỏi #2: Trắc nghiệm có nút submit
@@ -783,50 +790,48 @@
       return results.length > 0 ? results : null;
     }
 
-    // Loại câu hỏi #10: Viết vào chỗ trống
-    function question_type_10(jsonContent) {
-      if (jsonContent.library?.startsWith("H5P.Blanks") && Array.isArray(jsonContent.questions)) {
-        const questions = jsonContent.questions || [];
-        const results = questions.map((q, index) => {
-          let text = q.replace(/<\/?p>/g, "").replace(/\\n/g, "");
-          text = text.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
-          return { index: index + 1, text };
-        });
-        return results.length > 0 ? results : null;
-      }
-      return null;
-    }
-
-    const question_type = [question_type_1, question_type_2, question_type_3, question_type_4, question_type_5, question_type_6, question_type_7, question_type_8, question_type_9, question_type_10];
+    const question_type = [
+      question_type_1,
+      question_type_2,
+      question_type_3,
+      question_type_4,
+      question_type_5,
+      question_type_6,
+      question_type_7,
+      question_type_8,
+      question_type_9
+    ];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     function render_quest(data) {
       try {
-        const contentId = Object.keys(data.integration.contents)[0];
-        const jsonContent = JSON.parse(data.integration.contents[contentId].jsonContent);
+        let jsonContent;
+        let outerLib = "";
 
-        /*
-        let results = null;
-        for (let handler of question_type) {
-          results = handler(jsonContent);
-          if (results) break; // Dừng lại nếu đúng type
+        if (data.integration && data.integration.contents) {
+          const contentId = Object.keys(data.integration.contents)[0];
+          const contentObj = data.integration.contents[contentId];
+          jsonContent = JSON.parse(contentObj.jsonContent);
+
+          outerLib = contentObj.library || contentObj.metadata?.contentType || "";
+          jsonContent.__containerLibrary = outerLib;
+        } else {
+          jsonContent = data;
+          outerLib = jsonContent.library || "";
+          jsonContent.__containerLibrary = outerLib;
         }
-        */
 
         let results = [];
         for (let handler of question_type) {
           const output = handler(jsonContent);
-          if (output) {
-            results = results.concat(output);
-          }
+          if (output) results = results.concat(output);
         }
 
         container.innerHTML = "";
 
-        if (results && results.length > 0) {
+        if (results.length > 0) {
           container.innerHTML = `<div class="success-message">🎉 Tìm thấy ${results.length} câu hỏi!</div><br>`;
-          
           results.forEach((q, index) => {
             setTimeout(() => {
               const div = document.createElement("div");
@@ -837,7 +842,7 @@
             }, index * 100);
           });
         } else {
-          container.innerHTML = "<div class='error-message'>❌ Loại câu hỏi này chưa được hỗ trợ, vui lòng tạo Issue trên Github Repo của LMS360 Hack v4.0 để yêu cầu thêm dạng này vào.</div>";
+          container.innerHTML = "<div class='error-message'>❌ Loại câu hỏi này chưa được hỗ trợ.</div>";
         }
       } catch (err) {
         console.error("Lỗi khi phân tích câu hỏi:", err);
