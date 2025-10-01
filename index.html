@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LMS360 Hack v4.0</title>
+  <title>LMS360 Hack</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
@@ -49,7 +49,7 @@
     }
     
     h1 {
-      margin-bottom: 30px;
+      margin-bottom: 10px;
       color: #8B4513;
       font-size: 2.5rem;
       font-weight: 700;
@@ -59,9 +59,21 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      animation: titleGlow 2s ease-in-out infinite alternate;
+      animation: titleGlow 5s ease-in-out infinite alternate;
     }
     
+    h2 {
+      margin-bottom: 30px;
+      color: #e39157;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      background: linear-gradient(135deg, #e39157, #ffc387);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
     @keyframes titleGlow {
       from { filter: drop-shadow(0 0 5px rgba(139, 69, 19, 0.3)); }
       to { filter: drop-shadow(0 0 15px rgba(139, 69, 19, 0.6)); }
@@ -482,7 +494,8 @@
 </head>
 <body>
   <div class="container">
-    <h1>LMS360 Hack v4.0</h1>
+    <h1>LMS360 Hack</h1>
+    <h2>v4.1</h2>
 
     <div class="input-group">
       <label class="input-label" for="link_lms360">🔗 URL bài tập LMS360:</label>
@@ -523,6 +536,18 @@
     // Thuật toán chuyển đổi JSON sang ngôn ngữ mà loài người có thể hiểu được :) //
     ////////////////////////////////////////////////////////////////////////////////
 
+    function real_not_fake(results) {
+      if (!results || results.length === 0) return false;
+      
+      return results.some(result => {
+        const text = result.text || "";
+        return text.trim() !== "" && 
+               !text.includes("Câu hỏi trống") && 
+               !text.includes("không có nội dung") &&
+               !text.includes("không có đáp án");
+      });
+    }
+
     // Loại câu hỏi #1: Viết vào chỗ trống
     function question_type_1(jsonContent) {
       const lib = (jsonContent.library || jsonContent.__containerLibrary || "").toString();
@@ -548,7 +573,7 @@
         });
       }
 
-      return results.length > 0 ? results : null;
+      return real_not_fake(results) ? results : null;
     }
 
     // Loại câu hỏi #2: Trắc nghiệm có nút submit
@@ -570,7 +595,7 @@
 
           const finalHtml = hasCorrect 
             ? `${questionText}<ul>${optionsHtml}</ul>` 
-            : `${questionText}<ul>${optionsHtml}</ul><p style="color:gray;"><em>Câu hỏi này không có đáp án đúng</em></p>`;
+            : `${questionText}<ul>${optionsHtml}</ul>`;
 
           results.push({
             index: idx + 1,
@@ -579,7 +604,7 @@
         }
       });
 
-      return results.length > 0 ? results : null;
+      return real_not_fake(results) ? results : null;
     }
 
     // Loại câu hỏi #3: Trắc nghiệm không có nút submit (InteractiveVideo)
@@ -596,10 +621,6 @@
             const answers = choice.answers || [];
 
             if (!questionText || answers.length === 0) {
-              results.push({
-                index: idx + 1,
-                text: `<em style="color:gray;">Câu hỏi trống (không có nội dung hoặc đáp án)</em>`
-              });
               return;
             }
 
@@ -617,7 +638,7 @@
         }
       });
 
-      return results.length > 0 ? results : null;
+      return real_not_fake(results) ? results : null;
     }
 
     // Loại câu hỏi #4: Câu hỏi trắc nghiệm trong InteractiveVideo
@@ -641,7 +662,7 @@
 
           const finalHtml = hasCorrect 
             ? `${questionText}<ul>${optionsHtml}</ul>` 
-            : `${questionText}<ul>${optionsHtml}</ul><p style="color:gray;"><em>Câu hỏi này không có đáp án đúng</em></p>`;
+            : `${questionText}<ul>${optionsHtml}</ul>`;
 
           results.push({
             index: results.length + 1,
@@ -650,7 +671,7 @@
         }
       });
 
-      return results.length > 0 ? results : null;
+      return real_not_fake(results) ? results : null;
     }
 
     // Loại câu hỏi #5: Kéo thả văn bản
@@ -672,7 +693,7 @@
           }
         }
 
-        return [{ index: 1, text }];
+        return real_not_fake([{ index: 1, text }]) ? [{ index: 1, text }] : null;
       }
       return null;
     }
@@ -706,7 +727,7 @@
         }
       });
 
-      return results.length > 0 ? results : null;
+      return real_not_fake(results) ? results : null;
     }
 
     // Loại câu hỏi #7: Kéo thả văn bản trong InteractiveVideo
@@ -741,7 +762,7 @@
         }
       });
 
-      return results.length > 0 ? results : null;
+      return real_not_fake(results) ? results : null;
     }
 
     // Loại câu hỏi #8: Câu hỏi tự luận không có đáp án sẵn
@@ -767,7 +788,7 @@
         }
       });
 
-      return results.length > 0 ? results : null;
+      return real_not_fake(results) ? results : null;
     }
 
     // Loại câu hỏi #9: Trắc nghiệm không có nút submit
@@ -780,10 +801,6 @@
         const answers = choice.answers || [];
 
         if (!questionText || answers.length === 0) {
-          results.push({
-            index: idx + 1,
-            text: `<em style="color:gray;">Câu hỏi trống (không có nội dung hoặc đáp án)</em>`
-          });
           return;
         }
 
@@ -799,7 +816,7 @@
         });
       });
 
-      return results.length > 0 ? results : null;
+      return real_not_fake(results) ? results : null;
     }
     //#10: Sắp xếp câu
     function question_type_10(jsonContent) {
@@ -811,10 +828,13 @@
           .map((p, i) => `<li>${p.replace(/<\/?p>/g, "").trim()}</li>`)
           .join("");
     
-        return [{
+        return real_not_fake([{
           index: 1,
           text: `<strong>${taskDesc}</strong><ul>${itemsHtml}</ul><p><em>(Sắp xếp theo đúng thứ tự)</em></p>`
-        }];
+        }]) ? [{
+          index: 1,
+          text: `<strong>${taskDesc}</strong><ul>${itemsHtml}</ul><p><em>(Sắp xếp theo đúng thứ tự)</em></p>`
+        }] : null;
       }
     
       return null;
@@ -827,6 +847,16 @@
           const intro = jsonContent.intro.replace(/<\/?p>/g, "");
           const groups = jsonContent.summaries || [];
       
+          const hasValidGroups = groups.some(g => {
+            const summaryItems = g.summary || [];
+            return summaryItems.some(item => {
+              const clean = item.replace(/<\/?p>/g, "").trim();
+              return clean.length > 0;
+            });
+          });
+          
+          if (!hasValidGroups) return null;
+      
           const groupHtml = groups.map((g) => {
             const items = (g.summary || [])
               .map((i, idx) => {
@@ -838,10 +868,13 @@
             return `<ul>${items}</ul>`;
           }).join("");
       
-          return [{
+          return real_not_fake([{
             index: 1,
             text: `<strong>${intro}</strong><br>${groupHtml}<p><em></em></p>`
-          }];
+          }]) ? [{
+            index: 1,
+            text: `<strong>${intro}</strong><br>${groupHtml}<p><em></em></p>`
+          }] : null;
         }
       
         const summary = jsonContent.interactiveVideo?.summary?.task;
@@ -849,6 +882,16 @@
           const intro = summary.params?.intro?.replace(/<\/?p>/g, "") || "Chọn câu đúng:";
           const groups = summary.params?.summaries || [];
       
+          const hasValidGroups = groups.some(g => {
+            const summaryItems = g.summary || [];
+            return summaryItems.some(item => {
+              const clean = item.replace(/<\/?p>/g, "").trim();
+              return clean.length > 0;
+            });
+          });
+          
+          if (!hasValidGroups) return null;
+      
           const groupHtml = groups.map((g) => {
             const items = (g.summary || [])
               .map((i, idx) => {
@@ -860,10 +903,13 @@
             return `<ul>${items}</ul>`;
           }).join("");
       
-          return [{
+          return real_not_fake([{
             index: 1,
             text: `<strong>${intro}</strong><br>${groupHtml}<p><em></em></p>`
-          }];
+          }]) ? [{
+            index: 1,
+            text: `<strong>${intro}</strong><br>${groupHtml}<p><em></em></p>`
+          }] : null;
         }
       
         return null;
