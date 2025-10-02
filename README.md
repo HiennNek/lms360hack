@@ -10,6 +10,8 @@
 - Xin hãy sử dụng website [này](https://lms360hack.pages.dev/).
 - Điền URL (đường link) của bài tập LMS360 vào phần "🔗 URL bài tập LMS360:", sau đó bấm nút "🚀 Heck"
 
+### Backup site (web dự phòng): [hiennnek.github.io/lms360hack](https://hiennnek.github.io/lms360hack/)
+
 #
 
 ### [Tìm hiểu cách LMS360 Hack hoạt động](How_it_work.pdf)
