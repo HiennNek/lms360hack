@@ -969,10 +969,10 @@
             }, index * 100);
           });
         } else {
-          container.innerHTML = "<div class='error-message'>❌ Loại câu hỏi này chưa được hỗ trợ.</div>";
+          container.innerHTML = "<div class='error-message'>❌ Kiểu nội dung này chưa được hỗ trợ.</div>";
         }
       } catch (err) {
-        console.error("Lỗi khi phân tích câu hỏi:", err);
+        console.error("Lỗi khi phân tích nội dung:", err);
         container.innerHTML = "<div class='error-message'>❌ Link không hợp lệ hoặc không đúng định dạng.</div>";
       }
     }
@@ -1034,7 +1034,7 @@
           })
           .catch(err => {
             console.error(err);
-            container.innerHTML = "<div class='error-message'>❌ Không thể tải hoặc phân tích JSON hệ thống bypass CORS.</div>";
+            container.innerHTML = "<div class='error-message'>❌ Không thể tải hoặc phân tích JSON / hệ thống bypass CORS.</div>";
             hecker_button.disabled = false;
             hecker_button.classList.remove("loading");
             hecker_button.innerHTML = "<span>🚀 Heck</span>";
