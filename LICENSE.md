@@ -20,6 +20,7 @@
         - TOÀN BỘ trách nhiệm nếu sử dụng phần mềm / website / công cụ này (lms360hack / LMS360 Hack / lms360hack.pages.dev) sai mục đích sẽ do người sử dụng chịu trách nhiệm toàn bộ thiệt hại hay hình phạt.
         - Tôi CÓ quyền sửa đổi các điều khoản phân phối, các tuyên bố từ chối trách nhiệm và các chính sách sử dụng mà không có sự báo trước cho người sử dụng.
 
-Ngày sửa đổi: 05, tháng 10, năm 2025
-Ngày có hiệu lực áp dụng: 27, tháng 09, năm 2025
+    Ngày sửa đổi: 05, tháng 10, năm 2025
+    Ngày có hiệu lực áp dụng: 27, tháng 09, năm 2025
+
 
