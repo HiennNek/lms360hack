@@ -25,6 +25,6 @@
 
 #
 
-#### ⚠️ CHỈ PHỤC VỤ MỤC ĐÍNH NGHIÊN CỨU VÀ PHÁT HIỆN LỖ HỔNG BẢO MẬT. KHÔNG ĐƯỢC SỬ DỤNG CHO CÁC BÀI TẬP HOẶC BÀI KIỂM TRA TRÊN LMS360. TÔI SẼ KHÔNG CHỊU TRÁCH NHIỆM CHO CÁC HÀNH VI GIAN LẬN HAY BỊ PHÁT HIỆN, KỈ LUẬT DO SỬ DỤNG CÔNG CỤ NÀY! ⚠️
+#### ⚠️ CHỈ PHỤC VỤ MỤC ĐÍNH NGHIÊN CỨU, HỌC TẬP VÀ PHÁT HIỆN LỖ HỔNG BẢO MẬT. KHÔNG ĐƯỢC SỬ DỤNG CHO CÁC BÀI TẬP HOẶC BÀI KIỂM TRA TRÊN LMS360. TÔI SẼ KHÔNG CHỊU TRÁCH NHIỆM CHO CÁC HÀNH VI GIAN LẬN HAY BỊ PHÁT HIỆN, KỈ LUẬT, VI PHẠM PHÁP LUẬT DO SỬ DỤNG CÔNG CỤ NÀY! ⚠️
 
 #### Bằng cách sử dụng lms360hack.pages.dev và các dịch vụ liên quan đến lms360hack/LMS360 Hack hoặc/và có nguồn gốc từ lms360hack/LMS360 Hack, bạn đã đồng ý tuân thủ [các chính sách sử dụng, các điều khoản phân phối và các tuyên bố từ chối trách nhiệm](https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md) của tôi.
