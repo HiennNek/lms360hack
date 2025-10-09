@@ -1,20 +1,21 @@
 # LMS360 Hack - Hiện đáp án LMS360
 ## Version hiện tại: v4.1
 
-#
-
 <img width="1551" height="687" alt="image" src="https://github.com/user-attachments/assets/ef6b8afe-f941-46ed-bed2-76def2c43523" />
 
-#### Hướng dẫn sử dụng:
-- LƯU Ý: LMS360 Hack hiện tại đã không sử dụng Tampermonkey.
-- Xin hãy sử dụng website [này](https://lms360hack.pages.dev/).
-- Điền URL (đường link) của bài tập LMS360 vào phần "🔗 URL bài tập LMS360:", sau đó bấm nút "🚀 Heck"
+#
+
+> [!NOTE]
+>## Hướng dẫn sử dụng:
+>- LƯU Ý: LMS360 Hack hiện tại đã không sử dụng Tampermonkey.
+>- Xin hãy sử dụng website [này](https://lms360hack.pages.dev/).
+>- Điền URL (đường link) của bài tập LMS360 vào phần "🔗 URL bài tập LMS360:", sau đó bấm nút "🚀 Heck"
 
 ### Backup site (web dự phòng): [hiennnek.github.io/lms360hack](https://hiennnek.github.io/lms360hack/)
 
-#
-
 ### [Tìm hiểu cách LMS360 Hack hoạt động](How_it_work.pdf)
+
+#
 
 ### Changelog:
 - v4.1: Đã fix lỗi khi mà lms360hack.pages.dev hiển thị câu hỏi trống khi sử dụng
