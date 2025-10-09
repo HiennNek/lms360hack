@@ -1,7 +1,13 @@
-# LMS360 Hack - Hiện đáp án LMS360
-## Version hiện tại: v4.1
+<p align="center">
+  <img width="500" alt="logo" class="lms360hacklogo" src="https://github.com/user-attachments/assets/e1b4fe08-3057-4b24-ba9d-64f263c3b22a" />
+</p>
 
-<img width="1551" height="687" alt="image" src="https://github.com/user-attachments/assets/ef6b8afe-f941-46ed-bed2-76def2c43523" />
+## LMS360 Hack - Hiện đáp án LMS360
+### Version hiện tại: v4.1
+
+<p align="center">
+  <img width="800" alt="statistics" src="https://github.com/user-attachments/assets/ef6b8afe-f941-46ed-bed2-76def2c43523" />
+</p>
 
 #
 
