@@ -35,3 +35,47 @@
 #### ⚠️ CHỈ PHỤC VỤ MỤC ĐÍNH NGHIÊN CỨU, HỌC TẬP VÀ PHÁT HIỆN LỖ HỔNG BẢO MẬT. KHÔNG ĐƯỢC SỬ DỤNG CHO CÁC BÀI TẬP HOẶC BÀI KIỂM TRA TRÊN LMS360. TÔI SẼ KHÔNG CHỊU TRÁCH NHIỆM CHO CÁC HÀNH VI GIAN LẬN HAY BỊ PHÁT HIỆN, KỈ LUẬT, VI PHẠM PHÁP LUẬT DO SỬ DỤNG CÔNG CỤ NÀY! ⚠️
 
 #### Bằng cách sử dụng lms360hack.pages.dev và các dịch vụ liên quan đến lms360hack/LMS360 Hack hoặc/và có nguồn gốc từ lms360hack/LMS360 Hack, bạn đã đồng ý tuân thủ [các chính sách sử dụng, các điều khoản phân phối và các tuyên bố từ chối trách nhiệm](https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md) của tôi.
+
+### Source code Cloudflare Workers (bypass-lms360-cors.trdahien2011.workers.dev)
+
+```javascript
+
+export default {
+  async fetch(request) {
+    const urlParam = new URL(request.url).searchParams.get("url");
+
+    if (!urlParam) {
+      return new Response("Hey, what are you looking for?", { status: 400 });
+    }
+
+    try {
+      const targetUrl = new URL(urlParam);
+
+      if (targetUrl.hostname !== "lms360.vn") {
+        return new Response("This is not an open proxy!", { status: 403 });
+      }
+
+      if (!targetUrl.pathname.startsWith("/h5p/")) {
+        return new Response("Why u looking for other things?", { status: 403 });
+      }
+
+      const response = await fetch(targetUrl.toString(), {
+        headers: { "User-Agent": "Mozilla/5.0 (compatible)" },
+      });
+
+      const body = await response.text();
+
+      return new Response(body, {
+        status: response.status,
+        headers: {
+          "Content-Type": response.headers.get("content-type") || "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "*",
+        },
+      });
+    } catch (err) {
+      return new Response("Oops, " + err.message, { status: 500 });
+    }
+  },
+};
