@@ -1018,8 +1018,8 @@
           return;
         }
 
-        const ur_homework_link_that_ur_lazy_to_do = `https://lms360.vn/h5p/${questionId}/play`;
-        const fuck_you_cors = bypass_that_fucking_CORS + encodeURIComponent(ur_homework_link_that_ur_lazy_to_do);
+      // New secure backend :D
+      const fuck_you_cors = `https://lms360hack-backend.hiennek1.workers.dev?id=${encodeURIComponent(questionId)}`;
 
         fetch(fuck_you_cors)
           .then(res => {
