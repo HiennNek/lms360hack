@@ -530,7 +530,7 @@
     // Fuck you our browser and our LMS, too
     // Script của tôi bị chặn CORS :(
     // No ưorry, đã tìm đc cách bypass
-    const bypass_that_fucking_CORS = "https://bypass-lms360-cors.trdahien2011.workers.dev/?url=";
+    //const bypass_that_fucking_CORS = "https://bypass-lms360-cors.trdahien2011.workers.dev/?url=";
 
     ////////////////////////////////////////////////////////////////////////////////
     // Thuật toán chuyển đổi JSON sang ngôn ngữ mà loài người có thể hiểu được :) //
@@ -1023,7 +1023,10 @@
 
         fetch(fuck_you_cors)
           .then(res => {
-            if (!res.ok) throw new Error("Không thể load hệ thống bypass CORS.");
+            if (res.status === 429) {
+              throw new Error("Từ từ, không sập server!");
+            }
+            if (!res.ok) throw new Error("Không thể load backend.");
             return res.json();
           })
           .then(data => {
@@ -1034,7 +1037,7 @@
           })
           .catch(err => {
             console.error(err);
-            container.innerHTML = "<div class='error-message'>❌ Không thể tải hoặc phân tích JSON / hệ thống bypass CORS.</div>";
+            container.innerHTML = `<div class='error-message'>❌ Lỗi: ${err.message}</div>`;
             hecker_button.disabled = false;
             hecker_button.classList.remove("loading");
             hecker_button.innerHTML = "<span>🚀 Heck</span>";
