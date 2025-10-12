@@ -1,12 +1,8 @@
-<p align="center">
-  <img width="500" alt="logo" class="lms360hacklogo" src="https://github.com/user-attachments/assets/e1b4fe08-3057-4b24-ba9d-64f263c3b22a" />
-</p>
-
-## LMS360 Hack - Hiện đáp án LMS360
-### Version hiện tại: v4.1
+# LMS360 Hack - Hiện đáp án LMS360
+## Version hiện tại: v4.2
 
 <p align="center">
-  <img width="800" alt="statistics" src="https://github.com/user-attachments/assets/ef6b8afe-f941-46ed-bed2-76def2c43523" />
+  <img width="800" alt="image" src="https://github.com/user-attachments/assets/4b105993-bdb4-433c-a4ad-150054c24c89" />
 </p>
 
 #
@@ -15,7 +11,7 @@
 >## Hướng dẫn sử dụng:
 >- LƯU Ý: LMS360 Hack hiện tại đã không sử dụng Tampermonkey.
 >- Xin hãy sử dụng website [này](https://lms360hack.pages.dev/).
->- Điền URL (đường link) của bài tập LMS360 vào phần "🔗 URL bài tập LMS360:", sau đó bấm nút "🚀 Heck"
+>- Điền URL (đường link) của bài tập LMS360 vào ô URL, sau đó bấm nút "Lấy đáp án"
 
 ### Backup site (web dự phòng): [hiennnek.github.io/lms360hack](https://hiennnek.github.io/lms360hack/)
 
@@ -24,6 +20,7 @@
 #
 
 ### Changelog:
+- v4.2: Giao diện mới, sử dụng backend mới, fix lỗi sắp xếp thứ tự và số thứ tự.
 - v4.1: Đã fix lỗi khi mà lms360hack.pages.dev hiển thị câu hỏi trống khi sử dụng
 - v4.0: Phiên bản xịn nhất của LMS360 Hack :D, đang hỗ trợ (và có thể hơn) 11 dạng bài tập
 - v3.0: Bản improvement cho v2.0, hỗ trợ nhiều chế độ với câu hỏi trắc nghiệm một đáp án
@@ -32,48 +29,97 @@
 
 #
 
-### Source code Cloudflare Workers (bypass-lms360-cors.trdahien2011.workers.dev)
+### Source code backend (lms360hack-backend.hiennek1.workers.dev)
 
+#### /src/worker.js
 ```javascript
-export default {
-  async fetch(request) {
-    const urlParam = new URL(request.url).searchParams.get("url");
-
-    if (!urlParam) {
-      return new Response("Hey, what are you looking for?", { status: 400 });
+var worker_default = {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
+    if (!id) {
+      return new Response("What are you doing?", { status: 400 });
     }
-
-    try {
-      const targetUrl = new URL(urlParam);
-
-      if (targetUrl.hostname !== "lms360.vn") {
-        return new Response("This is not an open proxy!", { status: 403 });
-      }
-
-      if (!targetUrl.pathname.startsWith("/h5p/")) {
-        return new Response("Why u looking for other things?", { status: 403 });
-      }
-
-      const response = await fetch(targetUrl.toString(), {
-        headers: { "User-Agent": "Mozilla/5.0 (compatible)" },
+    const key = id;
+    const { success } = await env.ANTI_DDOS.limit({ key });
+    if (!success) {
+      return new Response("Trying to DDoS my server?", {
+        status: 429,
+        headers: {
+          "Retry-After": "60",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET"
+        }
       });
-
+    }
+    const lms360_url = `https://lms360.vn/h5p/${encodeURIComponent(id)}/play`;
+    const user_agent = [
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:143.0) Gecko/20100101 Firefox/143.0",
+      "Mozilla/5.0 (Linux; Android 14; SM-G998B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+      "Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Mobile Safari/537.36",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.110 Safari/537.36",
+      "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.5 Mobile/15E148 Safari/604.1",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko)"
+    ];
+    const randomUA = user_agent[Math.floor(Math.random() * user_agent.length)];
+    try {
+      const response = await fetch(lms360_url, {
+        headers: { "User-Agent": randomUA }
+      });
       const body = await response.text();
-
       return new Response(body, {
         status: response.status,
         headers: {
           "Content-Type": response.headers.get("content-type") || "application/json",
           "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, OPTIONS",
-          "Access-Control-Allow-Headers": "*",
-        },
+          "Access-Control-Allow-Methods": "GET",
+          "Access-Control-Allow-Headers": "*"
+        }
       });
     } catch (err) {
-      return new Response("Oops, " + err.message, { status: 500 });
+      return new Response("I smell something bad " + err.message, { status: 500 });
     }
-  },
+  }
 };
+export {
+  worker_default as default
+};
+```
+
+#### /wrangler.toml
+```toml
+name = "lms360hack-backend"
+main = "src/worker.js"
+workers_dev = true
+preview_urls = false
+compatibility_date = "2025-10-10"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[[ratelimits]]
+name = "ANTI_DDOS"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 6
+  period = 60
+
 ```
 
 
