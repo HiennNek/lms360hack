@@ -23,6 +23,20 @@
 
 #
 
+## FAQ (câu hỏi thường gặp)
+> **Cái này có illegal (bất hợp pháp) không?**
+- Không :) Miễn có sự đồng ý của giáo viên, người có thẩm quyền.
+> **Web này có virus không?**
+- Không :) Bạn có thể check mã nguồn của website ngay trên trang GitHub này!
+> **Web này có miễn phí không?**
+- Có :) 100% miễn phí và mã nguồn mở (open-source)
+> **LMS360 Hack có thể được ứng dụng vào việc gì?**
+- Bạn có thể sử dụng để kiểm tra đáp án bài làm (nếu có sự cho phép), và thậm chí giáo viên cũng có thể sử dụng công cụ này để check xem bài LMS của mình trông có ổn không mà không cần kiểm tra lại từng câu (GVCN của mình cũng thế)
+> **Dự án này hay thế :O**
+- Cho mình một ⭐ đi :3
+
+#
+
 ### Changelog:
 - v4.2: Giao diện mới, sử dụng backend mới, fix lỗi ~~sắp xếp thứ tự và~~ số thứ tự trong list câu hỏi (sau khi fix cái sắp xếp thứ tự câu hỏi thì nó mọc thêm đống bug nữa)
 - v4.1: Đã fix lỗi khi mà lms360hack.pages.dev hiển thị câu hỏi trống khi sử dụng
