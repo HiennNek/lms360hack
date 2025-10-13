@@ -3,7 +3,6 @@ const hecker_button = document.getElementById("hecker_button");
 const container = document.getElementById("questions");
 
 // Update v4.2: Đã sử dụng backend mới
-// Địa chỉ của backend ở dưới kia cơ
 
 ////////////////////////////////////////////////////////////////////////////////
 // Thuật toán chuyển đổi JSON sang ngôn ngữ mà loài người có thể hiểu được :) //
@@ -389,7 +388,7 @@ function question_type_11(jsonContent) {
     return null;
 }
 
-// Loại câu hỏi #12: Chọn từ
+//#12: Chọn từ
 function question_type_12(jsonContent) {
   let results = [];
 
@@ -468,97 +467,10 @@ function render_quest(data) {
     }
 
     let results = [];
-
-    // Thuật toán xử lý số thứ tự câu hỏi
-    // Trước đây thì số thứ tự của câu sẽ đc sắp xếp theo cái array list trên kia
-    // Giờ thì sẽ dựa vào cái stt của cây hỏi tron json.
-
-    const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
-    const short_interact = interactions.slice().sort((a, b) => {
-      // Sort bằng duration
-      const timeA = a.duration?.from || 0;
-      const timeB = b.duration?.from || 0;
-      if (timeA !== timeB) return timeA - timeB;
-      return interactions.indexOf(a) - interactions.indexOf(b);
-    });
-
-    // Xử lý theo thứ tự
-    short_interact.forEach((interaction, interact_indez) => {
-      const action = interaction.action;
-      if (!action || !action.library) return;
-
-      // Return cái order về (idk wtf is this, chatgpt suggest me to do this)
-      let handler = null;
-      if (action.library.startsWith("H5P.Blanks")) {
-        handler = question_type_1;
-      } else if (action.library.startsWith("H5P.SingleChoiceSet")) {
-        handler = question_type_3;
-      } else if (action.library.startsWith("H5P.MultiChoice")) {
-        handler = question_type_4;
-      } else if (action.library.startsWith("H5P.TrueFalse")) {
-        handler = question_type_6;
-      } else if (action.library.startsWith("H5P.DragText")) {
-        handler = question_type_7;
-      } else if (action.library.startsWith("H5P.FreeTextQuestion")) {
-        handler = question_type_8;
-      } else if (action.library.startsWith("H5P.MarkTheWords")) {
-        handler = question_type_12;
-      }
-
-      if (handler) {
-        const temp_json_cont = {
-          ...jsonContent,
-          interactiveVideo: {
-            ...jsonContent.interactiveVideo,
-            assets: {
-              ...jsonContent.interactiveVideo?.assets,
-              interactions: [interaction]
-            }
-          }
-        };
-        
-        const output = handler(temp_json_cont);
-        if (output) {
-          output.forEach(result => {
-            result.interact_order = interact_indez;
-            result.interact_time = interaction.duration?.from || 0;
-          });
-          results = results.concat(output);
-        }
-      }
-    });
-
-    const summa_out = question_type_11(jsonContent);
-    if (summa_out) {
-      summa_out.forEach(result => {
-        result.interact_order = 999999;
-        result.interact_time = 999999;
-      });
-      results = results.concat(summa_out);
-    }
-
     for (let handler of question_type) {
-      if ([question_type_1, question_type_3, question_type_4, question_type_6, question_type_7, question_type_8, question_type_11, question_type_12].includes(handler)) {
-        continue;
-      }
-      
       const output = handler(jsonContent);
-      if (output) {
-        results = results.concat(output);
-      }
+      if (output) results = results.concat(output);
     }
-
-    results.sort((a, b) => {
-      if (a.interact_order !== undefined && b.interact_order !== undefined) {
-        if (a.interact_order !== b.interact_order) {
-          return a.interact_order - b.interact_order;
-        }
-        return a.interact_time - b.interact_time;
-      }
-      if (a.interact_order !== undefined) return -1;
-      if (b.interact_order !== undefined) return 1;
-      return 0;
-    });
 
     container.innerHTML = "";
 
@@ -604,8 +516,8 @@ function hack_da_answer() {
       return;
     }
 
-    // New secure backend :D
-    const fuck_you_cors = `https://lms360hack-backend.hiennek1.workers.dev?id=${encodeURIComponent(questionId)}`;
+  // New secure backend :D
+  const fuck_you_cors = `https://lms360hack-backend.hiennek1.workers.dev?id=${encodeURIComponent(questionId)}`;
 
     fetch(fuck_you_cors)
       .then(res => {
@@ -626,7 +538,6 @@ function hack_da_answer() {
         hecker_button.disabled = false;
         hecker_button.textContent = "Lấy đáp án";
       });
-
   } catch (err) {
     alert("Cái link gì đây? (URL không hợp lệ - có thể do thiếu https:// hoặc http://)");
     hecker_button.disabled = false;
