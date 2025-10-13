@@ -2,7 +2,10 @@
 ## Version hiện tại: v4.2
 
 <p align="center">
-  <img width="800" alt="image" src="https://github.com/user-attachments/assets/4b105993-bdb4-433c-a4ad-150054c24c89" />
+  <div id=“pics”>
+    <img width="500" alt="image" src="https://github.com/user-attachments/assets/fdde0a50-880e-4b84-84fb-201b4cd616bd" />
+    <img width="500" alt="image" src="https://github.com/user-attachments/assets/869324f7-89d3-4975-8c68-25ae756da4d2" />
+  </div>
 </p>
 
 #
