@@ -1,5 +1,5 @@
 # LMS360 Hack - Hiện đáp án LMS360
-## Version hiện tại: v4.2.1
+## Version hiện tại: v4.2.2
 
 <div id=“pics”>
   <img width="49%" alt="image" src="https://github.com/user-attachments/assets/fdde0a50-880e-4b84-84fb-201b4cd616bd" />
