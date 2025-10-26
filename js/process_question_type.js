@@ -437,6 +437,123 @@ function question_type_12(jsonContent) {
   return results.length > 0 ? results : null;
 }
 
+// #13: Column + hình ảnh
+function question_type_13(jsonContent) {
+  let results = [];
+
+  const interactions = jsonContent.interactiveVideo?.assets?.interactions || [];
+  interactions.forEach((interaction) => {
+    if ((interaction.action?.library || "").startsWith("H5P.Column")) {
+      const params = interaction.action.params || {};
+      const contentArray = params.content || [];
+
+      contentArray.forEach((block) => {
+        const inner = block.content || {};
+        const innerLib = inner.library || "";
+        const innerParams = inner.params || {};
+
+        if (innerLib.startsWith("H5P.Image")) {
+          const imagePath = innerParams.file?.path;
+          if (imagePath) {
+            const altText = innerParams.alt || "Hình ảnh minh họa";
+            results.push({
+              index: results.length + 1,
+              text: `<div class="image-block"><img src="${imagePath}" alt="${altText}" style="max-width:100%;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,0.2);"></div>`
+            });
+          }
+        }
+
+        else if (innerLib.startsWith("H5P.SingleChoiceSet")) {
+          const choices = innerParams.choices || [];
+          choices.forEach((choice, idx) => {
+            const questionText = choice.question?.replace(/<\/?p>/g, "") || `Câu hỏi ${idx + 1}`;
+            const answers = choice.answers || [];
+            const optionsHtml = answers.map((a, i) => {
+              const clean = a.replace(/<\/?p>/g, "");
+              const correctClass = i === 0 ? "highlight" : "";
+              return `<li class="${correctClass}">${clean}</li>`;
+            }).join("");
+            results.push({
+              index: results.length + 1,
+              text: `${questionText}<ul>${optionsHtml}</ul>`
+            });
+          });
+        }
+
+        else if (innerLib.startsWith("H5P.MultiChoice")) {
+          const question = innerParams.question?.replace(/<\/?p>/g, "").trim() || "Câu hỏi trắc nghiệm";
+          const answers = innerParams.answers || [];
+          const optionsHtml = answers.map((ans) => {
+            const clean = ans.text.replace(/<\/?p>/g, "");
+            const correctClass = ans.correct ? "highlight" : "";
+            return `<li class="${correctClass}">${clean}</li>`;
+          }).join("");
+          results.push({
+            index: results.length + 1,
+            text: `${question}<ul>${optionsHtml}</ul>`
+          });
+        }
+      });
+    }
+  });
+
+  const lib = (jsonContent.library || jsonContent.__containerLibrary || "").toString();
+  if (lib.startsWith("H5P.Column")) {
+    const contentArray = jsonContent.content || [];
+
+    contentArray.forEach((block) => {
+      const inner = block.content || {};
+      const innerLib = inner.library || "";
+      const innerParams = inner.params || {};
+
+      if (innerLib.startsWith("H5P.Image")) {
+        const imagePath = innerParams.file?.path;
+        if (imagePath) {
+          const altText = innerParams.alt || "Hình ảnh minh họa";
+          results.push({
+            index: results.length + 1,
+            text: `<div class="image-block"><img src="${imagePath}" alt="${altText}" style="max-width:100%;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,0.2);"></div>`
+          });
+        }
+      }
+
+      else if (innerLib.startsWith("H5P.SingleChoiceSet")) {
+        const choices = innerParams.choices || [];
+        choices.forEach((choice, idx) => {
+          const questionText = choice.question?.replace(/<\/?p>/g, "") || `Câu hỏi ${idx + 1}`;
+          const answers = choice.answers || [];
+          const optionsHtml = answers.map((a, i) => {
+            const clean = a.replace(/<\/?p>/g, "");
+            const correctClass = i === 0 ? "highlight" : "";
+            return `<li class="${correctClass}">${clean}</li>`;
+          }).join("");
+          results.push({
+            index: results.length + 1,
+            text: `${questionText}<ul>${optionsHtml}</ul>`
+          });
+        });
+      }
+
+      else if (innerLib.startsWith("H5P.MultiChoice")) {
+        const question = innerParams.question?.replace(/<\/?p>/g, "").trim() || "Câu hỏi trắc nghiệm";
+        const answers = innerParams.answers || [];
+        const optionsHtml = answers.map((ans) => {
+          const clean = ans.text.replace(/<\/?p>/g, "");
+          const correctClass = ans.correct ? "highlight" : "";
+          return `<li class="${correctClass}">${clean}</li>`;
+        }).join("");
+        results.push({
+          index: results.length + 1,
+          text: `${question}<ul>${optionsHtml}</ul>`
+        });
+      }
+    });
+  }
+
+  return results.length > 0 ? results : null;
+}
+
+
 const question_type = [
   question_type_1,
   question_type_2,
@@ -449,7 +566,8 @@ const question_type = [
   question_type_9,
   question_type_10,
   question_type_11,
-  question_type_12
+  question_type_12,
+  question_type_13
 ];
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
