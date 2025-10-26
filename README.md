@@ -38,6 +38,7 @@
 #
 
 ### Changelog:
+- v4.2.1: Một bản fix nhỏ cho v4.2, đã fix lỗi thứ tự câu trong Interactive video
 - v4.2: Giao diện mới, sử dụng backend mới, fix lỗi ~~sắp xếp thứ tự và~~ số thứ tự trong list câu hỏi (sau khi fix cái sắp xếp thứ tự câu hỏi thì nó mọc thêm đống bug nữa)
 - v4.1: Đã fix lỗi khi mà lms360hack.pages.dev hiển thị câu hỏi trống khi sử dụng
 - v4.0: Phiên bản xịn nhất của LMS360 Hack :D, đang hỗ trợ (và có thể hơn) 11 dạng bài tập
