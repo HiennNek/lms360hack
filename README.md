@@ -2,8 +2,8 @@
 ## Version hiện tại: v4.2.2
 
 <div id=“pics”>
-  <img width="49%" alt="image" src="https://github.com/user-attachments/assets/fdde0a50-880e-4b84-84fb-201b4cd616bd" />
-  <img width="49%" alt="image" src="https://github.com/user-attachments/assets/869324f7-89d3-4975-8c68-25ae756da4d2" />
+<img width=100% alt="image" src="https://github.com/user-attachments/assets/95e79811-2f48-484e-93b1-dd349616a2a0" />
+
 </div>
 
 #
