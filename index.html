@@ -28,13 +28,30 @@
 <body>
   <div id="container"></div>
 
+  <div class="scrollable-container">
+  <div id="eula-modal" class="modal">
+    <div class="modal-content">
+      <h2>Chính Sách - Điều Khoản</h2>
+      <div class="modal-body">
+        <p>Bằng cách sử dụng lms360hack.pages.dev và các dịch vụ liên quan đến lms360hack/LMS360 Hack hoặc/và có nguồn gốc từ lms360hack/LMS360 Hack, bạn đã đồng ý tuân thủ<a target="_blank" href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a>của tôi.</p>
+        <p>Trong chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm sẽ bao gồm những điều sau:</p>
+        <ul>
+          <li>CHỈ cho mục đích nghiên cứu, phát triển, học tập, tìm hiểu lỗ hỏng bảo mật và nâng cao ý thức về bảo mật.</li>
+          <li>KHÔNG sử dụng cho các bài tập, bài kiểm tra mà không có sự cho phép của người đại diện LMS360 hoặc giáo viên, người có thẩm quyền.</li>
+          <li>TOÀN BỘ trách nhiệm nếu sử dụng công cụ này sai mục đích sẽ do người sử dụng chịu trách nhiệm</li>
+          <li>Tôi sẽ KHÔNG chịu trách nhiệm về hành vi vi phạm pháp luật, vi phạm nội quy nhà trường, vi phạm điều khoản của LMS360 do người dùng gây ra.</li>
+        </ul>
+        <p>Nếu bạn không đồng ý với<a target="_blank" href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a>, hãy ngưng sử dụng ngay lập tức!</p>
+      </div>
+      <button id="close-eula" class="modal-button">Tôi đã đọc và đồng ý với những điều trên</button>
+    </div>
+  </div>
+
   <div id="ui-card" role="region" aria-label="Link LMS360">
     <div class="card-inner">
       <div class="card-content">
         <h1 class="card-title">LMS360 Hack <span class="version">v4.2.1</span></h1>
-        <p class="card-sub">By HiennNek</p>
-
-        <br>
+        <p class="card-sub">By HiennNek</p>        <br>
 
         <form id="url-form" action="#" onsubmit="event.preventDefault();">
           <label for="link_lms360" class="sr-only">LMS360 URL</label>
@@ -59,32 +76,13 @@
         </div>
       </footer>
 
-      <div id="eula-modal" class="modal">
-        <div class="modal-content">
-          <h2>Chính Sách - Điều Khoản</h2>
-          <div class="modal-body">
-            <p>Bằng cách sử dụng lms360hack.pages.dev và các dịch vụ liên quan đến lms360hack/LMS360 Hack hoặc/và có nguồn gốc từ lms360hack/LMS360 Hack, bạn đã đồng ý tuân thủ<a target="_blank" href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a> của tôi.</p>
-            <p>Trong chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm sẽ bao gồm những điều sau:</p>
-            <ul>
-              <li>CHỈ cho mục đích nghiên cứu, phát triển, học tập, tìm hiểu lỗ hỏng bảo mật và nâng cao ý thức về bảo mật.</li>
-              <li>KHÔNG sử dụng cho các bài tập, bài kiểm tra mà không có sự cho phép của người đại diện LMS360 hoặc giáo viên, người có thẩm quyền.</li>
-              <li>TOÀN BỘ trách nhiệm nếu sử dụng công cụ này sai mục đích sẽ do người sử dụng chịu trách nhiệm</li>
-              <li>Tôi sẽ KHÔNG chịu trách nhiệm về hành vi vi phạm pháp luật, vi phạm nội quy nhà trường, vi phạm điều khoản của LMS360 do người dùng gây ra.</li>
-            </ul>
-            <p>Nếu bạn không đồng ý với<a target="_blank" href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a>, hãy ngưng sử dụng ngay lập tức!</p>
-          </div>
-          <button id="close-eula" class="modal-button">Tôi đã đọc và đồng ý với những điều trên</button>
-        </div>
-      </div>
+
     </div>
   </div>
 
   <button id="theme-toggle" class="theme-toggle" title="Theme">
     🌙
   </button>
-
-  <script src="js/particle-background.js"></script>
-  <script src="js/function.js"></script>
   <script src="js/process_question_type.js"></script>
   <script src="js/theme-toggle.js"></script>
 </body>
