@@ -32,7 +32,7 @@ function question_type_1(jsonContent) {
       questions.forEach(q => {
         const clean = q.replace(/<\/?p>/g, "")
                       .replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
-        results.push({ index: results.length + 1, text: clean });
+        results.push({ index: results.length + 1, text: clean, duration: interaction.duration });
       });
     }
   });
@@ -104,7 +104,8 @@ function question_type_3(jsonContent) {
 
         results.push({
           index: idx + 1,
-          text: `${questionText}<ul>${optionsHtml}</ul>`
+          text: `${questionText}<ul>${optionsHtml}</ul>`,
+          duration: interaction.duration
         });
       });
     }
@@ -138,7 +139,8 @@ function question_type_4(jsonContent) {
 
       results.push({
         index: results.length + 1,
-        text: finalHtml
+        text: finalHtml,
+        duration: interaction.duration
       });
     }
   });
@@ -194,7 +196,8 @@ function question_type_6(jsonContent) {
 
       results.push({
         index: results.length + 1,
-        text: `${questionText}${optionsHtml}<p><em>Đáp án đúng: ${correctAnswer}</em></p>`
+        text: `${questionText}${optionsHtml}<p><em>Đáp án đúng: ${correctAnswer}</em></p>`,
+        duration: interaction.duration
       });
     }
   });
@@ -229,7 +232,8 @@ function question_type_7(jsonContent) {
 
       results.push({
         index: results.length + 1,
-        text
+        text,
+        duration: interaction.duration
       });
     }
   });
@@ -255,7 +259,8 @@ function question_type_8(jsonContent) {
 
       results.push({
         index: results.length + 1,
-        text
+        text,
+        duration: interaction.duration
       });
     }
   });
@@ -424,7 +429,8 @@ function question_type_12(jsonContent) {
 
     results.push({
       index: results.length + 1,
-      text: `<p>${taskDescription}</p><p>${formattedText}</p>`
+      text: `<p>${taskDescription}</p><p>${formattedText}</p>`,
+      duration: interaction.duration
     });
   }
 
@@ -471,6 +477,12 @@ function render_quest(data) {
       const output = handler(jsonContent);
       if (output) results = results.concat(output);
     }
+
+    results.sort((a, b) => {
+      const timeA = a.duration?.from ?? Infinity;
+      const timeB = b.duration?.from ?? Infinity;
+      return timeA - timeB;
+    });
 
     container.innerHTML = "";
 
