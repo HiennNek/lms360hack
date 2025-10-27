@@ -617,7 +617,7 @@ function render_quest(data) {
         }, index * 100);
       });
     } else {
-      container.innerHTML = "<div class='error-message'>❌ Kiểu nội dung này chưa được hỗ trợ.</div>";
+      container.innerHTML = "<div class='error-message'>❌ Kiểu nội dung này chưa được hỗ trợ. Bạn có thể yêu cầu thêm dạng câu hỏi này qua phần “Report Bug”</div>";
     }
   } catch (err) {
     console.error("Lỗi khi phân tích nội dung:", err);
