@@ -15,7 +15,6 @@
 >- Điền URL (đường link) của bài tập LMS360 vào ô “Link LMS360”, sau đó bấm nút "Lấy đáp án"
 
 ## Website chính: [lms360hack.pages.dev](https://lms360hack.pages.dev/)
-### Backup site (web dự phòng): [hiennnek.github.io/lms360hack](https://hiennnek.github.io/lms360hack/)
 
 #
 
