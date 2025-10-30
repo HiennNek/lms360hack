@@ -30,8 +30,11 @@ function question_type_1(jsonContent) {
     if ((interaction.action?.library || "").startsWith("H5P.Blanks")) {
       const questions = interaction.action.params?.questions || [];
       questions.forEach(q => {
-        const clean = q.replace(/<\/?p>/g, "")
-                      .replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+        const clean = q
+          .replace(/<\/p>/gi, '<br>')
+          .replace(/<p>/gi, '')
+          .replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>')
+          .trim();
         results.push({ index: results.length + 1, text: clean, duration: interaction.duration });
       });
     }
@@ -39,8 +42,11 @@ function question_type_1(jsonContent) {
 
   if (lib.startsWith("H5P.Blanks") && Array.isArray(jsonContent.questions)) {
     jsonContent.questions.forEach(q => {
-      const clean = q.replace(/<\/?p>/g, "")
-                    .replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+      const clean = q
+        .replace(/<\/p>/gi, '<br>')
+        .replace(/<p>/gi, '')
+        .replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>')
+        .trim();
       results.push({ index: results.length + 1, text: clean });
     });
   }
@@ -154,7 +160,7 @@ function question_type_5(jsonContent) {
     const lines = (jsonContent.textField || "").split("\\n");
     let text = lines.map(line => {
       let clean = line.replace(/‾\t/g, "").trim();
-      return clean.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+      return clean.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>' + '<br>');
     }).join("<br>");
 
     if (jsonContent.distractors) {
@@ -217,7 +223,7 @@ function question_type_7(jsonContent) {
 
       let text = lines.map(line => {
         let clean = line.replace(/‾\t/g, "").trim();
-        return clean.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
+        return clean.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>' + '<br>');
       }).join("<br>");
 
       if (params.distractors) {
