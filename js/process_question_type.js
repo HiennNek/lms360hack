@@ -565,6 +565,18 @@ function question_type_13(jsonContent) {
           text: `${question}<ul>${optionsHtml}</ul>`
         });
       }
+
+      else if (innerLib.startsWith("H5P.Blanks")) {
+        const questions = innerParams.questions || [];
+        questions.forEach((q, idx) => {
+          const cleanQ = q.replace(/<\/?p>/g, "");
+          const highlighted = cleanQ.replace(/\*(.+?)\*/g, '<span class="highlight">$1</span>');
+          results.push({
+            index: results.length + 1,
+            text: `<p>${highlighted}</p>`
+          });
+        });
+      }
     });
   }
 
