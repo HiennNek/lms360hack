@@ -56,6 +56,12 @@ function question_type_1(jsonContent) {
 
 // Loại câu hỏi #2: Trắc nghiệm có nút submit
 function question_type_2(jsonContent) {
+  const lib = (jsonContent.library || jsonContent.__containerLibrary || "").toString();
+  
+  if (lib.startsWith("H5P.QuestionSet")) {
+    return null;
+  }
+  
   const mcqList = jsonContent.questions || [];
   let results = [];
 
@@ -324,7 +330,7 @@ function question_type_10(jsonContent) {
   return null;
 }
 
-//#11: Some fucking random multiple choice question
+//#11: Summary (Some fucking random multiple choice question)
 function question_type_11(jsonContent) {
     const lib = (jsonContent.library || jsonContent.__containerLibrary || "").toString();
     if (lib.startsWith("H5P.Summary") && jsonContent.intro) {
@@ -583,6 +589,59 @@ function question_type_13(jsonContent) {
   return results.length > 0 ? results : null;
 }
 
+// #14: QuestionSet (đây là cái chóa j?)
+function question_type_14(jsonContent) {
+  const lib = (jsonContent.library || jsonContent.__containerLibrary || "").toString();
+  
+  if (lib.startsWith("H5P.QuestionSet")) {
+    const questions = jsonContent.questions || [];
+    let results = [];
+
+    questions.forEach((q, idx) => {
+      const qLib = q.library || "";
+      
+      if (qLib.startsWith("H5P.MultiChoice")) {
+        const questionText = q.params?.question || `Câu hỏi ${idx + 1}`;
+        const answers = q.params?.answers || [];
+        
+        const optionsHtml = answers.map((ans) => {
+          const cleanText = ans.text?.replace(/<\/?p>/g, "") || "";
+          const correctClass = ans.correct ? "highlight" : "";
+          return `<li class="${correctClass}">${cleanText}</li>`;
+        }).join("");
+
+        results.push({
+          index: results.length + 1,
+          text: `${questionText}<ul>${optionsHtml}</ul>`
+        });
+      }
+      
+      else if (qLib.startsWith("H5P.TrueFalse")) {
+        const questionText = q.params?.question?.replace(/<\/?p>/g, "") || "Câu hỏi Đúng/Sai";
+        const trueLabel = q.params?.l10n?.trueText || "Đúng";
+        const falseLabel = q.params?.l10n?.falseText || "Sai";
+        const correctAnswer = q.params?.correct === "true" ? trueLabel : falseLabel;
+
+        const optionsHtml = `
+          <ul>
+            <li class="${q.params?.correct === "true" ? "highlight" : ""}">${trueLabel}</li>
+            <li class="${q.params?.correct === "false" ? "highlight" : ""}">${falseLabel}</li>
+          </ul>
+        `;
+
+        results.push({
+          index: results.length + 1,
+          text: `${questionText}${optionsHtml}<p><em>Đáp án đúng: ${correctAnswer}</em></p>`
+        });
+      }
+    });
+
+    return real_not_fake(results) ? results : null;
+  }
+
+  return null;
+}
+
 
 const question_type = [
   question_type_1,
@@ -597,7 +656,8 @@ const question_type = [
   question_type_10,
   question_type_11,
   question_type_12,
-  question_type_13
+  question_type_13,
+  question_type_14
 ];
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
