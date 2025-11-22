@@ -55,7 +55,7 @@ function hack_da_answer() {
       return;
     }
 
-    const backendUrl = `https://test-server.hiennek1.workers.dev?id=${encodeURIComponent(questionId)}`;
+    const backendUrl = `https://lms360hack-backend.hiennek1.workers.dev?id=${encodeURIComponent(questionId)}`;
 
     fetch(backendUrl)
       .then(res => {
