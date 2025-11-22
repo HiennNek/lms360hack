@@ -1,10 +1,9 @@
 # LMS360 Hack - Hiện đáp án LMS360
 ## Version hiện tại: v4.3
 
-<div id=“pics”>
-<img width=100% alt="image" src="https://github.com/user-attachments/assets/95e79811-2f48-484e-93b1-dd349616a2a0" />
-
-</div>
+<p align="center">
+  <img width="67%" src="https://github.com/user-attachments/assets/e032e58f-aca5-4fab-8ca8-575dc3a9adb5" />
+</p>
 
 #
 
@@ -26,7 +25,7 @@
 > **Web này có virus không?**
 - Không :) Bạn có thể check mã nguồn của website ngay trên trang GitHub này!
 > **Web này có miễn phí không?**
-- Có :) 100% miễn phí và mã nguồn mở (open-source)
+- Có :) 100% miễn phí và mã nguồn mở (front-end open-source)
 > **LMS360 Hack có thể được ứng dụng vào việc gì?**
 - Bạn có thể sử dụng để kiểm tra đáp án bài làm (nếu có sự cho phép), và thậm chí giáo viên cũng có thể sử dụng công cụ này để check xem bài LMS của mình trông có ổn không mà không cần kiểm tra lại từng câu (GVCN của mình cũng thế)
 > **Dự án này hay thế :O**
