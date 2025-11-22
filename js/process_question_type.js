@@ -49,7 +49,7 @@ function hack_da_answer() {
     const questionId = parsed.searchParams.get("c");
 
     if (!questionId) {
-      alert("Đây không phải URL bài tập!");
+      alert("Đây không phải URL hợp lệ!");
       hecker_button.disabled = false;
       hecker_button.textContent = "Lấy đáp án";
       return;
