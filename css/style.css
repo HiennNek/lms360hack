@@ -91,6 +91,7 @@ body {
   color: #ffffff;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+  margin-bottom: 2%;
 }
 .card-button:active { transform: translateY(1px); }
 
@@ -284,6 +285,11 @@ body {
   backdrop-filter: blur(8px);
   animation: slideInUp 0.5s ease-out both;
   animation-delay: calc(var(--index, 0) * 0.1s);
+}
+
+.no-question-animation .question {
+  animation: none !important;
+  animation-delay: 0s !important;
 }
 
 @keyframes slideInUp {
