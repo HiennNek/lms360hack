@@ -1,3 +1,10 @@
+> [!NOTE]
+>## Hướng dẫn sử dụng:
+>- Xin hãy sử dụng website [lms360hack.pages.dev](https://lms360hack.pages.dev/)
+>- Điền URL (đường link) của bài tập LMS360 vào ô *Link LMS360*, sau đó bấm nút *Lấy đáp án*
+
+#
+
 # LMS360 Hack - Hiện đáp án LMS360
 ## Version hiện tại: v4.3
 
@@ -6,12 +13,6 @@
 </p>
 
 #
-
-> [!NOTE]
->## Hướng dẫn sử dụng:
->- **LƯU Ý**: LMS360 Hack hiện tại đã không sử dụng Tampermonkey.
->- Xin hãy sử dụng website [**này**](https://lms360hack.pages.dev/).
->- Điền URL (đường link) của bài tập LMS360 vào ô *Link LMS360*, sau đó bấm nút *Lấy đáp án*
 
 ## Website chính: [lms360hack.pages.dev](https://lms360hack.pages.dev/)
 
