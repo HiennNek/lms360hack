@@ -14,24 +14,46 @@ function render_questions(backendResponse) {
   }
 
   const questions = backendResponse.questions || [];
+  const actualQuestionCount = backendResponse.actualQuestionCount || backendResponse.count || questions.length;
   
   if (questions.length === 0) {
     container.innerHTML = "<div class='error-message'>❌ Kiểu nội dung này chưa được hỗ trợ. Bạn có thể yêu cầu thêm dạng câu hỏi này qua phần \"Report Bug\"</div>";
     return;
   }
 
-  container.innerHTML = `<div class="success-message">Đã tìm thấy ${questions.length} câu hỏi!</div><br>`;
+  let message = `Đã tìm thấy tổng cộng ${questions.length} câu hỏi!`;
+  if (actualQuestionCount && actualQuestionCount !== questions.length) {
+    message += ` ( Số câu hỏi thực tế trong bài: ${actualQuestionCount} )`;
+  }
+  container.innerHTML = `<div class="success-message">${message}</div><br>`;
   
+  const skipAnimation = questions.length >= 20;
+  if (skipAnimation) {
+    container.classList.add("no-question-animation");
+  } else {
+    container.classList.remove("no-question-animation");
+  }
+
   questions.forEach((q, index) => {
-    setTimeout(() => {
+    const renderOne = () => {
       const div = document.createElement("div");
       div.className = "question";
       div.style.setProperty('--index', index);
 
       div.innerHTML = `<h3>Câu hỏi ${index + 1}:</h3><p>${q.text}</p>`;
       container.appendChild(div);
-    }, index * 100);
+    };
+
+    if (skipAnimation) {
+      renderOne();
+    } else {
+      setTimeout(renderOne, index * 100);
+    }
   });
+
+  if (window.updateQuestionSearch) {
+    window.updateQuestionSearch(actualQuestionCount);
+  }
 }
 
 function hack_da_answer() {
