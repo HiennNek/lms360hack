@@ -9,7 +9,7 @@
 ## Version hiện tại: v4.3.1
 
 <p align="center">
-  <img width="67%" src="https://github.com/user-attachments/assets/e032e58f-aca5-4fab-8ca8-575dc3a9adb5" />
+<img width=67% alt="image" src="https://github.com/user-attachments/assets/4db2cd58-081a-4789-8bdb-caa92ee18340" />
 </p>
 
 #
