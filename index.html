@@ -34,13 +34,25 @@
     <div class="card-inner">
       <div class="card-content">
         <h1 class="card-title">LMS360 Hack <span class="version">v4.3</span></h1>
-        <p class="card-sub">By HiennNek</p>        <br>
+        <p class="card-sub">By HiennNek</p>
+        
+        <br>
 
         <form id="url-form" action="#" onsubmit="event.preventDefault();">
           <label for="link_lms360" class="sr-only">LMS360 URL</label>
           <input id="link_lms360" class="card-input" type="text" placeholder="Link LMS360 (https://lms360.vn/...)" />
           <button id="hecker_button" class="card-button" type="submit">Lấy đáp án</button>
         </form>
+
+        <div id="search-container" class="search-container" style="display: none;">
+          <input
+            id="question-search"
+            class="card-input"
+            type="text"
+            placeholder="Tìm kiếm câu hỏi / đáp án..."
+          />
+        </div>
+
         <div id="questions"></div>
       </div>
       
@@ -67,6 +79,7 @@
     🌙
   </button>
   <script src="js/process_question_type.js"></script>
+  <script src="js/func.js"></script>
   <script src="js/theme-toggle.js"></script>
 </body>
 </html>
