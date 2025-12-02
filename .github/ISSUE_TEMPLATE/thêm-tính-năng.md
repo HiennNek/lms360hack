@@ -11,7 +11,7 @@ assignees: HiennNek
 VD: Tôi cảm thấy rất phiền khi mà...
 
 **Miêu tả giải pháp của bạn**
-Giải pháp hoặc tình năng muốn thêm của bạn
+Giải pháp hoặc tính năng muốn thêm của bạn
 
 **Những thứ khác**
 Thêm nội dung khác mà bạn muốn vào đây
