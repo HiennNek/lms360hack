@@ -6,7 +6,7 @@
 #
 
 # LMS360 Hack - Hiện đáp án LMS360
-## Version hiện tại: v4.3.1
+## Version hiện tại: v4.3.2
 
 <p align="center">
 <img width=67% alt="image" src="https://github.com/user-attachments/assets/4db2cd58-081a-4789-8bdb-caa92ee18340" />
@@ -35,6 +35,7 @@
 #
 
 ### Changelog:
+- v4.3.2: Tối ưu hóa độ mượt của giao diện + tối ưu hóa màu sắc giao diện.
 - v4.3.1: Đã thêm tính năng search cho bài tập có bằng hoặc trên 10 câu hỏi + Thêm hiển thị số câu hỏi thật nếu như bài có random.
 - v4.3: Đã chuyển toàn bộ thuật toán xử lý câu hỏi sang backend. Tối ưu hóa tốc độ load + bảo mật
 - v4.2.2: Fix lại giao diện + fix lỗi scroll trên thiết bị di động
