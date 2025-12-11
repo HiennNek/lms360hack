@@ -1,108 +1,103 @@
 html,
 body {
-  background-color: #0f1419;
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
 }
 
 #ui-card .card-inner {
-  background: rgba(20, 25, 31, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(20, 28, 40, 0.98);
+  border: 1px solid rgba(88, 200, 255, 0.15);
   color: rgba(255, 255, 255, 0.95);
-  -webkit-backdrop-filter: blur(8px) saturate(110%);
-  backdrop-filter: blur(8px) saturate(110%);
 }
 
 .card-title {
-  color: rgba(255, 255, 255, 0.95);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  color: rgba(255, 255, 255, 0.98);
+  font-weight: 700;
 }
 
 .card-title .version { 
-  color: rgba(255, 255, 255, 0.8); 
+  color: rgba(88, 200, 255, 0.8); 
 }
 
-.card-sub { 
-  color: rgba(255, 255, 255, 0.8); 
+.card-sub {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
 }
 
 .card-input {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(88, 200, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.98);
 }
 
 .card-input::placeholder { 
-  color: rgba(255, 255, 255, 0.6); 
+  color: rgba(255, 255, 255, 0.5); 
 }
 
 .card-input:focus { 
-  box-shadow: 0 8px 26px rgba(88, 200, 255, 0.2); 
-  border-color: rgba(88, 200, 255, 0.4); 
+  border-color: rgba(88, 200, 255, 0.6);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .card-button {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: linear-gradient(90deg, rgba(88, 200, 255, 0.9), rgba(44, 135, 173, 0.9));
-  box-shadow: 0 8px 20px rgba(88, 200, 255, 0.3);
-}
-
-.card-button:hover {
-  box-shadow: 0 18px 40px rgba(88, 200, 255, 0.25);
+  border: none;
+  background: linear-gradient(135deg, #58c8ff 0%, #2ca8e0 100%);
+  box-shadow: 0 2px 4px rgba(88, 200, 255, 0.15);
+  font-weight: 600;
+  color: #0f1419;
 }
 
 .question {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.question:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), 0 3px 6px rgba(0, 0, 0, 0.3);
-  border-color: rgba(88, 200, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(88, 200, 255, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .question h3 {
-  color: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.98);
+  border-bottom: 2px solid rgba(88, 200, 255, 0.2);
 }
 
 .question p {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 #questions li {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(88, 200, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 #questions li.highlight {
-  border-color: rgba(76, 175, 80, 0.4);
-  background: rgba(76, 175, 80, 0.1);
+  border-color: rgba(0, 255, 60, 0.5);
+  background: rgba(0, 255, 81, 0.164);
+  border-width: 3px;
 }
 
 .highlight {
-  color: #81C784;
-  background-color: rgba(44, 160, 48, 0.678);
+  color: #36ff72;
+  background-color: rgba(46, 161, 65, 0.674);
 }
 
 .card-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(88, 200, 255, 0.1);
   background: rgba(255, 255, 255, 0.02);
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.card-footer a {
   color: rgba(255, 255, 255, 0.8);
 }
 
+.card-footer a {
+  color: rgba(88, 200, 255, 0.9);
+}
+
 .card-footer a:hover {
-  color: rgba(255, 255, 255, 1);
+  color: rgba(88, 200, 255, 1);
+  text-decoration: underline;
 }
 
 .modal-content {
-  background: rgba(20, 25, 31, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(20, 28, 40, 0.98);
+  border: 1px solid rgba(88, 200, 255, 0.15);
   color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .modal-content h2 {
@@ -156,25 +151,31 @@ body {
 }
 
 .dark .theme-toggle {
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(20, 28, 40, 0.95), rgba(30, 40, 55, 0.95));
+  color: rgba(88, 200, 255, 0.9);
+  border: 2px solid rgba(88, 200, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(88, 200, 255, 0.15);
 }
 
 .dark .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 1);
+  background: linear-gradient(135deg, rgba(20, 28, 40, 1), rgba(30, 40, 55, 1));
+  color: rgba(88, 200, 255, 1);
+  border-color: rgba(88, 200, 255, 0.5);
+  box-shadow: 0 8px 24px rgba(88, 200, 255, 0.2);
 }
 
 .light .theme-toggle {
-  background: rgba(0, 0, 0, 0.05);
-  color: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(248, 251, 254, 0.95), rgba(235, 245, 252, 0.95));
+  color: #3d7a8f;
+  border: 2px solid rgba(61, 122, 143, 0.3);
+  box-shadow: 0 4px 16px rgba(61, 122, 143, 0.2);
 }
 
 .light .theme-toggle:hover {
-  background: rgba(0, 0, 0, 0.1);
-  color: rgba(0, 0, 0, 1);
+  background: linear-gradient(135deg, rgba(248, 251, 254, 1), rgba(235, 245, 252, 1));
+  color: #2d5f6f;
+  border-color: rgba(61, 122, 143, 0.5);
+  box-shadow: 0 8px 24px rgba(61, 122, 143, 0.25);
 }
 
 .dark .question p,

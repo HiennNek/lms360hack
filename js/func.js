@@ -2,6 +2,7 @@
   const MIN_SEARCH_QUESTION_COUNT = 10;
 
   let searchInitialized = false;
+  let searchTimeout;
 
   function initSearch() {
     if (searchInitialized) return;
@@ -15,17 +16,18 @@
     }
 
     searchInput.addEventListener("input", function () {
-      const query = searchInput.value.toLowerCase().trim();
-      const questionElements = questionsContainer.querySelectorAll(".question");
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        const query = searchInput.value.toLowerCase().trim();
+        const questionElements = questionsContainer.querySelectorAll(".question");
 
-      questionElements.forEach((el) => {
-        const text = el.innerText.toLowerCase();
-        if (!query || text.includes(query)) {
-          el.style.display = "";
-        } else {
-          el.style.display = "none";
-        }
-      });
+        requestAnimationFrame(() => {
+          questionElements.forEach((el) => {
+            const text = el.textContent.toLowerCase();
+            el.style.display = !query || text.includes(query) ? "" : "none";
+          });
+        });
+      }, 150);
     });
   }
 
@@ -46,8 +48,10 @@
       searchInput.value = "";
 
       const questionElements = questionsContainer.querySelectorAll(".question");
-      questionElements.forEach((el) => {
-        el.style.display = "";
+      requestAnimationFrame(() => {
+        questionElements.forEach((el) => {
+          el.style.display = "";
+        });
       });
     }
   };

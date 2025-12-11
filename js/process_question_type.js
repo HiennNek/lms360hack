@@ -27,29 +27,14 @@ function render_questions(backendResponse) {
   }
   container.innerHTML = `<div class="success-message">${message}</div><br>`;
   
-  const skipAnimation = questions.length >= 20;
-  if (skipAnimation) {
-    container.classList.add("no-question-animation");
-  } else {
-    container.classList.remove("no-question-animation");
-  }
-
+  const fragment = document.createDocumentFragment();
   questions.forEach((q, index) => {
-    const renderOne = () => {
-      const div = document.createElement("div");
-      div.className = "question";
-      div.style.setProperty('--index', index);
-
-      div.innerHTML = `<h3>Câu hỏi ${index + 1}:</h3><p>${q.text}</p>`;
-      container.appendChild(div);
-    };
-
-    if (skipAnimation) {
-      renderOne();
-    } else {
-      setTimeout(renderOne, index * 100);
-    }
+    const div = document.createElement("div");
+    div.className = "question";
+    div.innerHTML = `<h3>Câu hỏi ${index + 1}:</h3><p>${q.text}</p>`;
+    fragment.appendChild(div);
   });
+  container.appendChild(fragment);
 
   if (window.updateQuestionSearch) {
     window.updateQuestionSearch(actualQuestionCount);

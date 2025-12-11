@@ -1,7 +1,7 @@
 (function() {
   const themeToggle = document.getElementById('theme-toggle');
   const darkThemeLink = document.getElementById('dark-theme');
-  const body = document.body;
+  const html = document.documentElement;
   
   const LIGHT_ICON = '☀️';
   const DARK_ICON = '🌙';
@@ -15,29 +15,19 @@
   }
   
   function applyTheme(theme) {
-    body.classList.remove('light', 'dark');
+    html.classList.remove('light', 'dark');
+    html.classList.add(theme);
     
-    body.classList.add(theme);
+    darkThemeLink.disabled = theme !== 'dark';
     
-    if (theme === 'dark') {
-      darkThemeLink.disabled = false;
-    } else {
-      darkThemeLink.disabled = true;
-    }
-    
-    if (theme === 'light') {
-      themeToggle.textContent = DARK_ICON;
-      themeToggle.title = 'Switch to Dark Theme';
-    } else {
-      themeToggle.textContent = LIGHT_ICON;
-      themeToggle.title = 'Switch to Light Theme';
-    }
+    themeToggle.textContent = theme === 'light' ? DARK_ICON : LIGHT_ICON;
+    themeToggle.title = theme === 'light' ? 'Switch to Dark Theme' : 'Switch to Light Theme';
     
     saveTheme(theme);
   }
   
   function toggleTheme() {
-    const currentTheme = body.classList.contains('dark') ? 'dark' : 'light';
+    const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     applyTheme(newTheme);
   }
