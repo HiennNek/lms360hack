@@ -5,8 +5,11 @@
 
 #
 
-# LMS360 Hack - Hiện đáp án LMS360
-## Version hiện tại: v4.3.2
+# ⚠️ Đây là trang mã nguồn của LMS360 Hack
+
+
+## LMS360 Hack - Hiện đáp án LMS360
+### Version hiện tại: v4.3.2
 
 <p align="center">
 <img width=67% alt="image" src="https://github.com/user-attachments/assets/9996d83e-aa03-419a-bee0-6cb75d1d3562" />
@@ -15,13 +18,13 @@
 
 #
 
-## Website chính: [lms360hack.pages.dev](https://lms360hack.pages.dev/)
+#### Website chính: [lms360hack.pages.dev](https://lms360hack.pages.dev/)
 
-### [Tìm hiểu cách LMS360 Hack hoạt động](How_it_work.pdf)
+#### [Tìm hiểu cách LMS360 Hack hoạt động](How_it_work.pdf)
 
 #
 
-## FAQ (câu hỏi thường gặp)
+### FAQ (câu hỏi thường gặp)
 > **Cái này có illegal (bất hợp pháp) không?**
 - Không :) Miễn có sự đồng ý của giáo viên, người có thẩm quyền.
 > **Web này có virus không?**
