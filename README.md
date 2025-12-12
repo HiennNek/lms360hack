@@ -1,11 +1,11 @@
 > [!NOTE]
 >## Hướng dẫn sử dụng:
->- Xin hãy sử dụng website [lms360hack.pages.dev](https://lms360hack.pages.dev/)
->- Điền URL (đường link) của bài tập LMS360 vào ô *Link LMS360*, sau đó bấm nút *Lấy đáp án*
+>- ### Xin hãy sử dụng website [lms360hack.pages.dev](https://lms360hack.pages.dev/)
+>- ### Điền URL (đường link) của bài tập LMS360 vào ô *Link LMS360*, sau đó bấm nút *Lấy đáp án*
 
 #
 
-# ⚠️ Đây là trang mã nguồn của LMS360 Hack
+## ⚠️ Đây là trang mã nguồn của LMS360 Hack
 
 
 ## LMS360 Hack - Hiện đáp án LMS360
