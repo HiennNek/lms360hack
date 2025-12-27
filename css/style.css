@@ -59,7 +59,7 @@ body {
   color: #1a3a4a;
   font-weight: 700;
 }
-.card-title .version { font-size: 0.5em; color: #4a6e80; margin-left: 5px; }
+.card-title .version { font-size: 0.7em; color: #4a6e80; margin-left: 5px; }
 .card-sub { color: #4a6e80; margin: 1px 0 18px 0; margin-bottom: 30px; font-weight: 500; }
 
 .card-input {
