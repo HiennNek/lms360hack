@@ -44,6 +44,7 @@ async function downloadFromUrl() {
     
     try {
         // Genius way to get the file
+        // My backend is very secure :)
         const response = await fetch(`https://lms360hack-backend.hiennek1.workers.dev?h5p_id=${contentId}`);
         
         if (!response.ok) {
@@ -65,7 +66,6 @@ async function downloadFromUrl() {
 }
 
 function updateSyntaxHighlight() {
-    // Update h5p.json editor
     const h5pCode = h5pJsonEditor.textContent;
     if (window.hljs && h5pCode.trim()) {
         try {
@@ -76,7 +76,6 @@ function updateSyntaxHighlight() {
         }
     }
 
-    // Update content.json editor
     const contentCode = contentJsonEditor.textContent;
     if (window.hljs && contentCode.trim()) {
         try {
@@ -207,20 +206,16 @@ function displayH5pData() {
         </div>
     `;
 
-    // Populate editor
     document.getElementById('titleInput').value = h5pData.json.title || '';
     document.getElementById('languageInput').value = h5pData.json.language || '';
     
-    // Populate h5p.json editor
     h5pJsonEditor.textContent = JSON.stringify(h5pData.json, null, 2);
     
-    // Populate content.json editor
     contentJsonEditor.textContent = h5pData.content ?
         JSON.stringify(h5pData.content, null, 2) : '';
     
     updateSyntaxHighlight();
 
-    // Display files
     const fileList = document.getElementById('fileList');
     fileList.innerHTML = '';
     Object.keys(h5pData.files).forEach(path => {
@@ -255,13 +250,11 @@ function switchSubTab(e, tabName) {
 
 function updateContent() {
     try {
-        // Update h5p.json from editor
         const h5pText = h5pJsonEditor.textContent;
         if (h5pText.trim()) {
             h5pData.json = JSON.parse(h5pText);
         }
 
-        // Update content.json from editor
         const contentText = contentJsonEditor.textContent;
         if (contentText.trim()) {
             h5pData.content = JSON.parse(contentText);
@@ -278,15 +271,12 @@ async function downloadModified() {
     try {
         const zip = new JSZip();
 
-        // Add updated h5p.json
         zip.file('h5p.json', JSON.stringify(h5pData.json, null, 2));
 
-        // Add updated content.json if exists
         if (h5pData.content) {
             zip.file('content/content.json', JSON.stringify(h5pData.content, null, 2));
         }
 
-        // Add all other files
         for (const [path, file] of Object.entries(h5pData.files)) {
             if (path !== 'h5p.json' && path !== 'content/content.json') {
                 const data = await file.async('uint8array');
@@ -294,7 +284,6 @@ async function downloadModified() {
             }
         }
 
-        // Generate and download
         const blob = await zip.generateAsync({type: 'blob'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
