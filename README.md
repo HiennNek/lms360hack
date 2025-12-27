@@ -39,6 +39,7 @@
 #
 
 ### Changelog:
+- v5.0: Thêm LMS360 Hack Advanced. Xem, chỉnh sửa và tải về bài giảng LMS360.
 - v4.3.2: Tối ưu hóa độ mượt của giao diện + tối ưu hóa màu sắc giao diện.
 - v4.3.1: Đã thêm tính năng search cho bài tập có bằng hoặc trên 10 câu hỏi + Thêm hiển thị số câu hỏi thật nếu như bài có random.
 - v4.3: Đã chuyển toàn bộ thuật toán xử lý câu hỏi sang backend. Tối ưu hóa tốc độ load + bảo mật
