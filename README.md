@@ -9,7 +9,7 @@
 
 
 ## LMS360 Hack - Hiện đáp án LMS360
-### Version hiện tại: v4.3.2
+### Version hiện tại: v5
 
 <p align="center">
 <img width=67% alt="image" src="https://github.com/user-attachments/assets/9996d83e-aa03-419a-bee0-6cb75d1d3562" />
