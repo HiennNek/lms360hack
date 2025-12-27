@@ -218,17 +218,33 @@ function displayH5pData() {
 
     const fileList = document.getElementById('fileList');
     fileList.innerHTML = '';
+    
+    const priorityFiles = [];
+    const regularFiles = [];
+    
     Object.keys(h5pData.files).forEach(path => {
         const file = h5pData.files[path];
         if (!file.dir) {
-            const item = document.createElement('div');
-            item.className = 'h5p-file-item';
-            item.innerHTML = `
-                <span class="h5p-file-name">${path}</span>
-                <span class="h5p-file-size">${formatBytes(file._data.uncompressedSize)}</span>
-            `;
-            fileList.appendChild(item);
+            if (path === 'h5p.json' || path === 'content/content.json') {
+                priorityFiles.push({ path, file });
+            } else {
+                regularFiles.push({ path, file });
+            }
         }
+    });
+    
+    regularFiles.sort((a, b) => a.path.localeCompare(b.path));
+    
+    const sortedFiles = [...priorityFiles, ...regularFiles];
+    
+    sortedFiles.forEach(({ path, file }) => {
+        const item = document.createElement('div');
+        item.className = 'h5p-file-item';
+        item.innerHTML = `
+            <span class="h5p-file-name">${path}</span>
+            <span class="h5p-file-size">${formatBytes(file._data.uncompressedSize)}</span>
+        `;
+        fileList.appendChild(item);
     });
 }
 
