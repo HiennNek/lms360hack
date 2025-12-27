@@ -77,9 +77,23 @@
                             <label for="languageInput">Ngôn ngữ</label>
                             <input type="text" id="languageInput" placeholder="Ký hiệu ngôn ngữ (ví dụ: en, vi...)">
 
-                            <label for="contentJson">Nội dung JSON</label>
-                            <div class="h5p-code-editor-wrapper" id="codeEditorWrapper">
-                                <div id="contentJson" class="h5p-code-editor" contenteditable="true" spellcheck="false" placeholder="Chỉnh sửa nội dung JSON"></div>
+                            <div class="h5p-sub-tabs">
+                                <button class="h5p-sub-tab active" onclick="switchSubTab(event, 'contentJson')">📝 content.json</button>
+                                <button class="h5p-sub-tab" onclick="switchSubTab(event, 'h5pJson')">📄 h5p.json</button>
+                            </div>
+
+                            <div id="contentJsonTab" class="h5p-sub-tab-content active">
+                                <label for="contentJsonEditor">content.json</label>
+                                <div class="h5p-code-editor-wrapper" id="contentCodeEditorWrapper">
+                                    <div id="contentJsonEditor" class="h5p-code-editor" contenteditable="true" spellcheck="false" placeholder="content.json"></div>
+                                </div>
+                            </div>
+
+                            <div id="h5pJsonTab" class="h5p-sub-tab-content">
+                                <label for="h5pJsonEditor">h5p.json</label>
+                                <div class="h5p-code-editor-wrapper" id="h5pCodeEditorWrapper">
+                                    <div id="h5pJsonEditor" class="h5p-code-editor" contenteditable="true" spellcheck="false" placeholder="h5p.json"></div>
+                                </div>
                             </div>
 
                             <div class="h5p-action-buttons">

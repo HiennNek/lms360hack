@@ -258,6 +258,44 @@
     display: block;
 }
 
+.h5p-sub-tabs {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0 15px 0;
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+    padding-bottom: 0;
+}
+
+.h5p-sub-tab {
+    padding: 10px 15px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #999;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.h5p-sub-tab:hover {
+    color: #3d7a8f;
+}
+
+.h5p-sub-tab.active {
+    color: #3d7a8f;
+    border-bottom-color: #3d7a8f;
+    font-weight: 600;
+}
+
+.h5p-sub-tab-content {
+    display: none;
+}
+
+.h5p-sub-tab-content.active {
+    display: block;
+}
+
 .h5p-info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -346,7 +384,8 @@
 
 .h5p-code-editor {
     width: 100% !important;
-    min-height: 1000px !important;
+    min-height: 200px !important;
+    max-height: 1000px !important;
     padding: 12px !important;
     border: none !important;
     border-radius: 0 !important;
@@ -360,17 +399,14 @@
     color: #383a42 !important;
     outline: none !important;
     overflow-wrap: break-word !important;
+    overflow-y: auto !important;
 }
 
-/* Highlight.js custom colors for light mode (GitHub theme) */
 .hljs {
     background: transparent !important;
     color: #24292e;
 }
 
-/* Highlight.js uses built-in GitHub theme colors for high contrast */
-
-/* Dark mode code editor */
 .dark .h5p-code-editor-wrapper {
     background: #181819;
     border-color: rgba(88, 200, 255, 0.3);
@@ -381,7 +417,6 @@
     color: #abb2bf !important;
 }
 
-/* Highlight.js uses built-in Atom One Dark theme colors for dark mode */
 .dark .hljs {
     background: transparent !important;
     color: #abb2bf;
@@ -460,7 +495,6 @@
     border-color: #dc3545;
 }
 
-/* Dark mode styles */
 .dark .h5p-container {
     background: rgba(20, 28, 40, 0.98);
     border: 1px solid rgba(88, 200, 255, 0.15);
@@ -511,6 +545,23 @@
 }
 
 .dark .h5p-tab.active {
+    color: rgba(88, 200, 255, 0.95);
+    border-bottom-color: rgba(88, 200, 255, 0.95);
+}
+
+.dark .h5p-sub-tabs {
+    border-bottom-color: rgba(88, 200, 255, 0.15);
+}
+
+.dark .h5p-sub-tab {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.dark .h5p-sub-tab:hover {
+    color: rgba(88, 200, 255, 0.95);
+}
+
+.dark .h5p-sub-tab.active {
     color: rgba(88, 200, 255, 0.95);
     border-bottom-color: rgba(88, 200, 255, 0.95);
 }

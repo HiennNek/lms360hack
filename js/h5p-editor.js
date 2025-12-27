@@ -9,7 +9,8 @@ const uploadSection = document.getElementById('uploadSection');
 const fileInput = document.getElementById('fileInput');
 const viewerSection = document.getElementById('viewerSection');
 const alertContainer = document.getElementById('alertContainer');
-const contentJsonEditor = document.getElementById('contentJson');
+const h5pJsonEditor = document.getElementById('h5pJsonEditor');
+const contentJsonEditor = document.getElementById('contentJsonEditor');
 const contentUrlInput = document.getElementById('contentUrl');
 const urlLoadingIndicator = document.getElementById('urlLoadingIndicator');
 
@@ -64,10 +65,22 @@ async function downloadFromUrl() {
 }
 
 function updateSyntaxHighlight() {
-    const code = contentJsonEditor.textContent;
-    if (window.hljs && code.trim()) {
+    // Update h5p.json editor
+    const h5pCode = h5pJsonEditor.textContent;
+    if (window.hljs && h5pCode.trim()) {
         try {
-            const highlighted = window.hljs.highlight(code, {language: 'json'}).value;
+            const highlighted = window.hljs.highlight(h5pCode, {language: 'json'}).value;
+            h5pJsonEditor.innerHTML = highlighted;
+        } catch (e) {
+            console.error('Highlighting error:', e);
+        }
+    }
+
+    // Update content.json editor
+    const contentCode = contentJsonEditor.textContent;
+    if (window.hljs && contentCode.trim()) {
+        try {
+            const highlighted = window.hljs.highlight(contentCode, {language: 'json'}).value;
             contentJsonEditor.innerHTML = highlighted;
         } catch (e) {
             console.error('Highlighting error:', e);
@@ -76,6 +89,20 @@ function updateSyntaxHighlight() {
 }
 
 contentJsonEditor.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+        e.preventDefault();
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const tabNode = document.createTextNode('\t');
+        range.insertNode(tabNode);
+        range.setStartAfter(tabNode);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+});
+
+h5pJsonEditor.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
         e.preventDefault();
         const selection = window.getSelection();
@@ -183,8 +210,14 @@ function displayH5pData() {
     // Populate editor
     document.getElementById('titleInput').value = h5pData.json.title || '';
     document.getElementById('languageInput').value = h5pData.json.language || '';
+    
+    // Populate h5p.json editor
+    h5pJsonEditor.textContent = JSON.stringify(h5pData.json, null, 2);
+    
+    // Populate content.json editor
     contentJsonEditor.textContent = h5pData.content ?
         JSON.stringify(h5pData.content, null, 2) : '';
+    
     updateSyntaxHighlight();
 
     // Display files
@@ -212,11 +245,23 @@ function switchTab(e, tabName) {
     document.getElementById(`${tabName}Tab`).classList.add('active');
 }
 
+function switchSubTab(e, tabName) {
+    document.querySelectorAll('.h5p-sub-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.h5p-sub-tab-content').forEach(content => content.classList.remove('active'));
+
+    e.target.classList.add('active');
+    document.getElementById(`${tabName}Tab`).classList.add('active');
+}
+
 function updateContent() {
     try {
-        h5pData.json.title = document.getElementById('titleInput').value;
-        h5pData.json.language = document.getElementById('languageInput').value;
+        // Update h5p.json from editor
+        const h5pText = h5pJsonEditor.textContent;
+        if (h5pText.trim()) {
+            h5pData.json = JSON.parse(h5pText);
+        }
 
+        // Update content.json from editor
         const contentText = contentJsonEditor.textContent;
         if (contentText.trim()) {
             h5pData.content = JSON.parse(contentText);
