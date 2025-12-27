@@ -20,6 +20,11 @@
     
     darkThemeLink.disabled = theme !== 'dark';
     
+    const hljsDarkTheme = document.getElementById('hljs-dark-theme');
+    if (hljsDarkTheme) {
+      hljsDarkTheme.disabled = theme !== 'dark';
+    }
+    
     themeToggle.textContent = theme === 'light' ? DARK_ICON : LIGHT_ICON;
     themeToggle.title = theme === 'light' ? 'Switch to Dark Theme' : 'Switch to Light Theme';
     

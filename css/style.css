@@ -505,3 +505,31 @@ a {
 .light .question h3 {
   color: rgba(0, 0, 0, 0.95) !important;
 }
+.notice-banner {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border: 2px solid #667eea;
+  border-radius: 10px;
+  padding: 15px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 0.95em;
+  color: #333;
+  animation: slideDown 0.4s ease;
+}
+
+.notice-banner a {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.notice-banner a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.dark .notice-banner {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  color: #e0e0e0;
+}

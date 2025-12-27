@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS360 Hack Advanced - Xem, chỉnh sửa và tải về bài giảng LMS360</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/stackoverflow-light.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/stackoverflow-dark.min.css" id="hljs-dark-theme" disabled>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style_dark.css" id="dark-theme" disabled>
+    <link rel="stylesheet" href="css/h5p-editor.css">
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('dark-theme').disabled = false;
+                document.getElementById('hljs-dark-theme').disabled = false;
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="scrollable-container">
+        <div class="h5p-container">
+            <div class="h5p-header">
+                <a href="index.html" class="h5p-back-link">← Quay lại LMS360 Hack</a>
+                <h1>LMS360 Hack Advanced</h1>
+                <p>Xem, chỉnh sửa và tải về bài giảng LMS360</p>
+            </div>
+
+            <div class="h5p-content">
+
+                <div class="h5p-url-section">
+                    <div class="h5p-url-input-wrapper">
+                        <input type="text" id="contentUrl" class="h5p-url-input" placeholder="Link LMS360 (https://lms360.vn/...)">
+                        <button class="h5p-btn" onclick="downloadFromUrl()">Sử dụng</button>
+                    </div>
+                    <div id="urlLoadingIndicator" class="h5p-loading-indicator" style="display: none;">
+                        Chờ xíu...
+                    </div>
+                </div>
+
+                <div class="h5p-divider">Or</div>
+
+
+                <div class="h5p-upload-section" id="uploadSection">
+                    <div class="h5p-upload-icon">📁</div>
+                    <h2>Tải lên file H5P</h2>
+                    <p>Kéo thả hoặc chọn file</p>
+                    <button class="h5p-btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+                    <input type="file" id="fileInput" class="h5p-input-file" accept=".h5p">
+                </div>
+
+                <div id="alertContainer"></div>
+
+                <div class="h5p-viewer-section" id="viewerSection">
+                    <div class="h5p-tabs">
+                        <button class="h5p-tab active" onclick="switchTab(event, 'info')">📋 Thông tin</button>
+                        <button class="h5p-tab" onclick="switchTab(event, 'content')">✏️ Chỉnh sửa</button>
+                        <button class="h5p-tab" onclick="switchTab(event, 'files')">📁 File</button>
+                    </div>
+
+                    <div id="infoTab" class="h5p-tab-content active">
+                        <div class="h5p-info-grid" id="infoGrid"></div>
+                    </div>
+
+                    <div id="contentTab" class="h5p-tab-content">
+                        <div class="h5p-editor">
+                            <h2>Nội dung</h2>
+                            <label for="titleInput">Tiêu đề</label>
+                            <input type="text" id="titleInput" placeholder="Nội dung...">
+
+                            <label for="languageInput">Ngôn ngữ</label>
+                            <input type="text" id="languageInput" placeholder="Ký hiệu ngôn ngữ (ví dụ: en, vi...)">
+
+                            <label for="contentJson">Nội dung JSON</label>
+                            <div class="h5p-code-editor-wrapper" id="codeEditorWrapper">
+                                <div id="contentJson" class="h5p-code-editor" contenteditable="true" spellcheck="false" placeholder="Chỉnh sửa nội dung JSON"></div>
+                            </div>
+
+                            <div class="h5p-action-buttons">
+                                <button class="h5p-btn" onclick="updateContent()">💾 Update (lưu) nội dung</button>
+                                <button class="h5p-btn h5p-btn-success" onclick="downloadModified()">⬇️ Tải xuống</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="filesTab" class="h5p-tab-content">
+                        <h2>Các file</h2>
+                        <div class="h5p-file-list" id="fileList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="theme-toggle" class="theme-toggle" title="Theme">
+        🌙
+    </button>
+
+    <script src="js/theme-toggle.js"></script>
+    <script src="js/h5p-editor.js"></script>
+</body>
+</html>
