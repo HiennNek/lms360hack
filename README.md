@@ -12,7 +12,7 @@
 ### Version hiện tại: v5.1
 
 <p align="center">
-  <img width=67% alt="image" src="https://github.com/user-attachments/assets/f103efb4-1184-4061-bb21-eb7bdecacf13" />
+  <img width="67%" alt="image" src="https://github.com/user-attachments/assets/29b7b9c3-6ac6-43fc-83c1-0e842164dee5" />
 </p>
 
 #
