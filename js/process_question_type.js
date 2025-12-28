@@ -10,7 +10,7 @@ function render_questions(backendResponse) {
   const questions = backendResponse.questions || [];
   const actualQuestionCount = backendResponse.actualQuestionCount || backendResponse.count || questions.length;
 
-  if (questions.length === 0 || errorMsg === "") {
+  if (questions.length === 0) {
     container.innerHTML = "<div class='error-message'>❌ Kiểu nội dung này chưa được hỗ trợ. Bạn có thể yêu cầu thêm dạng câu hỏi này qua phần \"Report Bug\"</div>";
     return;
   }
