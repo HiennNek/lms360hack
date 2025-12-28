@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,11 +8,13 @@
   <title>LMS360 Hack - Hiện Đáp Án LMS360 </title>
   <meta name="description" content="Công cụ tìm kiếm đáp án bài giảng tương tác cho LMS360, miễn phí và mã nguồn mở.">
   <meta name="google-site-verification" content="lfvqLgJSDzbsUC_koTL5HEMd0vclYvQ9W9u4SG6bpgo" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/style_dark.css" id="dark-theme" disabled>
   <script>
-    (function() {
+    (function () {
       const theme = localStorage.getItem('theme') || 'light';
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
@@ -20,80 +23,87 @@
     })();
   </script>
 </head>
+
 <body>
   <div class="scrollable-container">
-  <div id="eula-modal" class="modal">
-    <div class="modal-content">
-      <h2>Chính Sách - Điều Khoản</h2>
-      <div class="modal-body">
-        <p>Bằng cách sử dụng lms360hack.pages.dev và các dịch vụ liên quan đến lms360hack / LMS360 Hack hoặc / và có nguồn gốc từ lms360hack / LMS360 Hack, bạn đã đồng ý tuân thủ<a target="_blank" href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a>của tôi.</p>
-        <p>Trong chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm sẽ bao gồm những điều sau:</p>
-        <ul>
-          <li>CHỈ cho mục đích nghiên cứu, phát triển, học tập, tìm hiểu lỗ hỏng bảo mật và nâng cao ý thức về bảo mật.</li>
-          <li>KHÔNG sử dụng cho các bài tập, bài kiểm tra mà không có sự cho phép của người đại diện LMS360 hoặc giáo viên, người có thẩm quyền.</li>
-          <li>TOÀN BỘ trách nhiệm nếu sử dụng công cụ này sai mục đích sẽ do người sử dụng chịu trách nhiệm</li>
-          <li>Tôi sẽ KHÔNG chịu trách nhiệm về hành vi vi phạm pháp luật, vi phạm nội quy nhà trường, vi phạm điều khoản của LMS360 do người dùng gây ra.</li>
-        </ul>
-        <p>Nếu bạn không đồng ý với<a target="_blank" href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a>, hãy ngưng sử dụng ngay lập tức!</p>
+    <div id="eula-modal" class="modal">
+      <div class="modal-content">
+        <h2>Chính Sách - Điều Khoản</h2>
+        <div class="modal-body">
+          <p>Bằng cách sử dụng lms360hack.pages.dev và các dịch vụ liên quan đến lms360hack / LMS360 Hack hoặc / và có
+            nguồn gốc từ lms360hack / LMS360 Hack, bạn đã đồng ý tuân thủ<a target="_blank"
+              href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử
+              dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a>của tôi.</p>
+          <p>Trong chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm sẽ bao gồm những điều sau:
+          </p>
+          <ul>
+            <li>CHỈ cho mục đích nghiên cứu, phát triển, học tập, tìm hiểu lỗ hỏng bảo mật và nâng cao ý thức về bảo
+              mật.</li>
+            <li>KHÔNG sử dụng cho các bài tập, bài kiểm tra mà không có sự cho phép của người đại diện LMS360 hoặc giáo
+              viên, người có thẩm quyền.</li>
+            <li>TOÀN BỘ trách nhiệm nếu sử dụng công cụ này sai mục đích sẽ do người sử dụng chịu trách nhiệm</li>
+            <li>Tôi sẽ KHÔNG chịu trách nhiệm về hành vi vi phạm pháp luật, vi phạm nội quy nhà trường, vi phạm điều
+              khoản của LMS360 do người dùng gây ra.</li>
+          </ul>
+          <p>Nếu bạn không đồng ý với<a target="_blank"
+              href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử
+              dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a>, hãy ngưng sử dụng ngay lập tức!</p>
+        </div>
+        <button id="close-eula" class="modal-button">Tôi đã đọc và đồng ý với những điều trên</button>
       </div>
-      <button id="close-eula" class="modal-button">Tôi đã đọc và đồng ý với những điều trên</button>
     </div>
-  </div>
 
-  <div id="ui-card" role="region" aria-label="Link LMS360">
-    <div class="card-inner">
-      <div class="card-content">
-        <h1 class="card-title">LMS360 Hack <span class="version">v5.0</span></h1>
-        <p class="card-sub">By HiennNek</p>
-        
-        <div class="notice-banner">
-          <span>💡 Bạn muốn xem, chỉnh sửa và tải về dạng bài LMS360 chưa được hỗ trợ?<a href="advanced.html">Thử LMS360 Hack Advanced</a></span>
+    <div id="ui-card" role="region" aria-label="Link LMS360">
+      <div class="card-inner">
+        <div class="card-content">
+          <h1 class="card-title">LMS360 Hack <span class="version">v5.1</span></h1>
+          <p class="card-sub">By HiennNek</p>
+
+          <div class="notice-banner">
+            <span>💡 Bạn muốn xem, chỉnh sửa và tải về dạng bài LMS360 chưa được hỗ trợ?<a href="advanced.html">Thử
+                LMS360 Hack Advanced</a></span>
+          </div>
+
+          <br>
+
+          <form id="url-form" action="#" onsubmit="event.preventDefault();">
+            <label for="link_lms360" class="sr-only">LMS360 URL</label>
+            <input id="link_lms360" class="card-input" type="text" placeholder="Link LMS360 (https://lms360.vn/...)" />
+            <button id="hecker_button" class="card-button" type="submit">Lấy đáp án</button>
+          </form>
+
+          <div id="search-container" class="search-container" style="display: none;">
+            <input id="question-search" class="card-input" type="text" placeholder="Tìm kiếm câu hỏi / đáp án..." />
+          </div>
+
+          <div id="questions"></div>
         </div>
 
-        <br>
-
-        <form id="url-form" action="#" onsubmit="event.preventDefault();">
-          <label for="link_lms360" class="sr-only">LMS360 URL</label>
-          <input id="link_lms360" class="card-input" type="text" placeholder="Link LMS360 (https://lms360.vn/...)" />
-          <button id="hecker_button" class="card-button" type="submit">Lấy đáp án</button>
-        </form>
-
-        <div id="search-container" class="search-container" style="display: none;">
-          <input
-            id="question-search"
-            class="card-input"
-            type="text"
-            placeholder="Tìm kiếm câu hỏi / đáp án..."
-          />
-        </div>
-
-        <div id="questions"></div>
-      </div>
-      
-      <footer class="card-footer">
-        <div class="footer-sections">
-          <div class="footer-links">
-            <div class="footer-credit">
-              Created with 💖 by HiennNek
-            </div>
-            <div class="align-right">
-              <a href="https://github.com/HiennNek/lms360hack" target="_blank" rel="noopener">GitHub</a>
-              <a href="https://github.com/HiennNek/lms360hack/issues" target="_blank" id="report-bug">Report Bug</a>
-              <a href="#" id="show-eula">Chính Sách - Điều Khoản</a>
+        <footer class="card-footer">
+          <div class="footer-sections">
+            <div class="footer-links">
+              <div class="footer-credit">
+                Created with 💖 by HiennNek
+              </div>
+              <div class="align-right">
+                <a href="https://github.com/HiennNek/lms360hack" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://github.com/HiennNek/lms360hack/issues" target="_blank" id="report-bug">Report Bug</a>
+                <a href="#" id="show-eula">Chính Sách - Điều Khoản</a>
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
 
 
+      </div>
     </div>
-  </div>
 
-  <button id="theme-toggle" class="theme-toggle" title="Theme">
-    🌙
-  </button>
-  <script src="js/process_question_type.js"></script>
-  <script src="js/func.js"></script>
-  <script src="js/theme-toggle.js"></script>
+    <button id="theme-toggle" class="theme-toggle" title="Theme">
+      🌙
+    </button>
+    <script src="js/process_question_type.js"></script>
+    <script src="js/func.js"></script>
+    <script src="js/theme-toggle.js"></script>
 </body>
+
 </html>

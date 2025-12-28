@@ -9,7 +9,7 @@
 
 
 ## LMS360 Hack - Hiện đáp án LMS360
-### Version hiện tại: v5.0
+### Version hiện tại: v5.1
 
 <p align="center">
   <img width=67% alt="image" src="https://github.com/user-attachments/assets/f103efb4-1184-4061-bb21-eb7bdecacf13" />
@@ -38,6 +38,7 @@
 #
 
 ### Changelog:
+- v5.1: Redesign giao diện, fix error handeler, thêm auto save vào advanced mode.
 - v5.0: Thêm LMS360 Hack Advanced. Xem, chỉnh sửa và tải về bài giảng LMS360.
 - v4.3.2: Tối ưu hóa độ mượt của giao diện + tối ưu hóa màu sắc giao diện.
 - v4.3.1: Đã thêm tính năng search cho bài tập có bằng hoặc trên 10 câu hỏi + Thêm hiển thị số câu hỏi thật nếu như bài có random.

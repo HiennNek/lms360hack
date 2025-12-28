@@ -1,20 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LMS360 Hack Advanced - Xem, chỉnh sửa và tải về bài giảng LMS360</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/stackoverflow-light.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/stackoverflow-dark.min.css" id="hljs-dark-theme" disabled>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/stackoverflow-light.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/stackoverflow-dark.min.css"
+        id="hljs-dark-theme" disabled>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" defer></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style_dark.css" id="dark-theme" disabled>
     <link rel="stylesheet" href="css/h5p-editor.css">
     <script>
-        (function() {
+        (function () {
             const theme = localStorage.getItem('theme') || 'light';
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -24,6 +32,7 @@
         })();
     </script>
 </head>
+
 <body>
     <div class="scrollable-container">
         <div class="h5p-container">
@@ -37,7 +46,8 @@
 
                 <div class="h5p-url-section">
                     <div class="h5p-url-input-wrapper">
-                        <input type="text" id="contentUrl" class="h5p-url-input" placeholder="Link LMS360 (https://lms360.vn/...)">
+                        <input type="text" id="contentUrl" class="h5p-url-input"
+                            placeholder="Link LMS360 (https://lms360.vn/...)">
                         <button class="h5p-btn" onclick="downloadFromUrl()">Sử dụng</button>
                     </div>
                     <div id="urlLoadingIndicator" class="h5p-loading-indicator" style="display: none;">
@@ -75,30 +85,35 @@
                             <input type="text" id="titleInput" placeholder="Tiêu đề..." disabled>
 
                             <label for="languageInput">Ngôn ngữ</label>
-                            <input type="text" id="languageInput" placeholder="Ký hiệu ngôn ngữ (ví dụ: en, vi...)" disabled>
+                            <input type="text" id="languageInput" placeholder="Ký hiệu ngôn ngữ (ví dụ: en, vi...)"
+                                disabled>
 
                             <div class="h5p-sub-tabs">
-                                <button class="h5p-sub-tab active" onclick="switchSubTab(event, 'contentJson')">📝 content.json</button>
-                                <button class="h5p-sub-tab" onclick="switchSubTab(event, 'h5pJson')">📄 h5p.json</button>
+                                <button class="h5p-sub-tab active" onclick="switchSubTab(event, 'contentJson')">📝
+                                    content.json</button>
+                                <button class="h5p-sub-tab" onclick="switchSubTab(event, 'h5pJson')">📄
+                                    h5p.json</button>
                             </div>
 
                             <div id="contentJsonTab" class="h5p-sub-tab-content active">
                                 <label for="contentJsonEditor">content.json</label>
                                 <div class="h5p-code-editor-wrapper" id="contentCodeEditorWrapper">
-                                    <div id="contentJsonEditor" class="h5p-code-editor" contenteditable="true" spellcheck="false" placeholder="content.json"></div>
+                                    <div id="contentJsonEditor" class="h5p-code-editor" contenteditable="true"
+                                        spellcheck="false" placeholder="content.json"></div>
                                 </div>
                             </div>
 
                             <div id="h5pJsonTab" class="h5p-sub-tab-content">
                                 <label for="h5pJsonEditor">h5p.json</label>
                                 <div class="h5p-code-editor-wrapper" id="h5pCodeEditorWrapper">
-                                    <div id="h5pJsonEditor" class="h5p-code-editor" contenteditable="true" spellcheck="false" placeholder="h5p.json"></div>
+                                    <div id="h5pJsonEditor" class="h5p-code-editor" contenteditable="true"
+                                        spellcheck="false" placeholder="h5p.json"></div>
                                 </div>
                             </div>
 
                             <div class="h5p-action-buttons">
-                                <button class="h5p-btn" onclick="updateContent()">💾 Update (lưu) nội dung</button>
-                                <button class="h5p-btn h5p-btn-success" onclick="downloadModified()">⬇️ Tải xuống</button>
+                                <button class="h5p-btn h5p-btn-success" onclick="downloadModified()">⬇️ Tải
+                                    xuống</button>
                             </div>
                         </div>
                     </div>
@@ -122,4 +137,5 @@
     <script src="js/theme-toggle.js"></script>
     <script src="js/h5p-editor.js"></script>
 </body>
+
 </html>

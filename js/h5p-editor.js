@@ -14,6 +14,16 @@ const contentJsonEditor = document.getElementById('contentJsonEditor');
 const contentUrlInput = document.getElementById('contentUrl');
 const urlLoadingIndicator = document.getElementById('urlLoadingIndicator');
 
+let autoSaveTimeout = null;
+const AUTO_SAVE_DELAY = 1000;
+
+contentUrlInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        downloadFromUrl();
+    }
+});
+
 function extractContentId(url) {
     try {
         const urlObj = new URL(url);
@@ -31,30 +41,30 @@ function extractContentId(url) {
 
 async function downloadFromUrl() {
     const url = contentUrlInput.value.trim();
-    
+
     if (!url) {
         showAlert('Hãy điền URL!', 'error');
         return;
     }
-    
+
     const contentId = extractContentId(url);
     if (!contentId) return;
-    
+
     urlLoadingIndicator.style.display = 'flex';
-    
+
     try {
         // Genius way to get the file
         // My backend is very secure :)
         const response = await fetch(`https://lms360hack-backend.hiennek1.workers.dev?h5p_id=${contentId}`);
-        
+
         if (!response.ok) {
             showAlert(`Không thể tải file: ${response.status} ${response.statusText}`, 'error');
             urlLoadingIndicator.style.display = 'none';
             return;
         }
-        
+
         const blob = await response.blob();
-        
+
         const tempFile = new File([blob], `h5p-content-${contentId}.h5p`, { type: 'application/zip' });
         await handleFile(tempFile);
     } catch (error) {
@@ -69,7 +79,7 @@ function updateSyntaxHighlight() {
     const h5pCode = h5pJsonEditor.textContent;
     if (window.hljs && h5pCode.trim()) {
         try {
-            const highlighted = window.hljs.highlight(h5pCode, {language: 'json'}).value;
+            const highlighted = window.hljs.highlight(h5pCode, { language: 'json' }).value;
             h5pJsonEditor.innerHTML = highlighted;
         } catch (e) {
             console.error('Highlighting error:', e);
@@ -79,7 +89,7 @@ function updateSyntaxHighlight() {
     const contentCode = contentJsonEditor.textContent;
     if (window.hljs && contentCode.trim()) {
         try {
-            const highlighted = window.hljs.highlight(contentCode, {language: 'json'}).value;
+            const highlighted = window.hljs.highlight(contentCode, { language: 'json' }).value;
             contentJsonEditor.innerHTML = highlighted;
         } catch (e) {
             console.error('Highlighting error:', e);
@@ -114,6 +124,55 @@ h5pJsonEditor.addEventListener('keydown', (e) => {
         selection.addRange(range);
     }
 });
+
+function triggerAutoSave() {
+    if (autoSaveTimeout) {
+        clearTimeout(autoSaveTimeout);
+    }
+    autoSaveTimeout = setTimeout(() => {
+        silentUpdateContent();
+    }, AUTO_SAVE_DELAY);
+}
+
+function silentUpdateContent() {
+    try {
+        const h5pText = h5pJsonEditor.textContent;
+        if (h5pText.trim()) {
+            h5pData.json = JSON.parse(h5pText);
+        }
+
+        const contentText = contentJsonEditor.textContent;
+        if (contentText.trim()) {
+            h5pData.content = JSON.parse(contentText);
+        }
+        const infoGrid = document.getElementById('infoGrid');
+        if (infoGrid && h5pData.json) {
+            infoGrid.innerHTML = `
+                <div class="h5p-info-card">
+                    <h3>Tiêu đề</h3>
+                    <p>${h5pData.json.title || 'N/A'}</p>
+                </div>
+                <div class="h5p-info-card">
+                    <h3>Thư viện chính</h3>
+                    <p>${h5pData.json.mainLibrary || 'N/A'}</p>
+                </div>
+                <div class="h5p-info-card">
+                    <h3>Ngôn ngữ</h3>
+                    <p>${h5pData.json.language || 'N/A'}</p>
+                </div>
+                <div class="h5p-info-card">
+                    <h3>Kiểu hiển thị</h3>
+                    <p>${h5pData.json.embedTypes ? h5pData.json.embedTypes.join(', ') : 'N/A'}</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.log('Json fucked, waiting for input...');
+    }
+}
+
+contentJsonEditor.addEventListener('input', triggerAutoSave);
+h5pJsonEditor.addEventListener('input', triggerAutoSave);
 
 uploadSection.addEventListener('dragover', (e) => {
     e.preventDefault();
@@ -208,20 +267,20 @@ function displayH5pData() {
 
     document.getElementById('titleInput').value = h5pData.json.title || '';
     document.getElementById('languageInput').value = h5pData.json.language || '';
-    
+
     h5pJsonEditor.textContent = JSON.stringify(h5pData.json, null, 2);
-    
+
     contentJsonEditor.textContent = h5pData.content ?
         JSON.stringify(h5pData.content, null, 2) : '';
-    
+
     updateSyntaxHighlight();
 
     const fileList = document.getElementById('fileList');
     fileList.innerHTML = '';
-    
+
     const priorityFiles = [];
     const regularFiles = [];
-    
+
     Object.keys(h5pData.files).forEach(path => {
         const file = h5pData.files[path];
         if (!file.dir) {
@@ -232,11 +291,11 @@ function displayH5pData() {
             }
         }
     });
-    
+
     regularFiles.sort((a, b) => a.path.localeCompare(b.path));
-    
+
     const sortedFiles = [...priorityFiles, ...regularFiles];
-    
+
     sortedFiles.forEach(({ path, file }) => {
         const item = document.createElement('div');
         item.className = 'h5p-file-item';
@@ -300,7 +359,7 @@ async function downloadModified() {
             }
         }
 
-        const blob = await zip.generateAsync({type: 'blob'});
+        const blob = await zip.generateAsync({ type: 'blob' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;

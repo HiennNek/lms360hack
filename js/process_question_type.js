@@ -7,17 +7,17 @@ const container = document.getElementById("questions");
 function render_questions(backendResponse) {
   container.innerHTML = "";
 
-  if (!backendResponse.success) {
-    const errorMsg = backendResponse.error || "Không thể xử lý câu hỏi.";
-    container.innerHTML = `<div class='error-message'>❌ ${errorMsg}</div>`;
+  const questions = backendResponse.questions || [];
+  const actualQuestionCount = backendResponse.actualQuestionCount || backendResponse.count || questions.length;
+
+  if (questions.length === 0 || errorMsg === "") {
+    container.innerHTML = "<div class='error-message'>❌ Kiểu nội dung này chưa được hỗ trợ. Bạn có thể yêu cầu thêm dạng câu hỏi này qua phần \"Report Bug\"</div>";
     return;
   }
 
-  const questions = backendResponse.questions || [];
-  const actualQuestionCount = backendResponse.actualQuestionCount || backendResponse.count || questions.length;
-  
-  if (questions.length === 0) {
-    container.innerHTML = "<div class='error-message'>❌ Kiểu nội dung này chưa được hỗ trợ. Bạn có thể yêu cầu thêm dạng câu hỏi này qua phần \"Report Bug\"</div>";
+  if (!backendResponse.success) {
+    const errorMsg = backendResponse.error || "Không thể xử lý câu hỏi.";
+    container.innerHTML = `<div class='error-message'>❌ ${errorMsg}</div>`;
     return;
   }
 
@@ -26,11 +26,13 @@ function render_questions(backendResponse) {
     message += ` ( Số câu hỏi thực tế trong bài: ${actualQuestionCount} )`;
   }
   container.innerHTML = `<div class="success-message">${message}</div><br>`;
-  
+
   const fragment = document.createDocumentFragment();
   questions.forEach((q, index) => {
     const div = document.createElement("div");
     div.className = "question";
+    const delay = Math.min(index, 15) * 50;
+    div.style.animationDelay = `${delay}ms`;
     div.innerHTML = `<h3>Câu hỏi ${index + 1}:</h3><p>${q.text}</p>`;
     fragment.appendChild(div);
   });
@@ -96,8 +98,6 @@ function hack_da_answer() {
   }
 }
 
-hecker_button.addEventListener("click", hack_da_answer);
-
 link_lms360.addEventListener("keypress", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
@@ -106,34 +106,34 @@ link_lms360.addEventListener("keypress", (event) => {
 });
 
 // Sorry mọi người vì cái EULA này:)
-(function(){
+(function () {
   const modal = document.getElementById('eula-modal');
   const showEula = document.getElementById('show-eula');
   const closeEula = document.getElementById('close-eula');
-  
+
   const bro_da_accept_chua_cham_hoi = localStorage.getItem('bro_da_accept_chua_cham_hoi');
   console.log('eula?:', bro_da_accept_chua_cham_hoi);
-  
+
   if (!bro_da_accept_chua_cham_hoi) {
     modal.classList.add('show');
   }
-  
-  showEula.addEventListener('click', function(e) {
+
+  showEula.addEventListener('click', function (e) {
     e.preventDefault();
     modal.classList.add('show');
   });
-  
-  closeEula.addEventListener('click', function() {
+
+  closeEula.addEventListener('click', function () {
     modal.classList.remove('show');
     localStorage.setItem('bro_da_accept_chua_cham_hoi', 'true');
   });
 })();
 
-(function(){
+(function () {
   const form = document.getElementById('url-form');
-  
+
   if (form) {
-    form.addEventListener('submit', function(e){
+    form.addEventListener('submit', function (e) {
       e.preventDefault();
       hack_da_answer();
     });
