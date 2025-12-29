@@ -430,7 +430,8 @@
     transition: all var(--transition-normal) var(--easing-smooth);
 }
 
-.h5p-editor h2 {
+.h5p-editor h2,
+.h5p-tab-content h2 {
     margin-top: 0;
     background: linear-gradient(135deg, var(--accent-gradient-start, #06b6d4), var(--accent-gradient-end, #3b82f6));
     -webkit-background-clip: text;
@@ -767,6 +768,7 @@
 }
 
 .dark .h5p-editor h2,
+.dark .h5p-tab-content h2,
 .dark .h5p-editor label {
     background: linear-gradient(135deg, #67e8f9, #38bdf8);
     -webkit-background-clip: text;
