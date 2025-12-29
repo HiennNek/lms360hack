@@ -50,12 +50,31 @@ async function downloadFromUrl() {
     const contentId = extractContentId(url);
     if (!contentId) return;
 
+    urlLoadingIndicator.textContent = "Chờ xíu...";
     urlLoadingIndicator.style.display = 'flex';
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    let loadedBytes = 0;
+    let showProgress = false;
+
+    const loadingTimeout = setTimeout(() => {
+        showProgress = true;
+        urlLoadingIndicator.textContent = `File hơi bự, đợi tý... (${formatBytes(loadedBytes)})`;
+    }, 5000);
+
+    const timeout20s = setTimeout(() => {
+        if (loadedBytes === 0) {
+            controller.abort();
+            showAlert("Kết nối quá chậm, vui lòng thử lại sau", "error");
+        }
+    }, 20000);
 
     try {
         // Genius way to get the file
         // My backend is very secure :)
-        const response = await fetch(`https://lms360hack-backend.hiennek1.workers.dev?h5p_id=${contentId}`);
+        const response = await fetch(`https://lms360hack-backend.hiennek1.workers.dev?h5p_id=${contentId}`, { signal });
 
         if (!response.ok) {
             showAlert(`Không thể tải file: ${response.status} ${response.statusText}`, 'error');
@@ -63,14 +82,34 @@ async function downloadFromUrl() {
             return;
         }
 
-        const blob = await response.blob();
+        const reader = response.body.getReader();
+        const chunks = [];
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            chunks.push(value);
+            loadedBytes += value.length;
+
+            if (showProgress) {
+                urlLoadingIndicator.textContent = `File hơi bự, đợi tý... (${formatBytes(loadedBytes)})`;
+            }
+        }
+
+        const blob = new Blob(chunks, { type: 'application/zip' });
 
         const tempFile = new File([blob], `h5p-content-${contentId}.h5p`, { type: 'application/zip' });
         await handleFile(tempFile);
     } catch (error) {
+        if (error.name === 'AbortError') {
+            return;
+        }
         showAlert(`Có lỗi trong quá trình tải file: ${error.message}`, 'error');
         console.error('Lỗi:', error);
     } finally {
+        clearTimeout(loadingTimeout);
+        clearTimeout(timeout20s);
         urlLoadingIndicator.style.display = 'none';
     }
 }
