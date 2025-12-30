@@ -30,9 +30,9 @@
   --input-border: rgba(6, 182, 212, 0.25);
   --question-bg: rgba(255, 255, 255, 0.9);
   --question-border: rgba(6, 182, 212, 0.2);
-  --highlight-bg: rgba(34, 211, 238, 0.15);
-  --highlight-border: #22d3ee;
-  --highlight-text: #0891b2;
+  --highlight-bg: rgba(93, 234, 88, 0.303);
+  --highlight-border: #2fff00;
+  --highlight-text: #000000;
   --footer-bg: rgba(255, 255, 255, 0.6);
   --modal-overlay: rgba(6, 182, 212, 0.25);
   --success-color: #10b981;
@@ -450,10 +450,10 @@ body {
 .highlight {
   font-weight: 700;
   color: var(--highlight-text);
-  background: linear-gradient(135deg, rgba(67, 233, 123, 0.2), rgba(56, 189, 248, 0.2));
+  background: linear-gradient(135deg, rgba(7, 237, 84, 0.493), rgba(0, 255, 42, 0.503));
   padding: 3px 8px;
   border-radius: 6px;
-  border: 1px solid rgba(67, 233, 123, 0.3);
+  border: 2px solid rgba(0, 255, 85, 0.907);
 }
 
 #questions {
@@ -508,7 +508,7 @@ body {
 }
 
 #questions li.highlight {
-  border: 2px solid var(--highlight-border);
+  border: 3px solid var(--highlight-border);
   background: var(--highlight-bg);
 }
 
@@ -827,7 +827,7 @@ a {
 .light .question *,
 .light #questions p,
 .light #questions * {
-  color: var(--text-body) !important;
+  color: #000000 !important;
 }
 
 .light .question h3 {

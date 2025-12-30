@@ -7,16 +7,16 @@
     --card-border: rgba(34, 211, 238, 0.25);
     --text-primary: #ecfeff;
     --text-secondary: #a5f3fc;
-    --text-body: #e0f7fa;
+    --text-body: #ffffff;
     --accent: #22d3ee;
     --accent-dark: #06b6d4;
     --input-bg: rgba(34, 211, 238, 0.12);
     --input-border: rgba(34, 211, 238, 0.25);
     --question-bg: rgba(15, 35, 60, 0.9);
     --question-border: rgba(34, 211, 238, 0.2);
-    --highlight-bg: rgba(45, 212, 191, 0.2);
-    --highlight-border: #2dd4bf;
-    --highlight-text: #5eead4;
+    --highlight-bg: rgba(64, 212, 45, 0.2);
+    --highlight-border: #00ff11;
+    --highlight-text: #ffffff;
     --footer-bg: rgba(15, 35, 60, 0.6);
     --modal-overlay: rgba(12, 25, 41, 0.7);
 
@@ -135,8 +135,8 @@
 
 .dark .highlight {
     color: var(--highlight-text);
-    background: linear-gradient(135deg, rgba(45, 212, 191, 0.2), rgba(56, 189, 248, 0.2));
-    border-color: rgba(45, 212, 191, 0.4);
+    background: linear-gradient(135deg, rgba(45, 212, 56, 0.2), rgba(82, 248, 56, 0.2));
+    border-color: rgba(0, 255, 4, 0.771);
 }
 
 .dark #questions::-webkit-scrollbar-track {
