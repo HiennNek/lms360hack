@@ -250,6 +250,12 @@ function showAlert(message, type = 'success') {
 }
 
 async function handleFile(file) {
+    h5pData = {
+        json: null,
+        content: null,
+        files: {}
+    };
+
     if (!file.name.endsWith('.h5p')) {
         showAlert('File không đúng định dạng', 'error');
         return;
