@@ -1,4 +1,10 @@
 // ./sw.js
+
+// WTF is this file? You might ask
+// It just some stupid code that I found on StackOverflow to render the H5P viewer
+
+// Then why you dont put it in the JS folder?
+// Yea, Ive tried that before, but Cloudflare Pages doesnt like to work with that.
 const filesMap = new Map();
 
 self.addEventListener('install', (event) => {
