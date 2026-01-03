@@ -1,3 +1,5 @@
+// ./js/sw.js
+
 const filesMap = new Map();
 
 self.addEventListener('install', (event) => {
