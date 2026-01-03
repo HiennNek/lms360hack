@@ -13,6 +13,19 @@ const h5pJsonEditor = document.getElementById('h5pJsonEditor');
 const contentJsonEditor = document.getElementById('contentJsonEditor');
 const contentUrlInput = document.getElementById('contentUrl');
 const urlLoadingIndicator = document.getElementById('urlLoadingIndicator');
+const h5pContainer = document.getElementById('h5p-container');
+
+if ('serviceWorker' in navigator) {
+    if (window.location.protocol === 'file:') {
+        console.error('Service Worker không hoạt động với file:// . Vui lòng deploy server.');
+    } else {
+        navigator.serviceWorker.register('js/sw.js')
+            .then(registration => console.log('Service Worker đã được đăng ký!'))
+            .catch(err => console.error('Service Worker không hoạt động:', err));
+    }
+} else {
+    console.error('Service Worker không thể hoạt động trên trình duyệt này.');
+}
 
 let autoSaveTimeout = null;
 const AUTO_SAVE_DELAY = 1000;
@@ -43,7 +56,7 @@ async function downloadFromUrl() {
     const url = contentUrlInput.value.trim();
 
     if (!url) {
-        showAlert('Hãy điền URL!', 'error');
+        showAlert('Vui lòng điền URL!', 'error');
         return;
     }
 
@@ -121,7 +134,7 @@ function updateSyntaxHighlight() {
             const highlighted = window.hljs.highlight(h5pCode, { language: 'json' }).value;
             h5pJsonEditor.innerHTML = highlighted;
         } catch (e) {
-            console.error('Highlighting error:', e);
+            console.error('Lỗi format:', e);
         }
     }
 
@@ -131,7 +144,7 @@ function updateSyntaxHighlight() {
             const highlighted = window.hljs.highlight(contentCode, { language: 'json' }).value;
             contentJsonEditor.innerHTML = highlighted;
         } catch (e) {
-            console.error('Highlighting error:', e);
+            console.error('Lỗi format:', e);
         }
     }
 }
@@ -284,6 +297,11 @@ async function handleFile(file) {
         displayH5pData();
         viewerSection.classList.add('active');
         showAlert('File đã load thành công!', 'success');
+
+        h5pContainer.innerHTML = '';
+        if (document.querySelector('.h5p-tab[onclick*="preview"]').classList.contains('active')) {
+            renderH5P();
+        }
     } catch (error) {
         showAlert(`Có lỗi trong quá trình load file: ${error.message}`, 'error');
     }
@@ -309,9 +327,6 @@ function displayH5pData() {
             <p>${h5pData.json.embedTypes ? h5pData.json.embedTypes.join(', ') : 'N/A'}</p>
         </div>
     `;
-
-    document.getElementById('titleInput').value = h5pData.json.title || '';
-    document.getElementById('languageInput').value = h5pData.json.language || '';
 
     h5pJsonEditor.textContent = JSON.stringify(h5pData.json, null, 2);
 
@@ -358,6 +373,123 @@ function switchTab(e, tabName) {
 
     e.target.classList.add('active');
     document.getElementById(`${tabName}Tab`).classList.add('active');
+
+    if (tabName === 'preview') {
+        renderH5P();
+    }
+}
+
+async function renderH5P() {
+    if (!h5pData.json) return;
+
+    h5pContainer.innerHTML = '<div style="padding: 20px; text-align: center;">Đang chuẩn bị preview...</div>';
+
+    try {
+        const filesToContent = {};
+        for (const [path, file] of Object.entries(h5pData.files)) {
+            if (!file.dir) {
+                filesToContent[path] = await file.async('uint8array');
+            }
+        }
+
+        filesToContent['h5p.json'] = new TextEncoder().encode(JSON.stringify(h5pData.json));
+        if (h5pData.content) {
+            filesToContent['content/content.json'] = new TextEncoder().encode(JSON.stringify(h5pData.content));
+        }
+
+        await new Promise((resolve, reject) => {
+            const channel = new MessageChannel();
+            channel.port1.onmessage = (event) => {
+                if (event.data.status === 'ok') resolve();
+                else reject(new Error('Không thể set H5P data trong SW'));
+            };
+            if (!navigator.serviceWorker.controller) {
+                reject(new Error('Service Worker không hoạt động. Vui lòng refresh.'));
+                return;
+            }
+            navigator.serviceWorker.controller.postMessage({
+                type: 'SET_H5P_DATA',
+                files: filesToContent
+            }, [channel.port2]);
+        });
+
+        h5pContainer.innerHTML = '';
+        const iframe = document.createElement('iframe');
+        iframe.style.width = '100%';
+        iframe.style.boxSizing = 'border-box';
+        iframe.style.display = 'block';
+        iframe.style.margin = '20px auto';
+        iframe.style.height = 'auto';
+        iframe.style.border = '3px solid rgba(6, 181, 212, 0.2)';
+        iframe.style.borderRadius = '16px';
+        iframe.style.background = 'white';
+        h5pContainer.appendChild(iframe);
+
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <script src="https://cdn.jsdelivr.net/npm/h5p-standalone@latest/dist/main.bundle.js"></script>
+                <style>
+                    body { margin: 0; padding: 15px; background: white; overflow: hidden; font-family: sans-serif; }
+                    #h5p-iframe-wrapper { width: 100%; height: auto; min-height: 100px; box-sizing: border-box; }
+                    .h5p-container { border: none !important; box-shadow: none !important; }
+                </style>
+            </head>
+            <body>
+                <div id="h5p-iframe-wrapper"></div>
+                <script>
+                    const resizeObserver = new ResizeObserver(entries => {
+                        window.parent.postMessage({
+                            type: 'H5P_RESIZE',
+                            height: document.body.scrollHeight
+                        }, '*');
+                    });
+                    resizeObserver.observe(document.body);
+                </script>
+            </body>
+            </html>
+        `);
+        doc.close();
+
+        window.onmessage = (event) => {
+            if (event.data.type === 'H5P_RESIZE' && event.source === iframe.contentWindow) {
+                iframe.style.height = event.data.height + 'px';
+            }
+        };
+
+        iframe.onload = () => {
+            const options = {
+                h5pJsonPath: '/h5p-preview',
+                frameJs: 'https://cdn.jsdelivr.net/npm/h5p-standalone@latest/dist/frame.bundle.js',
+                frameCss: 'https://cdn.jsdelivr.net/npm/h5p-standalone@latest/dist/styles/h5p.css'
+            };
+            new iframe.contentWindow.H5PStandalone.H5P(doc.getElementById('h5p-iframe-wrapper'), options);
+        };
+
+    } catch (error) {
+        console.error('H5P Render Error:', error);
+        let errorMsg = error.message;
+        if (window.location.protocol === 'file:') {
+            errorMsg = 'H5P Viewer yêu cầu chạy qua HTTP/HTTPS server (ví dụ: Live Server). Không thể chạy trực tiếp từ file (file://).';
+        }
+        h5pContainer.innerHTML = 'Lỗi khi hiển thị: ' + errorMsg;
+    }
+}
+
+function toggleFullscreen() {
+    const wrapper = document.getElementById('h5p-preview-wrapper');
+    if (!document.fullscreenElement) {
+        wrapper.requestFullscreen().catch(err => {
+            showAlert(`Không thể bật toàn màn hình: ${err.message}`, 'error');
+        });
+    } else {
+        document.exitFullscreen();
+    }
 }
 
 function switchSubTab(e, tabName) {

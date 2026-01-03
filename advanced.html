@@ -43,6 +43,9 @@
             </div>
 
             <div class="h5p-content">
+                <div class="mobile-warning">
+                    ⚠️ Vui lòng sử dụng màn hình lớn hơn để có trải nghiệm tốt nhất.
+                </div>
 
                 <div class="h5p-url-section">
                     <div class="h5p-url-input-wrapper">
@@ -69,25 +72,29 @@
 
                 <div class="h5p-viewer-section" id="viewerSection">
                     <div class="h5p-tabs">
-                        <button class="h5p-tab active" onclick="switchTab(event, 'info')">📋 Thông tin</button>
+                        <button class="h5p-tab active" onclick="switchTab(event, 'preview')">👁️ Xem thử</button>
                         <button class="h5p-tab" onclick="switchTab(event, 'content')">✏️ Chỉnh sửa</button>
                         <button class="h5p-tab" onclick="switchTab(event, 'files')">📁 File</button>
                     </div>
 
-                    <div id="infoTab" class="h5p-tab-content active">
-                        <div class="h5p-info-grid" id="infoGrid"></div>
+                    <div id="previewTab" class="h5p-tab-content active">
+                        <div id="h5p-preview-wrapper">
+                            <div class="h5p-preview-actions">
+                                <button class="h5p-btn-icon" onclick="downloadModified()" title="Tải xuống file H5P">
+                                    ⬇️ Tải xuống
+                                </button>
+                                <button class="h5p-btn-icon" onclick="toggleFullscreen()" title="Toàn màn hình">
+                                    ⛶ Fullscreen
+                                </button>
+                            </div>
+                            <div id="h5p-container"></div>
+                        </div>
                     </div>
 
                     <div id="contentTab" class="h5p-tab-content">
+                        <div class="h5p-info-grid" id="infoGrid"></div>
                         <div class="h5p-editor">
                             <h2>Nội dung</h2>
-                            <label for="titleInput">Tiêu đề</label>
-                            <input type="text" id="titleInput" placeholder="Tiêu đề..." disabled>
-
-                            <label for="languageInput">Ngôn ngữ</label>
-                            <input type="text" id="languageInput" placeholder="Ký hiệu ngôn ngữ (ví dụ: en, vi...)"
-                                disabled>
-
                             <div class="h5p-sub-tabs">
                                 <button class="h5p-sub-tab active" onclick="switchSubTab(event, 'contentJson')">📝
                                     content.json</button>
