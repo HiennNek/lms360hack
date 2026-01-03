@@ -12,14 +12,15 @@
 ### Version hiện tại: v5.2
 
 <p align="center">
-  <img width="67%" alt="image" src="https://github.com/user-attachments/assets/29b7b9c3-6ac6-43fc-83c1-0e842164dee5" />
+<img width="66%" alt="image" src="https://github.com/user-attachments/assets/673d0387-bb58-4aa7-b791-27f46842022f" />
+
 </p>
 
 #
 
-#### Website chính: [lms360hack.pages.dev](https://lms360hack.pages.dev/)
+### Website chính: [lms360hack.pages.dev](https://lms360hack.pages.dev/)
 
-#### [Tìm hiểu cách LMS360 Hack hoạt động](How_it_work.pdf)
+### [Tìm hiểu cách LMS360 Hack hoạt động](How_it_work.pdf)
 
 #
 
