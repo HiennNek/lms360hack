@@ -8,7 +8,7 @@
 ## ⚠️ Đây là trang mã nguồn của LMS360 Hack
 
 
-## LMS360 Hack - Hiện đáp án LMS360
+## LMS360 Hack - Công cụ xem, chỉnh sửa và tải xuống bài giảng LMS360 
 ### Version hiện tại: v5.2
 
 <p align="center">
