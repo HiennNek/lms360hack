@@ -19,7 +19,7 @@ if ('serviceWorker' in navigator) {
     if (window.location.protocol === 'file:') {
         console.error('Service Worker không hoạt động với file:// . Vui lòng deploy server.');
     } else {
-        navigator.serviceWorker.register('js/sw.js')
+        navigator.serviceWorker.register('sw.js')
             .then(registration => console.log('Service Worker đã được đăng ký!'))
             .catch(err => console.error('Service Worker không hoạt động:', err));
     }
