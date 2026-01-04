@@ -41,7 +41,7 @@
 
 ### Changelog:
 - v5.2: Thêm tính năng Preview cho Advanced mode, chỉnh một số vấn đề nhỏ.
-- v5.1: Redesign giao diện, fix error handeler, thêm auto save vào advanced mode.
+- v5.1: Redesign giao diện, fix error handler, thêm auto save vào advanced mode.
 - v5.0: Thêm LMS360 Hack Advanced. Xem, chỉnh sửa và tải về bài giảng LMS360.
 - v4.3.2: Tối ưu hóa độ mượt của giao diện + tối ưu hóa màu sắc giao diện.
 - v4.3.1: Đã thêm tính năng search cho bài tập có bằng hoặc trên 10 câu hỏi + Thêm hiển thị số câu hỏi thật nếu như bài có random.
