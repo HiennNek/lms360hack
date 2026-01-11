@@ -147,7 +147,6 @@
     align-items: center;
     color: var(--accent);
     font-weight: 600;
-    margin-top: 15px;
     animation: pulse 1.5s ease-in-out infinite;
 }
 
