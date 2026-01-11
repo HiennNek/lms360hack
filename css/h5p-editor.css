@@ -119,7 +119,7 @@
 .h5p-url-input {
     flex: 1;
     min-width: 200px;
-    padding: 14px 18px;
+    padding: 14px 10px;
     border: 2px solid var(--input-border);
     border-radius: 12px;
     font-size: 0.95em;
