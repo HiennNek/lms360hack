@@ -31,7 +31,7 @@
     }
 
     themeToggle.textContent = theme === 'light' ? DARK_ICON : LIGHT_ICON;
-    themeToggle.title = theme === 'light' ? 'Switch to Dark Theme' : 'Switch to Light Theme';
+    themeToggle.title = theme === 'light' ? 'Chuyển sang giao diện dảk' : 'Chuyển sang giao diện chói';
 
     saveTheme(theme);
 
