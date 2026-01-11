@@ -382,7 +382,7 @@ function switchTab(e, tabName) {
 async function renderH5P() {
     if (!h5pData.json) return;
 
-    h5pContainer.innerHTML = '<div style="padding: 20px; text-align: center;">Đang chuẩn bị preview...</div>';
+    h5pContainer.innerHTML = '<div class="h5p-loading-indicator" style="justify-content: center; margin: 20px;">Đang chuẩn bị preview...</div>';
 
     try {
         const filesToContent = {};
