@@ -638,6 +638,12 @@
     color: #fbbf24;
 }
 
+.dark .browser-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2));
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #fbbf24;
+}
+
 .dark .h5p-container {
     background: var(--glass-bg);
     border-color: var(--glass-border);
