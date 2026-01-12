@@ -24,6 +24,12 @@
 
 #
 
+> [!WARNING]
+> Known issue (lỗi đã được biết)
+>- Tính năng preview hiện tại không hỗ trợ trình duyệt Chromium-based. Chromium chặn service worker intercept js và css
+
+#
+
 ### FAQ (câu hỏi thường gặp)
 > **Cái này có illegal (bất hợp pháp) không?**
 - Không :) Miễn có sự đồng ý của giáo viên, người có thẩm quyền.
