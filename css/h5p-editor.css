@@ -267,6 +267,7 @@
 .h5p-tabs {
     display: flex;
     gap: 8px;
+    margin-top: 30px;
     margin-bottom: 25px;
     border-bottom: 2px solid rgba(6, 182, 212, 0.15);
     overflow-x: auto;
@@ -598,6 +599,20 @@
 
 .mobile-warning {
     display: none;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.15));
+    border: 2px solid rgba(245, 158, 11, 0.3);
+    border-radius: 12px;
+    color: #92400e;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: fadeInUp 0.5s var(--easing-smooth);
+}
+
+.browser-warning {
     padding: 16px 20px;
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.15));
     border: 2px solid rgba(245, 158, 11, 0.3);
