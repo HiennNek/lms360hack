@@ -26,7 +26,7 @@
 
 > [!WARNING]
 > Known issue (lỗi đã được biết)
->- Tính năng preview hiện tại không hỗ trợ trình duyệt Chromium-based. Chromium chặn service worker intercept js và css
+>- Tính năng preview hiện tại không hỗ trợ trình duyệt Chromium-based. Chromium không chịu worker intercept js và css (có thể là một bug bên Chromium)
 
 #
 
