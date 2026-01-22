@@ -433,7 +433,7 @@ async function renderH5P() {
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <script src="https://cdn.jsdelivr.net/npm/h5p-standalone@latest/dist/main.bundle.js"></script>
+                <script src="h5p-preview-lib/main.bundle.js"></script>
                 <style>
                     body { margin: 0; padding: 15px; background: white; overflow: hidden; font-family: sans-serif; }
                     #h5p-iframe-wrapper { width: 100%; height: auto; min-height: 100px; box-sizing: border-box; }
@@ -465,8 +465,8 @@ async function renderH5P() {
         iframe.onload = () => {
             const options = {
                 h5pJsonPath: '/h5p-preview',
-                frameJs: 'https://cdn.jsdelivr.net/npm/h5p-standalone@latest/dist/frame.bundle.js',
-                frameCss: 'https://cdn.jsdelivr.net/npm/h5p-standalone@latest/dist/styles/h5p.css'
+                frameJs: 'h5p-preview-lib/frame.bundle.js',
+                frameCss: 'h5p-preview-lib/h5p.css'
             };
             new iframe.contentWindow.H5PStandalone.H5P(doc.getElementById('h5p-iframe-wrapper'), options);
         };
