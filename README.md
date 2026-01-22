@@ -2,21 +2,15 @@
 >## Hướng dẫn sử dụng:
 >- ### Xin hãy sử dụng website [lms360hack.pages.dev](https://lms360hack.pages.dev/)
 >- ### Điền URL (đường link) của bài tập LMS360 vào ô *Link LMS360*, sau đó bấm nút *Lấy đáp án*
-
 #
-
-## ⚠️ Đây là trang mã nguồn của LMS360 Hack
-
-
 ## LMS360 Hack - Công cụ xem, chỉnh sửa và tải xuống bài giảng LMS360 
 ### Version hiện tại: v5.3
 
 <p align="center">
-<img width="66%" alt="image" src="https://github.com/user-attachments/assets/673d0387-bb58-4aa7-b791-27f46842022f" />
-
+  <img width="90%" alt="image" src="https://github.com/user-attachments/assets/cc5e9c4c-1699-45e8-8c6b-68bcb2cc1874" />
 </p>
 
-#
+## ⚠️ Đây là trang mã nguồn của LMS360 Hack
 
 ### Website chính: [lms360hack.pages.dev](https://lms360hack.pages.dev/)
 
