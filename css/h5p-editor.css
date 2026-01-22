@@ -586,19 +586,6 @@
     -webkit-backdrop-filter: blur(10px);
 }
 
-.browser-warning {
-    padding: 16px 20px;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.15));
-    border: 2px solid rgba(245, 158, 11, 0.3);
-    border-radius: 12px;
-    color: #92400e;
-    font-weight: 600;
-    margin-bottom: 25px;
-    text-align: center;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
 @media (max-width: 768px) {
     .mobile-warning {
         display: block;
@@ -606,12 +593,6 @@
 }
 
 .dark .mobile-warning {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2));
-    border-color: rgba(245, 158, 11, 0.4);
-    color: #fbbf24;
-}
-
-.dark .browser-warning {
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2));
     border-color: rgba(245, 158, 11, 0.4);
     color: #fbbf24;

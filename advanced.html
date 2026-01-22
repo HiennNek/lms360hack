@@ -5,20 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LMS360 Hack Advanced - Xem, chỉnh sửa và tải về bài giảng LMS360</title>
-    <meta name="description" content="Công cụ chỉnh sửa, xem và tải về bài giảng tương tác cho LMS360, miễn phí và mã nguồn mở.">
+    <meta name="description"
+        content="Công cụ chỉnh sửa, xem và tải về bài giảng tương tác cho LMS360, miễn phí và mã nguồn mở.">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/stackoverflow-light.min.css">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/stackoverflow-dark.min.css"
-        id="hljs-dark-theme" disabled>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" defer></script>
+    <script src="advanced_libs/jszip.min.js" defer></script>
+    <link rel="stylesheet" href="advanced_libs/stackoverflow-light.min.css">
+    <link rel="stylesheet" href="advanced_libs/stackoverflow-dark.min.css" id="hljs-dark-theme" disabled>
+    <script src="advanced_libs/highlight.min.js" defer></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style_dark.css" id="dark-theme" disabled>
     <link rel="stylesheet" href="css/h5p-editor.css">
@@ -66,7 +63,7 @@
                     <div class="h5p-upload-icon">📁</div>
                     <h2>Tải lên file H5P</h2>
                     <p>Kéo thả hoặc chọn file</p>
-                    <button class="h5p-btn" onclick="document.getElementById('fileInput').click()">Chọn File</button>
+                    <button class="h5p-btn">Chọn File</button>
                     <input type="file" id="fileInput" class="h5p-input-file" accept=".h5p">
                 </div>
 
@@ -80,10 +77,6 @@
 
                     <div id="previewTab" class="h5p-tab-content active">
                         <div id="h5p-preview-wrapper">
-
-                            <div class="browser-warning">
-                                ⚠️ Tính năng preview hiện tại chỉ hỗ trợ trên Firefox & Safari.
-                            </div>
 
                             <div class="h5p-preview-actions">
                                 <button class="h5p-btn-icon" onclick="downloadModified()" title="Tải xuống file H5P">

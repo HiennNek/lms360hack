@@ -9,7 +9,7 @@
 
 
 ## LMS360 Hack - Công cụ xem, chỉnh sửa và tải xuống bài giảng LMS360 
-### Version hiện tại: v5.2
+### Version hiện tại: v5.3
 
 <p align="center">
 <img width="66%" alt="image" src="https://github.com/user-attachments/assets/673d0387-bb58-4aa7-b791-27f46842022f" />
@@ -21,12 +21,6 @@
 ### Website chính: [lms360hack.pages.dev](https://lms360hack.pages.dev/)
 
 ### [Tìm hiểu cách LMS360 Hack hoạt động](How_it_work.pdf)
-
-#
-
-> [!WARNING]
-> Known issue (lỗi đã được biết)
->- Tính năng preview hiện tại không hỗ trợ trình duyệt Chromium-based. Chromium không chịu worker intercept js và css (có thể là một bug bên Chromium)
 
 #
 
@@ -46,6 +40,7 @@
 #
 
 ### Changelog:
+- v5.3: Đã thêm tính năng preview cho trình duyệt Chromium-based
 - v5.2: Thêm tính năng Preview cho Advanced mode, chỉnh một số vấn đề nhỏ.
 - v5.1: Redesign giao diện, fix error handler, thêm auto save vào advanced mode.
 - v5.0: Thêm LMS360 Hack Advanced. Xem, chỉnh sửa và tải về bài giảng LMS360.

@@ -15,17 +15,30 @@ const contentUrlInput = document.getElementById('contentUrl');
 const urlLoadingIndicator = document.getElementById('urlLoadingIndicator');
 const h5pContainer = document.getElementById('h5p-container');
 
-if ('serviceWorker' in navigator) {
-    if (window.location.protocol === 'file:') {
-        console.error('Service Worker không hoạt động với file:// . Vui lòng deploy server.');
-    } else {
-        navigator.serviceWorker.register('sw.js')
-            .then(registration => console.log('Service Worker đã được đăng ký!'))
-            .catch(err => console.error('Service Worker không hoạt động:', err));
-    }
-} else {
-    console.error('Service Worker không thể hoạt động trên trình duyệt này.');
+
+function getMimeType(path) {
+    const ext = path.split('.').pop().toLowerCase();
+    const types = {
+        'json': 'application/json',
+        'js': 'application/javascript',
+        'css': 'text/css',
+        'png': 'image/png',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'gif': 'image/gif',
+        'svg': 'image/svg+xml',
+        'mp4': 'video/mp4',
+        'mp3': 'audio/mpeg',
+        'wav': 'audio/wav',
+        'woff': 'font/woff',
+        'woff2': 'font/woff2',
+        'ttf': 'font/ttf',
+        'otf': 'font/otf',
+        'html': 'text/html'
+    };
+    return types[ext] || 'application/octet-stream';
 }
+
 
 let autoSaveTimeout = null;
 const AUTO_SAVE_DELAY = 1000;
@@ -379,39 +392,64 @@ function switchTab(e, tabName) {
     }
 }
 
+
+function resolvePath(currentPath, relativePath) {
+    const stack = currentPath.split('/');
+    stack.pop();
+    const parts = relativePath.split('/');
+    for (const part of parts) {
+        if (part === '.') continue;
+        if (part === '..') stack.pop();
+        else stack.push(part);
+    }
+    return stack.join('/');
+}
+
 async function renderH5P() {
     if (!h5pData.json) return;
 
     h5pContainer.innerHTML = '<div class="h5p-loading-indicator" style="justify-content: center; margin: 20px;">Đang chuẩn bị preview...</div>';
 
     try {
-        const filesToContent = {};
+        const filesToBlobUrl = {};
+
         for (const [path, file] of Object.entries(h5pData.files)) {
             if (!file.dir) {
-                filesToContent[path] = await file.async('uint8array');
+                const data = await file.async('uint8array');
+                const blob = new Blob([data], { type: getMimeType(path) });
+                filesToBlobUrl[path] = URL.createObjectURL(blob);
+            }
+        }
+        console.log("H5P Asset Keys mapped:", Object.keys(filesToBlobUrl));
+
+        for (const [path, file] of Object.entries(h5pData.files)) {
+            if (!file.dir && path.endsWith('.css')) {
+                const text = await file.async('string');
+                const newText = text.replace(/url\(['"]?([^'"\)]+)['"]?\)/g, (match, url) => {
+                    if (url.startsWith('data:') || url.startsWith('http') || url.startsWith('https')) return match;
+
+                    const cleanUrl = url.split('?')[0].split('#')[0];
+                    const resolved = resolvePath(path, cleanUrl);
+
+                    if (filesToBlobUrl[resolved]) {
+                        return `url('${filesToBlobUrl[resolved]}')`;
+                    }
+                    return match;
+                });
+
+                URL.revokeObjectURL(filesToBlobUrl[path]);
+                const newBlob = new Blob([newText], { type: 'text/css' });
+                filesToBlobUrl[path] = URL.createObjectURL(newBlob);
             }
         }
 
-        filesToContent['h5p.json'] = new TextEncoder().encode(JSON.stringify(h5pData.json));
+        const h5pJsonBlob = new Blob([JSON.stringify(h5pData.json)], { type: 'application/json' });
+        filesToBlobUrl['h5p.json'] = URL.createObjectURL(h5pJsonBlob);
+
         if (h5pData.content) {
-            filesToContent['content/content.json'] = new TextEncoder().encode(JSON.stringify(h5pData.content));
+            const contentJsonBlob = new Blob([JSON.stringify(h5pData.content)], { type: 'application/json' });
+            filesToBlobUrl['content/content.json'] = URL.createObjectURL(contentJsonBlob);
         }
-
-        await new Promise((resolve, reject) => {
-            const channel = new MessageChannel();
-            channel.port1.onmessage = (event) => {
-                if (event.data.status === 'ok') resolve();
-                else reject(new Error('Không thể set H5P data trong SW'));
-            };
-            if (!navigator.serviceWorker.controller) {
-                reject(new Error('Service Worker không hoạt động. Vui lòng refresh.'));
-                return;
-            }
-            navigator.serviceWorker.controller.postMessage({
-                type: 'SET_H5P_DATA',
-                files: filesToContent
-            }, [channel.port2]);
-        });
 
         h5pContainer.innerHTML = '';
         const iframe = document.createElement('iframe');
@@ -433,6 +471,9 @@ async function renderH5P() {
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <script>
+                    window.H5P_PREVIEW_FILES = ${JSON.stringify(filesToBlobUrl)};
+                </script>
                 <script src="h5p-preview-lib/main.bundle.js"></script>
                 <style>
                     body { margin: 0; padding: 15px; background: white; overflow: hidden; font-family: sans-serif; }
@@ -466,7 +507,8 @@ async function renderH5P() {
             const options = {
                 h5pJsonPath: '/h5p-preview',
                 frameJs: 'h5p-preview-lib/frame.bundle.js',
-                frameCss: 'h5p-preview-lib/h5p.css'
+                frameCss: 'h5p-preview-lib/h5p.css',
+                embedType: 'div'
             };
             new iframe.contentWindow.H5PStandalone.H5P(doc.getElementById('h5p-iframe-wrapper'), options);
         };
@@ -474,9 +516,6 @@ async function renderH5P() {
     } catch (error) {
         console.error('H5P Render Error:', error);
         let errorMsg = error.message;
-        if (window.location.protocol === 'file:') {
-            errorMsg = 'H5P Viewer yêu cầu chạy qua HTTP/HTTPS server (ví dụ: Live Server). Không thể chạy trực tiếp từ file (file://).';
-        }
         h5pContainer.innerHTML = 'Lỗi khi hiển thị: ' + errorMsg;
     }
 }

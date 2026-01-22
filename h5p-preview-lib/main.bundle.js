@@ -1,66 +1,253 @@
-! function(e, n) {
+(function () {
+    console.log("H5P Interceptor V8 Loaded");
+    const FILES = window.H5P_PREVIEW_FILES || {};
+    const PROCESSED = Symbol('h5p-processed');
+
+    function getKey(url) {
+        if (!url || typeof url !== 'string') return null;
+
+        if (url.startsWith('blob:') || url.startsWith('data:')) return null;
+        if ((url.startsWith('http://') || url.startsWith('https://')) && !url.includes('h5p-preview/')) {
+            return null;
+        }
+
+        if (url.includes('h5p-preview/')) {
+            let key = url.split('h5p-preview/')[1].split('?')[0].split('#')[0];
+            if (key.endsWith('/')) key = key.slice(0, -1);
+            return key;
+        }
+
+        return url;
+    }
+
+    function getBlobUrl(key) {
+        if (!key) return null;
+        if (FILES[key]) return FILES[key];
+        if (!key.startsWith('content/') && FILES['content/' + key]) return FILES['content/' + key];
+        if (!key.startsWith('H5P.') && key.includes('-')) {
+            const altKey = 'H5P.' + key;
+            if (FILES[altKey]) return FILES[altKey];
+        }
+        if (key.startsWith('H5P.')) {
+            const altKey = key.substring(4);
+            if (FILES[altKey]) return FILES[altKey];
+        }
+        return null;
+    }
+
+    let h5pInstance = window.H5P;
+    const patchH5P = (val) => {
+        if (val && !val._patched_v8) {
+            console.log("H5P Global detected, applying V8 patches...");
+            val._patched_v8 = true;
+
+            const wrap = (original) => function (...args) {
+                const result = original ? original.apply(this, args) : args[0];
+                if (typeof result === 'string') {
+                    const blob = getBlobUrl(getKey(result)) || getBlobUrl(result);
+                    if (blob) return blob;
+                }
+                return result;
+            };
+
+            if (val.getPath) val.getPath = wrap(val.getPath);
+            if (val.getLibraryPath) val.getLibraryPath = wrap(val.getLibraryPath);
+        }
+    };
+
+    Object.defineProperty(window, 'H5P', {
+        get: function () { return h5pInstance; },
+        set: function (val) {
+            h5pInstance = val;
+            patchH5P(val);
+        },
+        configurable: true
+    });
+    if (window.H5P) patchH5P(window.H5P);
+
+    const checkNode = (node) => {
+        if (node.nodeType !== 1) return;
+        if (node[PROCESSED]) return;
+
+        ['src', 'href'].forEach(attr => {
+            const val = node.getAttribute && node.getAttribute(attr);
+            if (val) {
+                const blob = getBlobUrl(getKey(val));
+                if (blob && val !== blob) {
+                    node.setAttribute(attr, blob);
+                }
+            }
+        });
+
+        if (node.style && node.style.backgroundImage) {
+            const bg = node.style.backgroundImage;
+            if (bg.includes('h5p-preview/')) {
+                const newValue = bg.replace(/url\(['"]?([^'"\)]+)['"]?\)/g, (match, url) => {
+                    const blob = getBlobUrl(getKey(url));
+                    return blob ? `url('${blob}')` : match;
+                });
+                if (newValue !== bg) node.style.setProperty('background-image', newValue);
+            }
+        }
+
+        const targets = ['IMG', 'SCRIPT', 'LINK', 'SOURCE', 'VIDEO', 'AUDIO', 'IFRAME'];
+        if (targets.includes(node.tagName)) {
+            node[PROCESSED] = true;
+        }
+    };
+
+    const observer = new MutationObserver((mutations) => {
+        for (let i = 0; i < mutations.length; i++) {
+            const m = mutations[i];
+            if (m.type === 'childList') {
+                m.addedNodes.forEach(node => {
+                    if (node.nodeType === 1) {
+                        checkNode(node);
+                        if (node.children && node.children.length > 0) {
+                            const sub = node.querySelectorAll('img, script, link, video, audio, source, iframe, [style*="background-image"]');
+                            sub.forEach(checkNode);
+                        }
+                    }
+                });
+            } else if (m.type === 'attributes') {
+                const val = m.target.getAttribute(m.attributeName);
+                if (val && !val.startsWith('blob:')) {
+                    const blob = getBlobUrl(getKey(val));
+                    if (blob && val !== blob) m.target.setAttribute(m.attributeName, blob);
+                }
+            }
+        }
+    });
+
+    observer.observe(document, { childList: true, subtree: true, attributes: true, attributeFilter: ['src', 'href', 'style'] });
+
+    const hookProperty = (proto, prop) => {
+        const descriptor = Object.getOwnPropertyDescriptor(proto, prop);
+        if (!descriptor) return;
+        Object.defineProperty(proto, prop, {
+            set: function (val) {
+                if (typeof val === 'string' && !val.startsWith('blob:')) {
+                    const blob = getBlobUrl(getKey(val));
+                    if (blob) {
+                        this[PROCESSED] = true;
+                        return descriptor.set.call(this, blob);
+                    }
+                }
+                return descriptor.set.call(this, val);
+            },
+            get: descriptor.get
+        });
+    };
+
+    ['src', 'href'].forEach(p => {
+        [HTMLImageElement, HTMLScriptElement, HTMLLinkElement, HTMLSourceElement, HTMLVideoElement, HTMLAudioElement, HTMLIFrameElement].forEach(el => {
+            hookProperty(el.prototype, p);
+        });
+    });
+
+    const originalFetch = window.fetch;
+    window.fetch = function (input, init) {
+        let url = (input instanceof Request) ? input.url : input;
+        if (typeof url === 'string' && !url.startsWith('blob:')) {
+            const blob = getBlobUrl(getKey(url));
+            if (blob) {
+                if (input instanceof Request) {
+                    const newRequest = new Request(blob, {
+                        method: input.method,
+                        headers: input.headers,
+                        body: input.body,
+                        mode: input.mode,
+                        credentials: input.credentials,
+                        cache: input.cache,
+                        redirect: input.redirect,
+                        referrer: input.referrer,
+                        integrity: input.integrity,
+                        keepalive: input.keepalive,
+                        signal: input.signal
+                    });
+                    return originalFetch(newRequest);
+                }
+                return originalFetch(blob, init);
+            }
+        }
+        return originalFetch(input, init);
+    };
+
+    const originalOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function (method, url, ...args) {
+        if (typeof url === 'string' && !url.startsWith('blob:')) {
+            const blob = getBlobUrl(getKey(url));
+            if (blob) {
+                return originalOpen.call(this, method, blob, ...args);
+            }
+        }
+        return originalOpen.apply(this, arguments);
+    };
+
+})();
+! function (e, n) {
     "object" == typeof exports && "object" == typeof module ? module.exports = n() : "function" == typeof define && define.amd ? define([], n) : "object" == typeof exports ? exports["h5p-standalone"] = n() : e.H5PStandalone = n()
 }(self, (() => (() => {
     var e = {
-            633: e => {
-                function n(e, n) {
-                    var t = e.length,
-                        r = new Array(t),
-                        o = {},
-                        i = t,
-                        a = function(e) {
-                            for (var n = new Map, t = 0, r = e.length; t < r; t++) {
-                                var o = e[t];
-                                n.has(o[0]) || n.set(o[0], new Set), n.has(o[1]) || n.set(o[1], new Set), n.get(o[0]).add(o[1])
-                            }
-                            return n
-                        }(n),
-                        s = function(e) {
-                            for (var n = new Map, t = 0, r = e.length; t < r; t++) n.set(e[t], t);
-                            return n
-                        }(e);
-                    for (n.forEach((function(e) {
-                            if (!s.has(e[0]) || !s.has(e[1])) throw new Error("Unknown node. There is an unknown node in the supplied edges.")
-                        })); i--;) o[i] || c(e[i], i, new Set);
-                    return r;
+        633: e => {
+            function n(e, n) {
+                var t = e.length,
+                    r = new Array(t),
+                    o = {},
+                    i = t,
+                    a = function (e) {
+                        for (var n = new Map, t = 0, r = e.length; t < r; t++) {
+                            var o = e[t];
+                            n.has(o[0]) || n.set(o[0], new Set), n.has(o[1]) || n.set(o[1], new Set), n.get(o[0]).add(o[1])
+                        }
+                        return n
+                    }(n),
+                    s = function (e) {
+                        for (var n = new Map, t = 0, r = e.length; t < r; t++) n.set(e[t], t);
+                        return n
+                    }(e);
+                for (n.forEach((function (e) {
+                    if (!s.has(e[0]) || !s.has(e[1])) throw new Error("Unknown node. There is an unknown node in the supplied edges.")
+                })); i--;) o[i] || c(e[i], i, new Set);
+                return r;
 
-                    function c(e, n, i) {
-                        if (i.has(e)) {
-                            var l;
-                            try {
-                                l = ", node was:" + JSON.stringify(e)
-                            } catch (e) {
-                                l = ""
-                            }
-                            throw new Error("Cyclic dependency" + l)
+                function c(e, n, i) {
+                    if (i.has(e)) {
+                        var l;
+                        try {
+                            l = ", node was:" + JSON.stringify(e)
+                        } catch (e) {
+                            l = ""
                         }
-                        if (!s.has(e)) throw new Error("Found unknown node. Make sure to provided all involved nodes. Unknown node: " + JSON.stringify(e));
-                        if (!o[n]) {
-                            o[n] = !0;
-                            var u = a.get(e) || new Set;
-                            if (n = (u = Array.from(u)).length) {
-                                i.add(e);
-                                do {
-                                    var d = u[--n];
-                                    c(d, s.get(d), i)
-                                } while (n);
-                                i.delete(e)
-                            }
-                            r[--t] = e
+                        throw new Error("Cyclic dependency" + l)
+                    }
+                    if (!s.has(e)) throw new Error("Found unknown node. Make sure to provided all involved nodes. Unknown node: " + JSON.stringify(e));
+                    if (!o[n]) {
+                        o[n] = !0;
+                        var u = a.get(e) || new Set;
+                        if (n = (u = Array.from(u)).length) {
+                            i.add(e);
+                            do {
+                                var d = u[--n];
+                                c(d, s.get(d), i)
+                            } while (n);
+                            i.delete(e)
                         }
+                        r[--t] = e
                     }
                 }
-                e.exports = function(e) {
-                    return n(function(e) {
-                        for (var n = new Set, t = 0, r = e.length; t < r; t++) {
-                            var o = e[t];
-                            n.add(o[0]), n.add(o[1])
-                        }
-                        return Array.from(n)
-                    }(e), e)
-                }, e.exports.array = n
             }
-        },
+            e.exports = function (e) {
+                return n(function (e) {
+                    for (var n = new Set, t = 0, r = e.length; t < r; t++) {
+                        var o = e[t];
+                        n.add(o[0]), n.add(o[1])
+                    }
+                    return Array.from(n)
+                }(e), e)
+            }, e.exports.array = n
+        }
+    },
         n = {};
 
     function t(r) {
@@ -83,37 +270,37 @@
         t.d(r, {
             default: () => m
         });
-        var e = function(e, n, t, r) {
-                return new(t || (t = Promise))((function(o, i) {
-                    function a(e) {
-                        try {
-                            c(r.next(e))
-                        } catch (e) {
-                            i(e)
-                        }
+        var e = function (e, n, t, r) {
+            return new (t || (t = Promise))((function (o, i) {
+                function a(e) {
+                    try {
+                        c(r.next(e))
+                    } catch (e) {
+                        i(e)
                     }
+                }
 
-                    function s(e) {
-                        try {
-                            c(r.throw(e))
-                        } catch (e) {
-                            i(e)
-                        }
+                function s(e) {
+                    try {
+                        c(r.throw(e))
+                    } catch (e) {
+                        i(e)
                     }
+                }
 
-                    function c(e) {
-                        var n;
-                        e.done ? o(e.value) : (n = e.value, n instanceof t ? n : new t((function(e) {
-                            e(n)
-                        }))).then(a, s)
-                    }
-                    c((r = r.apply(e, n || [])).next())
-                }))
-            },
-            n = function(e, n) {
+                function c(e) {
+                    var n;
+                    e.done ? o(e.value) : (n = e.value, n instanceof t ? n : new t((function (e) {
+                        e(n)
+                    }))).then(a, s)
+                }
+                c((r = r.apply(e, n || [])).next())
+            }))
+        },
+            n = function (e, n) {
                 var t, r, o, i, a = {
                     label: 0,
-                    sent: function() {
+                    sent: function () {
                         if (1 & o[0]) throw o[1];
                         return o[1]
                     },
@@ -124,13 +311,13 @@
                     next: s(0),
                     throw: s(1),
                     return: s(2)
-                }, "function" == typeof Symbol && (i[Symbol.iterator] = function() {
+                }, "function" == typeof Symbol && (i[Symbol.iterator] = function () {
                     return this
                 }), i;
 
                 function s(s) {
-                    return function(c) {
-                        return function(s) {
+                    return function (c) {
+                        return function (s) {
                             if (t) throw new TypeError("Generator is already executing.");
                             for (; i && (i = 0, s[0] && (a = 0)), a;) try {
                                 if (t = 1, r && (o = 2 & s[0] ? r.return : s[0] ? r.throw || ((o = r.return) && o.call(r), 0) : r.next) && !(o = o.call(r, s[1])).done) return o;
@@ -195,8 +382,8 @@
         }
 
         function i(t, r) {
-            return e(this, void 0, void 0, (function() {
-                return n(this, (function(e) {
+            return e(this, void 0, void 0, (function () {
+                return n(this, (function (e) {
                     switch (e.label) {
                         case 0:
                             return r || (r = {
@@ -210,19 +397,19 @@
         }
 
         function a(t, r) {
-            return e(this, void 0, void 0, (function() {
+            return e(this, void 0, void 0, (function () {
                 var e, o, i, a;
-                return n(this, (function(n) {
+                return n(this, (function (n) {
                     switch (n.label) {
                         case 0:
                             for (e = t.getElementsByTagName("script"), o = [], i = 0; i < e.length; i++) e[i].dataset.h5p && o.push(e[i]);
-                            return a = [], r.forEach((function(e) {
-                                if (!o.some((function(n) {
-                                        return n.dataset.h5p === e
-                                    }))) {
+                            return a = [], r.forEach((function (e) {
+                                if (!o.some((function (n) {
+                                    return n.dataset.h5p === e
+                                }))) {
                                     var n = document.createElement("script");
                                     n.src = e, n.async = !1, n.defer = !1, n.dataset.h5p = e;
-                                    var r = new Promise((function(e) {
+                                    var r = new Promise((function (e) {
                                         n.onload = e
                                     }));
                                     t.append(n), a.push(r)
@@ -237,10 +424,10 @@
 
         function s(e, n) {
             for (var t = e.getElementsByTagName("link"), r = [], o = 0; o < t.length; o++) t[o].dataset.h5p && r.push(t[o]);
-            n.forEach((function(n) {
-                if (!r.some((function(e) {
-                        return e.dataset.h5p === n
-                    }))) {
+            n.forEach((function (n) {
+                if (!r.some((function (e) {
+                    return e.dataset.h5p === n
+                }))) {
                     var t = document.createElement("link");
                     t.href = n, t.dataset.h5p = n, t.rel = "stylesheet", t.type = "text/css", e.append(t)
                 }
@@ -257,7 +444,7 @@
             var i = r.shift();
             if (c(e) && c(i))
                 for (var a in i) c(i[a]) ? (e[a] || Object.assign(e, ((n = {})[a] = {}, n)), l(e[a], i[a])) : Object.assign(e, ((t = {})[a] = i[a], t));
-            return l.apply(void 0, function(e, n, t) {
+            return l.apply(void 0, function (e, n, t) {
                 if (t || 2 === arguments.length)
                     for (var r, o = 0, i = n.length; o < i; o++) !r && o in n || (r || (r = Array.prototype.slice.call(n, 0, o)), r[o] = n[o]);
                 return e.concat(r || Array.prototype.slice.call(n))
@@ -265,41 +452,41 @@
         }
 
         function u(e, n) {
-            return n.filter((function(n) {
+            return n.filter((function (n) {
                 return e.indexOf(n) < 0
             })).concat(e)
         }
-        var d = function(e, n, t, r) {
-                return new(t || (t = Promise))((function(o, i) {
-                    function a(e) {
-                        try {
-                            c(r.next(e))
-                        } catch (e) {
-                            i(e)
-                        }
+        var d = function (e, n, t, r) {
+            return new (t || (t = Promise))((function (o, i) {
+                function a(e) {
+                    try {
+                        c(r.next(e))
+                    } catch (e) {
+                        i(e)
                     }
+                }
 
-                    function s(e) {
-                        try {
-                            c(r.throw(e))
-                        } catch (e) {
-                            i(e)
-                        }
+                function s(e) {
+                    try {
+                        c(r.throw(e))
+                    } catch (e) {
+                        i(e)
                     }
+                }
 
-                    function c(e) {
-                        var n;
-                        e.done ? o(e.value) : (n = e.value, n instanceof t ? n : new t((function(e) {
-                            e(n)
-                        }))).then(a, s)
-                    }
-                    c((r = r.apply(e, n || [])).next())
-                }))
-            },
-            p = function(e, n) {
+                function c(e) {
+                    var n;
+                    e.done ? o(e.value) : (n = e.value, n instanceof t ? n : new t((function (e) {
+                        e(n)
+                    }))).then(a, s)
+                }
+                c((r = r.apply(e, n || [])).next())
+            }))
+        },
+            p = function (e, n) {
                 var t, r, o, i, a = {
                     label: 0,
-                    sent: function() {
+                    sent: function () {
                         if (1 & o[0]) throw o[1];
                         return o[1]
                     },
@@ -310,13 +497,13 @@
                     next: s(0),
                     throw: s(1),
                     return: s(2)
-                }, "function" == typeof Symbol && (i[Symbol.iterator] = function() {
+                }, "function" == typeof Symbol && (i[Symbol.iterator] = function () {
                     return this
                 }), i;
 
                 function s(s) {
-                    return function(c) {
-                        return function(s) {
+                    return function (c) {
+                        return function (s) {
                             if (t) throw new TypeError("Generator is already executing.");
                             for (; i && (i = 0, s[0] && (a = 0)), a;) try {
                                 if (t = 1, r && (o = 2 & s[0] ? r.return : s[0] ? r.throw || ((o = r.return) && o.call(r), 0) : r.next) && !(o = o.call(r, s[1])).done) return o;
@@ -372,12 +559,12 @@
                 }
             },
             f = t(633),
-            h = function() {
+            h = function () {
                 function e(e, n) {
                     var t = this;
                     this.libraryFolderContainsVersion = !0;
                     var r = n.id || Math.random().toString(36).substr(2, 9);
-                    return this.prepareH5PEnvironment(r, n).then((function(o) {
+                    return this.prepareH5PEnvironment(r, n).then((function (o) {
                         window.H5P || (window.H5P = {}), window.H5P.preventInit = !0;
                         var i = n.embedType ? n.embedType : "iframe";
                         return t.renderPlayerFrame({
@@ -385,15 +572,15 @@
                             contentId: r,
                             embedType: i,
                             H5PIntegration: o
-                        }).then((function() {
+                        }).then((function () {
                             return (void 0 === n.preventH5PInit || n.preventH5PInit) && ("function" == typeof window.H5P.init && window.H5P.init(), window.H5P.preventInit = !1), r
                         }))
                     }))
                 }
-                return e.prototype.renderPlayerFrame = function(e) {
-                    return d(this, void 0, void 0, (function() {
+                return e.prototype.renderPlayerFrame = function (e) {
+                    return d(this, void 0, void 0, (function () {
                         var n, t, r, o, i, c;
-                        return p(this, (function(l) {
+                        return p(this, (function (l) {
                             switch (l.label) {
                                 case 0:
                                     if (!(e.anchorElement instanceof HTMLElement)) throw new Error("createH5P must be passed an element");
@@ -409,11 +596,11 @@
                             }
                         }))
                     }))
-                }, e.prototype.prepareH5PEnvironment = function(e, n) {
+                }, e.prototype.prepareH5PEnvironment = function (e, n) {
                     var t, r;
-                    return d(this, void 0, void 0, (function() {
+                    return d(this, void 0, void 0, (function () {
                         var a, s, c, d, f, h, m, y, b, v, w, g, C, P, D, F, N;
-                        return p(this, (function(p) {
+                        return p(this, (function (p) {
                             switch (p.label) {
                                 case 0:
                                     return a = this.getH5PPaths(n), s = a.h5pJsonPath, c = a.contentJsonPath, d = a.librariesPath, [4, i("".concat(s, "/h5p.json"), null == n ? void 0 : n.assetsRequestFetchOptions)];
@@ -507,9 +694,9 @@
                                     }, window && window.H5PIntegration && (C = l(C, window.H5PIntegration)), P = [o("./frame.bundle.js")], D = [o("./styles/h5p.css")], n.frameJs && (P = [o(n.frameJs)]), n.frameCss && (D = [o(n.frameCss)]), C.core ? (C.core.styles = u(C.core.styles, D), C.core.scripts = u(C.core.scripts, P)) : C.core = {
                                         styles: D,
                                         scripts: P
-                                    }, C.url = e, C.urlLibraries = d, C.postUserStatistics = !!n.postUserStatistics, C.reportingIsEnabled = !!n.reportingIsEnabled, n.saveFreq && "number" == typeof n.saveFreq && (C.saveFreq = n.saveFreq), n.user && (C.user = n.user), (null === (t = n.ajax) || void 0 === t ? void 0 : t.contentUserDataUrl) && (C.ajax.contentUserData = n.ajax.contentUserDataUrl), (null === (r = n.ajax) || void 0 === r ? void 0 : r.setFinishedUrl) && (C.ajax.setFinished = n.ajax.setFinishedUrl), n.translations && (C.l10n = l(C.l10n, n.translations)), n.customCss && "string" == typeof n.customCss && (n.customCss = [n.customCss]), n.customJs && "string" == typeof n.customJs && (n.customJs = [n.customJs]), w = w.concat((n.customCss || []).map((function(e) {
+                                    }, C.url = e, C.urlLibraries = d, C.postUserStatistics = !!n.postUserStatistics, C.reportingIsEnabled = !!n.reportingIsEnabled, n.saveFreq && "number" == typeof n.saveFreq && (C.saveFreq = n.saveFreq), n.user && (C.user = n.user), (null === (t = n.ajax) || void 0 === t ? void 0 : t.contentUserDataUrl) && (C.ajax.contentUserData = n.ajax.contentUserDataUrl), (null === (r = n.ajax) || void 0 === r ? void 0 : r.setFinishedUrl) && (C.ajax.setFinished = n.ajax.setFinishedUrl), n.translations && (C.l10n = l(C.l10n, n.translations)), n.customCss && "string" == typeof n.customCss && (n.customCss = [n.customCss]), n.customJs && "string" == typeof n.customJs && (n.customJs = [n.customJs]), w = w.concat((n.customCss || []).map((function (e) {
                                         return o(e)
-                                    }))), g = g.concat((n.customJs || []).map((function(e) {
+                                    }))), g = g.concat((n.customJs || []).map((function (e) {
                                         return o(e)
                                     }))), F = {
                                         copyright: !!n.copyright,
@@ -540,7 +727,7 @@
                             }
                         }))
                     }))
-                }, e.prototype.getH5PPaths = function(e) {
+                }, e.prototype.getH5PPaths = function (e) {
                     var n = o("workspace");
                     e.h5pJsonPath && (n = o(e.h5pJsonPath));
                     var t = "".concat(n, "/content");
@@ -551,10 +738,10 @@
                         contentJsonPath: t,
                         librariesPath: r
                     }
-                }, e.prototype.libraryFolderNameIncludesVersion = function(e, n, t) {
-                    return d(this, void 0, void 0, (function() {
+                }, e.prototype.libraryFolderNameIncludesVersion = function (e, n, t) {
+                    return d(this, void 0, void 0, (function () {
                         var r, o;
-                        return p(this, (function(a) {
+                        return p(this, (function (a) {
                             switch (a.label) {
                                 case 0:
                                     r = this.libraryToFolderName(n), a.label = 1;
@@ -569,43 +756,43 @@
                             }
                         }))
                     }))
-                }, e.prototype.libraryToFolderName = function(e) {
+                }, e.prototype.libraryToFolderName = function (e) {
                     var n = e.machineName;
                     return this.libraryFolderContainsVersion && (void 0 !== e.majorVersion && (n += "-".concat(e.majorVersion)), void 0 !== e.minorVersion && (n += ".".concat(e.minorVersion))), n
-                }, e.prototype.findMainLibrary = function(e, n, t) {
-                    return d(this, void 0, void 0, (function() {
+                }, e.prototype.findMainLibrary = function (e, n, t) {
+                    return d(this, void 0, void 0, (function () {
                         var r, o;
-                        return p(this, (function(a) {
-                            return r = e.preloadedDependencies.find((function(n) {
+                        return p(this, (function (a) {
+                            return r = e.preloadedDependencies.find((function (n) {
                                 return n.machineName === e.mainLibrary
                             })), o = this.libraryToFolderName(r), [2, i("".concat(n, "/").concat(o, "/library.json"), t)]
                         }))
                     }))
-                }, e.prototype.findAllDependencies = function(e, n, t) {
-                    return d(this, void 0, void 0, (function() {
+                }, e.prototype.findAllDependencies = function (e, n, t) {
+                    return d(this, void 0, void 0, (function () {
                         var r, o = this;
-                        return p(this, (function(i) {
-                            return r = e.preloadedDependencies.map((function(e) {
+                        return p(this, (function (i) {
+                            return r = e.preloadedDependencies.map((function (e) {
                                 return o.libraryToFolderName(e)
                             })), [2, this.loadDependencies(r, [], n, t)]
                         }))
                     }))
-                }, e.prototype.loadDependencies = function(e, n, t, r) {
-                    return d(this, void 0, void 0, (function() {
+                }, e.prototype.loadDependencies = function (e, n, t, r) {
+                    return d(this, void 0, void 0, (function () {
                         var o, i, a, s, c = this;
-                        return p(this, (function(l) {
+                        return p(this, (function (l) {
                             switch (l.label) {
                                 case 0:
-                                    return o = n, i = [], a = e.map((function(e) {
+                                    return o = n, i = [], a = e.map((function (e) {
                                         return c.findLibraryDependencies(e, t, r)
                                     })), [4, Promise.all(a)];
                                 case 1:
-                                    return (s = l.sent()).forEach((function(e) {
-                                        o.push(e), e.dependencies.forEach((function(e) {
-                                            var n = o.find((function(n) {
-                                                    return n.libraryFolderName === e
-                                                })),
-                                                t = s.find((function(n) {
+                                    return (s = l.sent()).forEach((function (e) {
+                                        o.push(e), e.dependencies.forEach((function (e) {
+                                            var n = o.find((function (n) {
+                                                return n.libraryFolderName === e
+                                            })),
+                                                t = s.find((function (n) {
                                                     return n.libraryFolderName === e
                                                 }));
                                             n || t || i.push(e)
@@ -614,15 +801,15 @@
                             }
                         }))
                     }))
-                }, e.prototype.findLibraryDependencies = function(e, n, t) {
-                    return d(this, void 0, void 0, (function() {
+                }, e.prototype.findLibraryDependencies = function (e, n, t) {
+                    return d(this, void 0, void 0, (function () {
                         var r, o, a = this;
-                        return p(this, (function(s) {
+                        return p(this, (function (s) {
                             switch (s.label) {
                                 case 0:
                                     return [4, i("".concat(n, "/").concat(e, "/library.json"), t)];
                                 case 1:
-                                    return r = s.sent(), o = [], r.preloadedDependencies && (o = r.preloadedDependencies.map((function(e) {
+                                    return r = s.sent(), o = [], r.preloadedDependencies && (o = r.preloadedDependencies.map((function (e) {
                                         return a.libraryToFolderName(e)
                                     }))), [2, {
                                         libraryFolderName: e,
@@ -633,24 +820,24 @@
                             }
                         }))
                     }))
-                }, e.prototype.sortDependencies = function(e, n) {
+                }, e.prototype.sortDependencies = function (e, n) {
                     var t = [],
                         r = {},
                         o = {};
-                    e.forEach((function(e) {
-                        0 === e.dependencies.length && t.push([e.libraryFolderName]), e.dependencies.forEach((function(n) {
+                    e.forEach((function (e) {
+                        0 === e.dependencies.length && t.push([e.libraryFolderName]), e.dependencies.forEach((function (n) {
                             t.push([e.libraryFolderName, n])
-                        })), e.preloadedCss && (r[e.libraryFolderName] = [], r[e.libraryFolderName] && (r[e.libraryFolderName] = r[e.libraryFolderName]), e.preloadedCss.forEach((function(t) {
+                        })), e.preloadedCss && (r[e.libraryFolderName] = [], r[e.libraryFolderName] && (r[e.libraryFolderName] = r[e.libraryFolderName]), e.preloadedCss.forEach((function (t) {
                             var o = "".concat(n, "/").concat(e.libraryFolderName, "/").concat(t.path);
                             r[e.libraryFolderName].push(o)
-                        }))), e.preloadedJs && (o[e.libraryFolderName] = [], o[e.libraryFolderName] && (o[e.libraryFolderName] = o[e.libraryFolderName]), e.preloadedJs.forEach((function(t) {
+                        }))), e.preloadedJs && (o[e.libraryFolderName] = [], o[e.libraryFolderName] && (o[e.libraryFolderName] = o[e.libraryFolderName]), e.preloadedJs.forEach((function (t) {
                             var r = "".concat(n, "/").concat(e.libraryFolderName, "/").concat(t.path);
                             o[e.libraryFolderName].push(r)
                         })))
                     }));
                     var i = [],
                         a = [];
-                    return f(t).reverse().forEach((function(e) {
+                    return f(t).reverse().forEach((function (e) {
                         Array.prototype.push.apply(i, r[e]), Array.prototype.push.apply(a, o[e])
                     })), {
                         styles: i,
@@ -658,7 +845,7 @@
                     }
                 }, e
             }();
-        h.EventDispatcher = function() {};
+        h.EventDispatcher = function () { };
         const m = {
             H5P: h
         }
