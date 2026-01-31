@@ -7,7 +7,8 @@
 ### Version hiện tại: v6
 
 <p align="center">
-  <img width="90%" alt="image" src="https://github.com/user-attachments/assets/cc5e9c4c-1699-45e8-8c6b-68bcb2cc1874" />
+<img width="95%" alt="img" src="https://github.com/user-attachments/assets/7abe2a86-5ff6-4bb4-bdfd-b2aefa47d65f" />
+
 </p>
 
 ## ⚠️ Đây là trang mã nguồn của LMS360 Hack
