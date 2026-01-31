@@ -1,5 +1,10 @@
+// Đây là code được lấy từ H5P Standalone
+// Not actually my code :)
+// Nhưng có chỉnh sửa đôi chút
+// Nhằm intercept file h5p.
+
 (function () {
-    console.log("H5P Interceptor V8 Loaded");
+    console.log("Đã load H5P preview intercept");
     const FILES = window.H5P_PREVIEW_FILES || {};
     const PROCESSED = Symbol('h5p-processed');
 
@@ -38,7 +43,7 @@
     let h5pInstance = window.H5P;
     const patchH5P = (val) => {
         if (val && !val._patched_v8) {
-            console.log("H5P Global detected, applying V8 patches...");
+            console.log("Loading.... (plz work)");
             val._patched_v8 = true;
 
             const wrap = (original) => function (...args) {

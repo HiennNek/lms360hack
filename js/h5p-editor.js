@@ -213,21 +213,21 @@ function silentUpdateContent() {
         const infoGrid = document.getElementById('infoGrid');
         if (infoGrid && h5pData.json) {
             infoGrid.innerHTML = `
-                <div class="h5p-info-card">
-                    <h3>Tiêu đề</h3>
-                    <p>${h5pData.json.title || 'N/A'}</p>
+                <div class="info-card">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-primary mb-2">Tiêu đề</h3>
+                    <p class="text-slate-900 dark:text-white font-semibold break-words">${h5pData.json.title || 'N/A'}</p>
                 </div>
-                <div class="h5p-info-card">
-                    <h3>Thư viện chính</h3>
-                    <p>${h5pData.json.mainLibrary || 'N/A'}</p>
+                <div class="info-card">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-primary mb-2">Thư viện chính</h3>
+                    <p class="text-slate-900 dark:text-white font-semibold break-words">${h5pData.json.mainLibrary || 'N/A'}</p>
                 </div>
-                <div class="h5p-info-card">
-                    <h3>Ngôn ngữ</h3>
-                    <p>${h5pData.json.language || 'N/A'}</p>
+                <div class="info-card">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-primary mb-2">Ngôn ngữ</h3>
+                    <p class="text-slate-900 dark:text-white font-semibold break-words">${h5pData.json.language || 'N/A'}</p>
                 </div>
-                <div class="h5p-info-card">
-                    <h3>Kiểu hiển thị</h3>
-                    <p>${h5pData.json.embedTypes ? h5pData.json.embedTypes.join(', ') : 'N/A'}</p>
+                <div class="info-card">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-primary mb-2">Kiểu hiển thị</h3>
+                    <p class="text-slate-900 dark:text-white font-semibold break-words">${h5pData.json.embedTypes ? h5pData.json.embedTypes.join(', ') : 'N/A'}</p>
                 </div>
             `;
         }
@@ -270,9 +270,17 @@ fileInput.addEventListener('change', (e) => {
 function showAlert(message, type = 'success') {
     const alert = document.createElement('div');
     alert.className = `h5p-alert h5p-alert-${type}`;
-    alert.textContent = message;
+
+    const iconName = type === 'success' ? 'check_circle' : 'error';
+    alert.innerHTML = `
+        <span class="material-symbols-outlined">${iconName}</span>
+        <span>${message}</span>
+    `;
     alertContainer.appendChild(alert);
-    setTimeout(() => alert.remove(), 5000);
+    setTimeout(() => {
+        alert.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => alert.remove(), 300);
+    }, 5000);
 }
 
 async function handleFile(file) {
@@ -308,11 +316,11 @@ async function handleFile(file) {
         });
 
         displayH5pData();
-        viewerSection.classList.add('active');
+        viewerSection.classList.remove('hidden');
         showAlert('File đã load thành công!', 'success');
 
         h5pContainer.innerHTML = '';
-        if (document.querySelector('.h5p-tab[onclick*="preview"]').classList.contains('active')) {
+        if (document.querySelector('.advanced-tab[onclick*="preview"]').classList.contains('active')) {
             renderH5P();
         }
     } catch (error) {
@@ -323,21 +331,21 @@ async function handleFile(file) {
 function displayH5pData() {
     const infoGrid = document.getElementById('infoGrid');
     infoGrid.innerHTML = `
-        <div class="h5p-info-card">
-            <h3>Tiêu đề</h3>
-            <p>${h5pData.json.title || 'N/A'}</p>
+        <div class="info-card">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-primary mb-2">Tiêu đề</h3>
+            <p class="text-slate-900 dark:text-white font-semibold break-words">${h5pData.json.title || 'N/A'}</p>
         </div>
-        <div class="h5p-info-card">
-            <h3>Thư viện chính</h3>
-            <p>${h5pData.json.mainLibrary || 'N/A'}</p>
+        <div class="info-card">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-primary mb-2">Thư viện chính</h3>
+            <p class="text-slate-900 dark:text-white font-semibold break-words">${h5pData.json.mainLibrary || 'N/A'}</p>
         </div>
-        <div class="h5p-info-card">
-            <h3>Ngôn ngữ</h3>
-            <p>${h5pData.json.language || 'N/A'}</p>
+        <div class="info-card">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-primary mb-2">Ngôn ngữ</h3>
+            <p class="text-slate-900 dark:text-white font-semibold break-words">${h5pData.json.language || 'N/A'}</p>
         </div>
-        <div class="h5p-info-card">
-            <h3>Kiểu hiển thị</h3>
-            <p>${h5pData.json.embedTypes ? h5pData.json.embedTypes.join(', ') : 'N/A'}</p>
+        <div class="info-card">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-primary mb-2">Kiểu hiển thị</h3>
+            <p class="text-slate-900 dark:text-white font-semibold break-words">${h5pData.json.embedTypes ? h5pData.json.embedTypes.join(', ') : 'N/A'}</p>
         </div>
     `;
 
@@ -371,21 +379,26 @@ function displayH5pData() {
 
     sortedFiles.forEach(({ path, file }) => {
         const item = document.createElement('div');
-        item.className = 'h5p-file-item';
+        item.className = 'flex items-center justify-between p-4 bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition-all group';
         item.innerHTML = `
-            <span class="h5p-file-name">${path}</span>
-            <span class="h5p-file-size">${formatBytes(file._data.uncompressedSize)}</span>
+            <span class="font-mono text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">${path}</span>
+            <span class="text-xs font-medium text-slate-400 dark:text-white/20">${formatBytes(file._data.uncompressedSize)}</span>
         `;
         fileList.appendChild(item);
     });
 }
 
 function switchTab(e, tabName) {
-    document.querySelectorAll('.h5p-tab').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.h5p-tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelectorAll('.advanced-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.advanced-tab-content').forEach(content => {
+        content.classList.remove('block');
+        content.classList.add('hidden');
+    });
 
-    e.target.classList.add('active');
-    document.getElementById(`${tabName}Tab`).classList.add('active');
+    e.currentTarget.classList.add('active');
+    const targetTab = document.getElementById(`${tabName}Tab`);
+    targetTab.classList.remove('hidden');
+    targetTab.classList.add('block');
 
     if (tabName === 'preview') {
         renderH5P();
@@ -456,11 +469,7 @@ async function renderH5P() {
         iframe.style.width = '100%';
         iframe.style.boxSizing = 'border-box';
         iframe.style.display = 'block';
-        iframe.style.margin = '20px auto';
         iframe.style.height = 'auto';
-        iframe.style.border = '3px solid rgba(6, 181, 212, 0.2)';
-        iframe.style.borderRadius = '16px';
-        iframe.style.background = 'white';
         h5pContainer.appendChild(iframe);
 
         const doc = iframe.contentDocument || iframe.contentWindow.document;
@@ -476,9 +485,9 @@ async function renderH5P() {
                 </script>
                 <script src="h5p-preview-lib/main.bundle.js"></script>
                 <style>
-                    body { margin: 0; padding: 15px; background: white; overflow: hidden; font-family: sans-serif; }
+                    body { margin: 0; padding: 0; background: transparent; overflow: hidden; font-family: sans-serif; }
                     #h5p-iframe-wrapper { width: 100%; height: auto; min-height: 100px; box-sizing: border-box; }
-                    .h5p-container { border: none !important; box-shadow: none !important; }
+                    .h5p-container { border: none !important; box-shadow: none !important; border-radius: 0 !important; }
                 </style>
             </head>
             <body>
@@ -532,11 +541,16 @@ function toggleFullscreen() {
 }
 
 function switchSubTab(e, tabName) {
-    document.querySelectorAll('.h5p-sub-tab').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.h5p-sub-tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelectorAll('.advanced-sub-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.advanced-sub-tab-content').forEach(content => {
+        content.classList.remove('block');
+        content.classList.add('hidden');
+    });
 
-    e.target.classList.add('active');
-    document.getElementById(`${tabName}Tab`).classList.add('active');
+    e.currentTarget.classList.add('active');
+    const targetTab = document.getElementById(`${tabName}Tab`);
+    targetTab.classList.remove('hidden');
+    targetTab.classList.add('block');
 }
 
 function updateContent() {

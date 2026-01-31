@@ -1,3 +1,8 @@
+/*
+  Đây là phần code được lấy từ H5P Preview
+  Not actually my code :)
+*/
+
 @import 'font-open-sans.css';
 
 @font-face {
@@ -440,7 +445,7 @@ div.h5p-fullscreen {
 
 .h5p-popup-dialog .h5p-scroll-content::-webkit-scrollbar-thumb {
   box-shadow: 0 0 10px #000 inset;
-  border-radius: 4px;
+  border-radius: 1rem;
 }
 
 .h5p-popup-dialog .h5p-close {
@@ -574,7 +579,7 @@ div.h5p-fullscreen {
   text-align: left;
   border: 1px solid #dedede;
   background: linear-gradient(#ffffff, #f1f1f2);
-  border-radius: 0.25em;
+  border-radius: 1rem;
 }
 
 .h5p-big-button:before {
@@ -639,7 +644,7 @@ div.h5p-fullscreen {
   position: absolute;
   padding: 0 0.5em;
   line-height: 2;
-  border-radius: 4px;
+  border-radius: 1rem;
   white-space: nowrap;
   pointer-events: none;
   top: 0;
@@ -657,7 +662,7 @@ div.h5p-fullscreen {
 .h5peditor code {
   color: #3d3d3d;
   background: #e0e0e0;
-  border-radius: 2px;
+  border-radius: 1rem;
   padding: 0 5px;
 }
 
@@ -940,7 +945,7 @@ button.h5p-core-button {
   font-size: 1em;
   line-height: 1.2;
   padding: 0.5em 1.25em;
-  border-radius: 2em;
+  border-radius: 1rem;
 
   background: #2579c6;
   color: #fff;

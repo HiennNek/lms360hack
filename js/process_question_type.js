@@ -1,23 +1,35 @@
 const link_lms360 = document.getElementById("link_lms360");
 const hecker_button = document.getElementById("hecker_button");
 const container = document.getElementById("questions");
+const status_message = document.getElementById("status-message");
 
 // Update v4.2: Đã sử dụng backend mới 
 // Update v4.3: đã chuyển toàn bộ thuật toán xử lý câu hỏi sang backend
 function render_questions(backendResponse) {
   container.innerHTML = "";
+  if (status_message) status_message.innerHTML = "";
 
   const questions = backendResponse.questions || [];
   const actualQuestionCount = backendResponse.actualQuestionCount || backendResponse.count || questions.length;
 
   if (questions.length === 0) {
-    container.innerHTML = "<div class='error-message'>❌ Kiểu nội dung này chưa được hỗ trợ. Bạn có thể yêu cầu thêm dạng câu hỏi này qua phần \"Report Bug\"</div>";
+    const errorHTML = "<div class='error-message'>❌ Kiểu nội dung này chưa được hỗ trợ. Bạn có thể yêu cầu thêm dạng câu hỏi này qua phần \"Report Bug\"</div>";
+    if (status_message) {
+      status_message.innerHTML = errorHTML;
+    } else {
+      container.innerHTML = errorHTML;
+    }
     return;
   }
 
   if (!backendResponse.success) {
     const errorMsg = backendResponse.error || "Không thể xử lý câu hỏi.";
-    container.innerHTML = `<div class='error-message'>❌ ${errorMsg}</div>`;
+    const errorHTML = `<div class='error-message'>❌ ${errorMsg}</div>`;
+    if (status_message) {
+      status_message.innerHTML = errorHTML;
+    } else {
+      container.innerHTML = errorHTML;
+    }
     return;
   }
 
@@ -25,7 +37,13 @@ function render_questions(backendResponse) {
   if (actualQuestionCount && actualQuestionCount !== questions.length) {
     message += ` ( Số câu hỏi thực tế trong bài: ${actualQuestionCount} )`;
   }
-  container.innerHTML = `<div class="success-message">${message}</div><br>`;
+
+  const successHTML = `<div class="success-message">${message}</div>`;
+  if (status_message) {
+    status_message.innerHTML = successHTML;
+  } else {
+    container.innerHTML = successHTML + "<br>";
+  }
 
   const fragment = document.createDocumentFragment();
   questions.forEach((q, index) => {
@@ -33,7 +51,7 @@ function render_questions(backendResponse) {
     div.className = "question";
     const delay = Math.min(index, 15) * 50;
     div.style.animationDelay = `${delay}ms`;
-    div.innerHTML = `<h3>Câu hỏi ${index + 1}:</h3><p>${q.text}</p>`;
+    div.innerHTML = `<h3>Câu hỏi ${index + 1}:</h3><div class="question-content"><p>${q.text}</p></div>`;
     fragment.appendChild(div);
   });
   container.appendChild(fragment);
@@ -87,7 +105,12 @@ function hack_da_answer() {
       })
       .catch(err => {
         console.error(err);
-        container.innerHTML = `<div class='error-message'>❌ Lỗi: ${err.message}</div>`;
+        const errorHTML = `<div class='error-message'>❌ Lỗi: ${err.message}</div>`;
+        if (status_message) {
+          status_message.innerHTML = errorHTML;
+        } else {
+          container.innerHTML = errorHTML;
+        }
         hecker_button.disabled = false;
         hecker_button.textContent = "Lấy đáp án";
       });
@@ -115,18 +138,22 @@ link_lms360.addEventListener("keypress", (event) => {
   console.log('eula?:', bro_da_accept_chua_cham_hoi);
 
   if (!bro_da_accept_chua_cham_hoi) {
-    modal.classList.add('show');
+    if (modal) modal.classList.add('show');
   }
 
-  showEula.addEventListener('click', function (e) {
-    e.preventDefault();
-    modal.classList.add('show');
-  });
+  if (showEula && modal) {
+    showEula.addEventListener('click', function (e) {
+      e.preventDefault();
+      modal.classList.add('show');
+    });
+  }
 
-  closeEula.addEventListener('click', function () {
-    modal.classList.remove('show');
-    localStorage.setItem('bro_da_accept_chua_cham_hoi', 'true');
-  });
+  if (closeEula && modal) {
+    closeEula.addEventListener('click', function () {
+      modal.classList.remove('show');
+      localStorage.setItem('bro_da_accept_chua_cham_hoi', 'true');
+    });
+  }
 })();
 
 (function () {

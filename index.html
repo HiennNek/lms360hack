@@ -2,42 +2,60 @@
 <html lang="vi">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <title>LMS360 Hack - Tìm kiếm nội dung và đáp án bài giảng LMS360 </title>
+  <title>LMS360 Hack - Tìm kiếm nội dung và đáp án bài giảng LMS360</title>
   <meta name="description"
     content="Công cụ tìm kiếm đáp án và nội dung bài giảng tương tác cho LMS360, miễn phí và mã nguồn mở.">
   <meta name="google-site-verification" content="lfvqLgJSDzbsUC_koTL5HEMd0vclYvQ9W9u4SG6bpgo" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/style_dark.css" id="dark-theme" disabled>
   <script>
     (function () {
-      const theme = localStorage.getItem('theme') || 'light';
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.getElementById('dark-theme').disabled = false;
-      }
+      const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
     })();
   </script>
+
+  <script src="js/tailwind_compat.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style_dark.css">
+  <link rel="stylesheet" href="css/style_compiled.css">
 </head>
 
-<body>
-  <div class="scrollable-container">
-    <div id="eula-modal" class="modal">
-      <div class="modal-content">
-        <h2>Chính Sách - Điều Khoản</h2>
-        <div class="modal-body">
+<body
+  class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-300">
+  <!-- Background -->
+  <div
+    class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px] pointer-events-none animate-float">
+  </div>
+  <div
+    class="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] pointer-events-none animate-float"
+    style="animation-delay: -5s;">
+  </div>
+
+  <!-- Điều khoản -->
+  <div id="eula-modal"
+    class="fixed inset-0 z-[100] items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
+    <div
+      class="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+      <div class="p-8">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Chính Sách - Điều Khoản</h2>
+        <div class="space-y-4 text-slate-600 dark:text-slate-400 text-sm max-h-[60vh] overflow-y-auto pr-2">
           <p>Bằng cách sử dụng lms360hack.pages.dev và các dịch vụ liên quan đến lms360hack / LMS360 Hack hoặc / và có
-            nguồn gốc từ lms360hack / LMS360 Hack, bạn đã đồng ý tuân thủ<a target="_blank"
-              href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử
-              dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a>của tôi.</p>
+            nguồn gốc từ lms360hack / LMS360 Hack, bạn đã đồng ý tuân thủ <a target="_blank"
+              href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md"
+              class="text-primary hover:underline transition-colors">chính sách sử dụng, điều khoản phân phối và tuyên
+              bố từ chối trách
+              nhiệm</a> của tôi.</p>
           <p>Trong chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm sẽ bao gồm những điều sau:
           </p>
-          <ul>
+          <ul class="list-disc pl-5 space-y-2">
             <li>CHỈ cho mục đích nghiên cứu, phát triển, học tập, tìm hiểu lỗ hỏng bảo mật và nâng cao ý thức về bảo
               mật.</li>
             <li>KHÔNG sử dụng cho các bài tập, bài kiểm tra mà không có sự cho phép của người đại diện LMS360 hoặc giáo
@@ -46,65 +64,203 @@
             <li>Tôi sẽ KHÔNG chịu trách nhiệm về hành vi vi phạm pháp luật, vi phạm nội quy nhà trường, vi phạm điều
               khoản của LMS360 do người dùng gây ra.</li>
           </ul>
-          <p>Nếu bạn không đồng ý với<a target="_blank"
-              href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md">chính sách sử
-              dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm</a>, hãy ngưng sử dụng ngay lập tức!</p>
+          <p>Nếu bạn không đồng ý với <a target="_blank"
+              href="https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md"
+              class="text-primary hover:underline transition-colors">chính sách sử dụng, điều khoản phân phối và tuyên
+              bố từ chối trách
+              nhiệm</a>, hãy ngưng sử dụng ngay lập tức!</p>
         </div>
-        <button id="close-eula" class="modal-button">Tôi đã đọc và đồng ý với những điều trên</button>
+        <button id="close-eula"
+          class="w-full mt-8 gradient-button h-14 rounded-xl text-white font-bold text-lg hover:after:opacity-100 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+          Tôi đã đọc và đồng ý với những điều trên
+        </button>
       </div>
     </div>
+  </div>
 
-    <div id="ui-card" role="region" aria-label="Link LMS360">
-      <div class="card-inner">
-        <div class="card-content">
-          <h1 class="card-title">LMS360 Hack <span class="version">v5.3</span></h1>
-          <p class="card-sub">By HiennNek</p>
-
-          <div class="notice-banner">
-            <span>💡 Bạn muốn xem, chỉnh sửa và tải về <strong>tất cả</strong> dạng bài LMS360?<a href="advanced">Thử
-                LMS360 Hack Advanced</a></span>
-          </div>
-
-          <br>
-
-          <form id="url-form" action="#" onsubmit="event.preventDefault();">
-            <label for="link_lms360" class="sr-only">LMS360 URL</label>
-            <input id="link_lms360" class="card-input" type="text" placeholder="Link LMS360 (https://lms360.vn/...)" />
-            <button id="hecker_button" class="card-button" type="submit">Lấy đáp án</button>
-          </form>
-
-          <div id="search-container" class="search-container" style="display: none;">
-            <input id="question-search" class="card-input" type="text" placeholder="Tìm kiếm câu hỏi / đáp án..." />
-          </div>
-
-          <div id="questions"></div>
+  <nav
+    class="sticky top-0 z-50 w-full border-b border-black/5 dark:border-white/10 bg-background-light/10 dark:bg-background-dark/10 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3 text-slate-900 dark:text-white">
+        <div class="flex items-center justify-center">
+          <img src="favicon.ico" class="size-8 object-contain" alt="Logo">
         </div>
+        <h2 class="text-xl font-bold tracking-tight">LMS360 Hack <span class="font-normal opacity-50">v6</span></h2>
+      </div>
+      <div class="flex items-center gap-6 md:gap-8">
+        <a class="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-white/70 hover:text-primary dark:hover:text-primary transition-colors"
+          href="https://github.com/HiennNek/lms360hack" target="_blank">
+          <span class="material-symbols-outlined text-lg">code</span>
+          GitHub
+        </a>
+        <a class="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-white/70 hover:text-primary dark:hover:text-primary transition-colors"
+          href="https://github.com/HiennNek/lms360hack/issues" target="_blank" id="report-bug">
+          <span class="material-symbols-outlined text-lg">bug_report</span>
+          Báo Lỗi
+        </a>
+        <div class="h-6 w-[1px] bg-black/10 dark:bg-white/10 hidden sm:block"></div>
+        <button id="theme-toggle"
+          class="flex items-center justify-center size-10 rounded-full bg-slate-200/50 dark:bg-white/5 border border-black/5 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
+          title="Theme">
+          <span class="material-symbols-outlined dark:hidden">dark_mode</span>
+          <span class="material-symbols-outlined hidden dark:block">light_mode</span>
+        </button>
+      </div>
+    </div>
+  </nav>
 
-        <footer class="card-footer">
-          <div class="footer-sections">
-            <div class="footer-links">
-              <div class="footer-credit">
-                Created with 💖 by HiennNek
-              </div>
-              <div class="align-right">
-                <a href="https://github.com/HiennNek/lms360hack" target="_blank" rel="noopener">GitHub</a>
-                <a href="https://github.com/HiennNek/lms360hack/issues" target="_blank" id="report-bug">Report Bug</a>
-                <a href="#" id="show-eula">Chính Sách - Điều Khoản</a>
-              </div>
+  <div
+    class="w-full bg-indigo-50 dark:bg-indigo-950/30 border-b border-indigo-100 dark:border-indigo-900/50 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div
+          class="flex size-10 items-center justify-center rounded-full bg-indigo-600/10 dark:bg-indigo-400/20 text-indigo-600 dark:text-indigo-400">
+          <span class="material-symbols-outlined">auto_awesome</span>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+            Giới thiệu chế độ nâng cao
+            <span
+              class="inline-flex items-center rounded-full bg-indigo-100 dark:bg-indigo-900/50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">NEW</span>
+          </p>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Bạn muốn xem, chỉnh sửa và tải về <strong>tất cả</strong> dạng bài?
+          </p>
+        </div>
+      </div>
+      <a href="advanced"
+        class="whitespace-nowrap rounded-full bg-indigo-600 px-5 py-2 text-xs font-bold text-white transition-all hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 flex items-center gap-2">
+        Thử LMS360 Hack Advanced
+        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+      </a>
+    </div>
+  </div>
+
+  <main class="flex-grow flex flex-col items-center px-6 py-12">
+    <div class="max-w-[800px] w-full text-center mb-12 animate-slide-up">
+      <h1 class="text-slate-900 dark:text-white text-4xl md:text-5x font-bold leading-tight tracking-tight mb-6">
+        Tìm kiếm nội dung & đáp án <br /> bài giảng LMS360
+      </h1>
+      <p class="text-slate-600 dark:text-white/60 text-lg max-w-2xl mx-auto opacity-0 animate-slide-up"
+        style="animation-delay: 0.2s;">
+        Đơn giản, nhanh chóng, hiệu quả.
+      </p>
+    </div>
+
+    <!-- Phần element chính -->
+    <div class="w-full max-w-6xl glass-card rounded-2xl p-8 md:p-10 shadow-2xl opacity-0 animate-slide-up"
+      style="animation-delay: 0.4s;">
+      <form id="url-form" action="#" onsubmit="event.preventDefault();" class="flex flex-col gap-6">
+        <div class="space-y-2 group">
+          <label for="link_lms360"
+            class="text-slate-700 dark:text-white/90 text-sm font-medium ml-1 transition-colors group-focus-within:text-primary">Link
+            LMS360</label>
+          <div class="relative">
+            <div
+              class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-white/40 transition-colors group-focus-within:text-primary">
+              <span class="material-symbols-outlined">link</span>
             </div>
+            <input id="link_lms360"
+              class="w-full bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-xl h-14 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300"
+              placeholder="Link LMS360 (https://lms360.vn/...)" type="text" />
           </div>
-        </footer>
-
-
-      </div>
+        </div>
+        <button id="hecker_button"
+          class="gradient-button w-full h-14 rounded-xl text-white font-bold text-lg flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/20"
+          type="submit">
+          <span class="material-symbols-outlined">search_check</span>
+          Lấy đáp án
+        </button>
+      </form>
     </div>
 
-    <button id="theme-toggle" class="theme-toggle" title="Theme">
-      🌙
-    </button>
-    <script src="js/process_question_type.js"></script>
-    <script src="js/func.js"></script>
-    <script src="js/theme-toggle.js"></script>
+    <!-- Phần hiển thị câu hỏi -->
+    <div class="w-full max-w-[94%] mt-12 empty:hidden">
+      <div id="search-container" class="mb-8 space-y-4 mx-auto max-w-[640px]" style="display: none;">
+        <div class="flex items-center gap-3 px-2">
+          <div class="h-[1px] flex-grow bg-slate-200 dark:bg-white/10"></div>
+          <span class="text-slate-400 dark:text-white/30 text-xs font-medium uppercase tracking-widest">Tìm kiếm & Tùy
+            chỉnh</span>
+          <div class="h-[1px] flex-grow bg-slate-200 dark:bg-white/10"></div>
+        </div>
+        <div class="flex gap-3">
+          <div class="relative flex-grow">
+            <div
+              class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-white/40">
+              <span class="material-symbols-outlined">search</span>
+            </div>
+            <input id="question-search"
+              class="w-full bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-xl h-12 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+              type="text" placeholder="Tìm kiếm câu hỏi / đáp án..." />
+          </div>
+          <button id="layout-toggle"
+            class="hidden md:flex items-center justify-center size-12 rounded-xl bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:text-primary dark:hover:text-primary hover:border-primary/50 transition-all shadow-sm"
+            title="Thay đổi bố cục">
+            <span id="layout-icon" class="material-symbols-outlined">view_stream</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="status-message" class="mb-6 text-center"></div>
+
+      <div id="questions" class="grid grid-cols-1 md:grid-cols-2 gap-6" data-layout="grid"></div>
+    </div>
+
+    <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-3 gap-6 mx-auto mt-6 opacity-0 animate-slide-up"
+      style="animation-delay: 0.6s;">
+      <div
+        class="p-6 rounded-2xl bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/5 flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-lg">
+        <div
+          class="bg-primary/20 size-12 shrink-0 rounded-xl text-primary flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+          <span class="material-symbols-outlined">bolt</span>
+        </div>
+        <div>
+          <h3 class="text-slate-900 dark:text-white font-bold mb-1">Tốc độ</h3>
+          <p class="text-slate-500 dark:text-white/50 text-sm">Lấy toàn bộ dữ liệu bài giảng chỉ trong một nốt nhạc.</p>
+        </div>
+      </div>
+      <div
+        class="p-6 rounded-2xl bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/5 flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-lg">
+        <div class="bg-primary/20 size-12 shrink-0 rounded-xl text-primary flex items-center justify-center">
+          <span class="material-symbols-outlined">security</span>
+        </div>
+        <div>
+          <h3 class="text-slate-900 dark:text-white font-bold mb-1">Bảo mật</h3>
+          <p class="text-slate-500 dark:text-white/50 text-sm">LMS360 Hack không thu thập thông tin cá nhân và bảo vệ
+            bạn khỏi việc bị theo dõi bởi LMS360
+          </p>
+        </div>
+      </div>
+      <div
+        class="p-6 rounded-2xl bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/5 flex items-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-lg">
+        <div class="bg-primary/20 size-12 shrink-0 rounded-xl text-primary flex items-center justify-center">
+          <span class="material-symbols-outlined">volunteer_activism</span>
+        </div>
+        <div>
+          <h3 class="text-slate-900 dark:text-white font-bold mb-1">Miễn phí</h3>
+          <p class="text-slate-500 dark:text-white/50 text-sm">100% miễn phí và mã nguồn mở frontend.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="w-full border-t border-black/5 dark:border-white/5 bg-white dark:bg-background-dark py-10 mt-auto">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center gap-2">
+        <p class="text-sm text-slate-500 dark:text-white/60">Created with 💖 by <span class="font-bold">HiennNek</span>
+        </p>
+      </div>
+      <div class="flex gap-8">
+        <a class="text-slate-400 dark:text-white/40 hover:text-slate-900 dark:hover:text-white text-sm transition-colors"
+          href="#" id="show-eula">Chính Sách - Điều Khoản</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/process_question_type.js?v=5.3.1"></script>
+  <script src="js/func.js?v=5.3.1"></script>
+  <script src="js/theme-toggle.js?v=5.3.1"></script>
 </body>
 
 </html>

@@ -1,0 +1,13 @@
+{
+  "name": "lms360hack",
+  "version": "idk",
+  "description": "LMS360 Hack",
+  "main": "index.html",
+  "scripts": {
+    "build": "tailwindcss -i ./css/input.css -o ./css/style_compiled.css --minify",
+    "watch": "tailwindcss -i ./css/input.css -o ./css/style_compiled.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

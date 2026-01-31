@@ -4,7 +4,7 @@
 >- ### Điền URL (đường link) của bài tập LMS360 vào ô *Link LMS360*, sau đó bấm nút *Lấy đáp án*
 #
 ## LMS360 Hack - Công cụ xem, chỉnh sửa và tải xuống bài giảng LMS360 
-### Version hiện tại: v5.3
+### Version hiện tại: v6
 
 <p align="center">
   <img width="90%" alt="image" src="https://github.com/user-attachments/assets/cc5e9c4c-1699-45e8-8c6b-68bcb2cc1874" />
@@ -34,6 +34,7 @@
 #
 
 ### Changelog:
+- v6: Giao diện mới, tốc độ loading nhanh hơn + giao diện mượt hơn nhờ Tailwind CSS, hiển thị câu hỏi dạng grid.
 - v5.3: Đã thêm tính năng preview cho trình duyệt Chromium-based
 - v5.2: Thêm tính năng Preview cho Advanced mode, chỉnh một số vấn đề nhỏ.
 - v5.1: Redesign giao diện, fix error handler, thêm auto save vào advanced mode.
