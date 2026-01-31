@@ -18,6 +18,28 @@
 ### [Tìm hiểu cách LMS360 Hack hoạt động](How_it_work.pdf)
 
 #
+### Cách build và chạy LMS360 Hack (Kể từ v6)
+
+#### Đầu tiên, bạn phải có `Node.js` và `npm`
+
+#### Cài đặt dependency bằng: 
+```bash
+npm install
+```
+
+#### Build:
+```bash
+npm run build
+```
+
+#### (Optional) chạy local server:
+```bash
+npx serve
+```
+
+#### Hoặc chạy từ file `index.html`
+
+#
 
 ### FAQ (câu hỏi thường gặp)
 > **Cái này có illegal (bất hợp pháp) không?**
