@@ -7,7 +7,7 @@
 ### Version hiện tại: v6
 
 <p align="center">
-<img width="95%" alt="img" src="https://github.com/user-attachments/assets/7abe2a86-5ff6-4bb4-bdfd-b2aefa47d65f" />
+<img width="90%" alt="image" src="https://github.com/user-attachments/assets/ea8e3186-7cad-4fad-92b6-d7baf4efb307" />
 
 </p>
 
