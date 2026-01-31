@@ -4,6 +4,8 @@ node_modules
 dist
 build
 
+css/style_compiled.css
+
 .DS_Store
 .env
 npm-debug.log*
