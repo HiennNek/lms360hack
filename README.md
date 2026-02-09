@@ -1,5 +1,3 @@
-# LMS360 Hack Hiện Tại Đang Bảo Trì, Vui Lòng Quay Lại Sau!
-
 > [!NOTE]
 >## Hướng dẫn sử dụng:
 >- ### Xin hãy sử dụng website [lms360hack.pages.dev](https://lms360hack.pages.dev/)
@@ -17,31 +15,47 @@
 </p>
 
 #
+## Mã nguồn back-end: [github.com/HiennNek/lms360hack/tree/back-end](https://github.com/HiennNek/lms360hack/tree/back-end)
 
-### Cách build và chạy LMS360 Hack (Frontend - Kể từ v6)
+> [!NOTE]
+> ## Cách build và chạy LMS360 Hack
+> ### Đầu tiên, bạn phải có `Node.js` và `npm`
 
-#### Đầu tiên, bạn phải có `Node.js` và `npm`
+> ### Front-end
+> #### Hãy đảm bảo rằng bạn đang ở branch front-end
+> ```bash
+> git switch front-end
+> ```
+> #### Cài đặt dependency bằng: 
+> ```bash
+> npm install
+> ```
+> #### Build:
+> ```bash
+> npm run build
+> ```
+> #### (Optional) chạy local server:
+> ```bash
+> cd ./dist
+> ```
+> ```bash
+> npx serve
+> ```
+> #### Hoặc chạy từ `./dist/index.html`
 
-#### Cài đặt dependency bằng: 
-```bash
-npm install
-```
-
-#### Build:
-```bash
-npm run build
-```
-
-#### (Optional) chạy local server:
-```bash
-cd ./dist
-```
-
-```bash
-npx serve
-```
-
-#### Hoặc chạy từ `./dist/index.html`
+> ### Back-end
+> #### Đầu tiên, bạn cần chuyển qua branch back-end
+> ```bash
+> git switch back-end
+> ```
+> #### (Optional) Chạy development server bằng
+> ```bash
+> npm run dev
+> ```
+> #### (Optional) Hoặc upload lên Cloudflare Workers và chạy production server
+> ```bash
+> npm run deploy
+> ```
 
 #
 
