@@ -43,20 +43,6 @@
 > ```
 > #### Hoặc chạy từ `./dist/index.html`
 
-> ### Back-end
-> #### Đầu tiên, bạn cần chuyển qua branch back-end
-> ```bash
-> git switch back-end
-> ```
-> #### (Optional) Chạy development server bằng
-> ```bash
-> npm run dev
-> ```
-> #### (Optional) Hoặc upload lên Cloudflare Workers và chạy production server
-> ```bash
-> npm run deploy
-> ```
-
 #
 
 ### FAQ (câu hỏi thường gặp)
