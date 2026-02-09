@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://lms360hack.pages.dev/sitemap.xml

@@ -1,0 +1,15 @@
+node_modules
+.pnpm-store
+
+dist
+build
+
+css/style_compiled.css
+
+.DS_Store
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+package-lock.json
