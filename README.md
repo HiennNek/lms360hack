@@ -16,3 +16,5 @@
 > ```bash
 > npm run deploy
 > ```
+
+#### Bằng cách sử dụng LMS360 Hack hoặc sản phẩm / dịch vụ có liên quan đến LMS360 Hack hoặc sử dụng một phần / toàn bộ mã nguồn của LMS360 Hack, bạn đã đồng ý tuân thủ [chính sách sử dụng, điều khoản phân phối và tuyên bố từ chối trách nhiệm](https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/main/LICENSE.md) của tôi.
