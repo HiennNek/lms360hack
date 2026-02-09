@@ -20,7 +20,6 @@
 > [!NOTE]
 > ## Cách build và chạy LMS360 Hack
 > ### Đầu tiên, bạn phải có `Node.js` và `npm`
-
 > ### Front-end
 > #### Hãy đảm bảo rằng bạn đang ở branch front-end
 > ```bash
