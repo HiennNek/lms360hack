@@ -1,9 +1,3 @@
-/**
- * Theme Toggle Module
- * Handles light/dark mode switching with localStorage persistence
- * and highlight.js theme toggling on the advanced page.
- */
-
 function getSavedTheme(): string {
     const saved = localStorage.getItem('theme');
     if (saved) return saved;

@@ -3,8 +3,6 @@
   Not actually my code :)
 */
 
-/* Fonts removed because files are missing */
-
 html.h5p-iframe,
 html.h5p-iframe>body {
   font-family: Sans-Serif;
@@ -184,7 +182,6 @@ div.h5p-fullscreen {
 .h5p-iframe-wrapper iframe.h5p-iframe {
   width: 10px;
   min-width: 100%;
-  /* *width: 100%; removed */
   height: 100%;
   z-index: 10;
   overflow: hidden;

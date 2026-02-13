@@ -1,9 +1,3 @@
-/**
- * Process Question Type Module
- * Handles answer fetching from backend, question rendering, and EULA modal
- * on the main (index) page.
- */
-
 import { updateQuestionSearch, registerSearchItems } from './func';
 
 interface BackendQuestion {

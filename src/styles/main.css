@@ -3,24 +3,19 @@
 @tailwind utilities;
 
 :root {
-  /* Keep outer radius controlled */
   --r-outer: 22px;
   --p-outer: 20px;
 
   --r-mid: 16px;
-  /* 6px */
   --p-mid: 20px;
 
   --r-inner: 16px;
-  /* clamp to 0 if needed */
   --p-inner: 20px;
 
-  /* Slightly softer shadow to support more air */
   --shadow-premium:
     0 4px 18px -6px rgba(0, 0, 0, 0.08),
     0 2px 8px -4px rgba(0, 0, 0, 0.05);
 
-  /* Increase overall breathing room */
   --p-safe: 22px;
 
   --text-body: #1e3a5f;
@@ -58,7 +53,6 @@
   .gradient-button {
     background: linear-gradient(135deg, #197fe6 0%, #1565c0 100%);
     border-radius: var(--r-mid);
-    /* Standalone buttons match mid radius for balance */
   }
 
 
@@ -99,7 +93,6 @@
 
   .advanced-sub-tab {
     border-radius: calc(var(--r-mid) - 6px);
-    /* 10px - Surgical Precision */
     @apply px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-white/40 transition-all hover:text-slate-700 dark:hover:hover:text-white/70 whitespace-nowrap;
   }
 
@@ -171,7 +164,6 @@
     @apply flex-grow;
   }
 
-  /* Form Balance Fix */
   label {
     @apply mt-1;
   }
