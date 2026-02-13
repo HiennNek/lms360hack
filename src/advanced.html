@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>LMS360 Hack Advanced - Xem, chỉnh sửa và tải về bài giảng LMS360</title>
     <meta name="description"
         content="Công cụ chỉnh sửa, xem và tải về bài giảng tương tác cho LMS360, miễn phí và mã nguồn mở.">
@@ -15,26 +15,28 @@
         })();
     </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://lms360hack-backend.hiennek1.workers.dev" crossorigin>
+    <link rel="dns-prefetch" href="https://lms360hack-backend.hiennek1.workers.dev">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap">
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap">
+
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
 
-    <script src="advanced_libs/jszip.min.js" defer></script>
-    <link rel="stylesheet" href="advanced_libs/stackoverflow-light.min.css" id="hljs-light-theme">
-    <link rel="stylesheet" href="advanced_libs/stackoverflow-dark.min.css" id="hljs-dark-theme" disabled>
-    <script src="advanced_libs/highlight.min.js" defer></script>
-
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/style_dark.css">
-    <link rel="stylesheet" href="css/style_compiled.css">
+    <link rel="stylesheet" href="" id="hljs-light-theme">
+    <link rel="stylesheet" href="" id="hljs-dark-theme" disabled>
 </head>
 
 <body
     class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-300">
-    <!-- Background -->
     <div
         class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px] pointer-events-none animate-float">
     </div>
@@ -47,7 +49,7 @@
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3 text-slate-900 dark:text-white">
                 <div class="flex items-center justify-center">
-                    <img src="favicon.ico" class="size-8 object-contain" alt="Logo">
+                    <img src="/favicon.ico" class="size-8 object-contain" alt="Logo">
                 </div>
                 <h2 class="text-xl font-bold tracking-tight">LMS360 Hack <span class="text-primary">Advanced</span></h2>
             </div>
@@ -68,7 +70,6 @@
     </nav>
 
     <main class="flex-grow flex flex-col items-center px-6 py-12 relative z-10 w-full max-w-[94%] mx-auto">
-        <!-- Header -->
         <div class="w-full text-center mb-10 animate-slide-up">
             <h1 class="text-slate-900 dark:text-white text-3xl md:text-4xl font-bold tracking-tight mb-4">
                 LMS360 Hack <span class="text-primary italic">Advanced</span>
@@ -78,34 +79,45 @@
             </p>
         </div>
 
+        <div id="alertContainer" class="fixed top-20 right-6 z-[100] flex flex-col items-end gap-3 empty:hidden"></div>
+
         <!-- Element chính -->
-        <div class="w-full glass-card rounded-2xl p-6 md:p-6 shadow-2xl opacity-0 animate-slide-up"
-            style="animation-delay: 0.2s;">
+        <div class="w-full glass-card shadow-2xl opacity-0 animate-slide-up" style="animation-delay: 0.2s;">
 
             <!-- Một dòng cảnh báo nho nhỏ :) -->
             <div
-                class="hidden max-md:flex items-center gap-3 p-4 mb-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-xl text-amber-800 dark:text-amber-200 text-sm">
+                class="hidden max-md:flex items-center gap-4 p-5 mb-8 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-[var(--r-mid)] text-amber-800 dark:text-amber-200 text-sm">
+
                 <span class="material-symbols-outlined text-amber-500">warning</span>
                 <p>Vui lòng sử dụng màn hình lớn hơn để có trải nghiệm tốt nhất.</p>
             </div>
 
             <!-- Phần nhập url -->
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-6">
+
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="relative flex-grow group">
                         <div
-                            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-white/40 group-focus-within:text-primary transition-colors">
+                            class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 dark:text-white/40 group-focus-within:text-primary transition-colors">
                             <span class="material-symbols-outlined">link</span>
                         </div>
                         <input type="text" id="contentUrl"
-                            class="w-full bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-xl h-14 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300"
+                            class="w-full bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-[var(--r-mid)] h-16 pl-14 pr-6 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300"
                             placeholder="Link LMS360 (https://lms360.vn/...)" />
                     </div>
-                    <button onclick="downloadFromUrl()"
-                        class="gradient-button px-8 h-14 rounded-xl text-white font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
-                        <span class="material-symbols-outlined">api</span>
-                        Sử dụng
-                    </button>
+                    <div class="flex gap-3">
+                        <button onclick="downloadOnlyFromUrl()"
+                            class="px-8 h-16 rounded-[var(--r-mid)] bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white font-bold hover:bg-slate-200 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 border border-slate-200 dark:border-white/10">
+                            <span class="material-symbols-outlined">download</span>
+                            Tải về
+                        </button>
+                        <button onclick="downloadFromUrl()"
+                            class="gradient-button px-10 h-16 text-white font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+                            <span class="material-symbols-outlined">api</span>
+                            Sử dụng
+                        </button>
+                    </div>
+
                 </div>
                 <div id="urlLoadingIndicator"
                     class="hidden items-center text-primary font-medium pl-2 animate-pulse mt-2">
@@ -114,22 +126,23 @@
             </div>
 
             <!-- "Biên giới" -->
-            <div class="flex items-center gap-4 mb-6 mt-6 text-slate-300 dark:text-white/10">
+            <div class="flex items-center gap-6 my-10 text-slate-200 dark:text-white/5">
                 <div class="h-px flex-grow bg-current"></div>
-                <span class="text-xs font-bold tracking-widest uppercase text-slate-400 dark:text-white/20">Hoặc</span>
+                <span
+                    class="text-[10px] font-black tracking-[0.2em] uppercase text-slate-400 dark:text-white/20">Hoặc</span>
                 <div class="h-px flex-grow bg-current"></div>
             </div>
 
             <!-- Phần upload -->
             <div id="uploadSection" class="upload-zone">
-                <div class="text-primary/50 text-5xl mb-4">
-                    <span class="material-symbols-outlined text-6xl">cloud_upload</span>
+                <div class="text-primary/50 text-5xl mb-6">
+                    <span class="material-symbols-outlined text-7xl">cloud_upload</span>
                 </div>
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Tải file .h5p</h2>
-                <p class="text-slate-500 dark:text-slate-400 mb-6">Kéo thả hoặc chọn file
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Tải file .h5p</h2>
+                <p class="text-slate-500 dark:text-slate-400 mb-8 text-lg">Kéo thả hoặc chọn file
                 </p>
                 <button
-                    class="px-6 py-2 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all">Chọn
+                    class="px-10 py-3 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all text-lg">Chọn
                     file</button>
                 <input type="file" id="fileInput" class="hidden" accept=".h5p">
             </div>
@@ -137,55 +150,59 @@
             <!-- Phần hiển thị -->
             <div id="viewerSection" class="hidden">
                 <!-- Tab -->
-                <div class="advanced-tabs mt-6">
+                <div class="advanced-tabs mt-10">
                     <button class="advanced-tab active" onclick="switchTab(event, 'preview')">
-                        <span class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[20px] text-primary">visibility</span>
+                        <span class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[22px] text-primary">visibility</span>
                             Xem thử
                         </span>
                     </button>
                     <button class="advanced-tab" onclick="switchTab(event, 'content')">
-                        <span class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[20px] text-primary">edit_note</span>
+                        <span class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[22px] text-primary">edit_note</span>
                             Chỉnh sửa
                         </span>
                     </button>
                     <button class="advanced-tab" onclick="switchTab(event, 'files')">
-                        <span class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[20px] text-primary">folder</span>
+                        <span class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[22px] text-primary">folder</span>
                             Duyệt file
                         </span>
                     </button>
                 </div>
 
-                <!-- Pơ rì viu -->
+                <!-- Preview -->
                 <div id="previewTab" class="advanced-tab-content block">
-                    <div id="h5p-preview-wrapper" class="flex flex-col gap-4">
+                    <div id="h5p-preview-wrapper" class="flex flex-col gap-6">
                         <div class="flex justify-end gap-3 mb-2">
                             <button onclick="downloadModified()"
-                                class="flex items-center gap-2 px-4 py-2 bg-green-500/10 text-green-600 dark:text-green-400 rounded-lg font-bold text-sm hover:bg-green-500/20 transition-all">
-                                <span class="material-symbols-outlined text-[18px]">download</span>
+                                class="flex items-center gap-2 px-6 py-3 bg-green-500/10 text-green-600 dark:text-green-400 rounded-[var(--r-mid)] font-bold text-sm hover:bg-green-500/20 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">download</span>
                                 Tải xuống
                             </button>
                             <button onclick="toggleFullscreen()"
-                                class="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-white/70 rounded-lg font-bold text-sm hover:bg-slate-200 dark:hover:bg-white/10 transition-all">
-                                <span class="material-symbols-outlined text-[18px]">fullscreen</span>
+                                class="flex items-center gap-2 px-6 py-3 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-white/70 rounded-[var(--r-mid)] font-bold text-sm hover:bg-slate-200 dark:hover:bg-white/10 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">fullscreen</span>
                                 Toàn màn hình
                             </button>
                         </div>
-                        <div id="h5p-container" class="preview-container">
+
+                        <div id="h5p-container" class="preview-container shadow-inner">
                         </div>
                     </div>
                 </div>
 
                 <!-- Nội dung -->
                 <div id="contentTab" class="advanced-tab-content hidden">
-                    <div id="infoGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6"></div>
+                    <div id="infoGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10"></div>
 
                     <div
-                        class="flex flex-col gap-6 bg-slate-50 dark:bg-white/5 rounded-2xl p-6 md:p-8 border border-slate-100 dark:border-white/5">
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <span class="material-symbols-outlined text-primary">data_object</span>
+                        class="flex flex-col gap-8 bg-slate-50 dark:bg-white/5 rounded-[var(--r-mid)] p-[var(--p-mid)] border border-slate-100 dark:border-white/5">
+
+
+
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary text-3xl">data_object</span>
                             Nội dung JSON
                         </h3>
 
@@ -196,42 +213,43 @@
                         </div>
 
                         <div id="contentJsonTab" class="advanced-sub-tab-content block">
-                            <div class="code-editor-wrapper">
+                            <div class="code-editor-wrapper shadow-sm">
                                 <div id="contentJsonEditor" class="code-editor" contenteditable="true"
                                     spellcheck="false" placeholder="content.json"></div>
                             </div>
                         </div>
 
                         <div id="h5pJsonTab" class="advanced-sub-tab-content hidden">
-                            <div class="code-editor-wrapper">
+                            <div class="code-editor-wrapper shadow-sm">
                                 <div id="h5pJsonEditor" class="code-editor" contenteditable="true" spellcheck="false"
                                     placeholder="h5p.json">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex justify-center mt-4">
+                        <div class="flex justify-center mt-6">
                             <button onclick="downloadModified()"
-                                class="gradient-button px-10 py-4 rounded-xl text-white font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                class="gradient-button px-12 py-5 text-white font-bold text-lg flex items-center gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
                                 <span class="material-symbols-outlined">save</span>
                                 Lưu và Tải xuống
                             </button>
                         </div>
+
                     </div>
                 </div>
 
                 <!-- File -->
                 <div id="filesTab" class="advanced-tab-content hidden">
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">inventory_2</span>
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-8 flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-3xl">inventory_2</span>
                         Cấu trúc file
                     </h3>
-                    <div id="fileList" class="flex flex-col gap-2 max-h-[600px] overflow-y-auto pr-2"></div>
+                    <div id="fileList" class="flex flex-col gap-3 max-h-[600px] overflow-y-auto pr-3 custom-scrollbar">
+                    </div>
                 </div>
             </div>
-
-            <div id="alertContainer" class="mt-4 empty:hidden"></div>
         </div>
+
     </main>
 
     <footer
@@ -244,8 +262,7 @@
         </div>
     </footer>
 
-    <script src="js/theme-toggle.js"></script>
-    <script src="js/h5p-editor.js"></script>
+    <script type="module" src="./advanced.ts"></script>
 </body>
 
 </html>

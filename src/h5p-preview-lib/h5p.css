@@ -3,30 +3,7 @@
   Not actually my code :)
 */
 
-@import 'font-open-sans.css';
-
-@font-face {
-  font-family: 'h5p';
-  src: url('../fonts/h5p-core-30.eot?h1atjl');
-  src: url('../fonts/h5p-core-30.eot?h1atjl#iefix') format('embedded-opentype'),
-    url('../fonts/h5p-core-30.ttf?h1atjl') format('truetype'),
-    url('../fonts/h5p-core-30.woff?h1atjl') format('woff'),
-    url('../fonts/h5p-core-30.svg?h1atjl#h5p-core-30') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'h5p-hub-publish';
-  src: url('../fonts/h5p-hub-publish.eot?wy8ylc');
-  src: url('../fonts/h5p-hub-publish.eot?wy8ylc#iefix') format('embedded-opentype'),
-    url('../fonts/h5p-hub-publish.ttf?wy8ylc') format('truetype'),
-    url('../fonts/h5p-hub-publish.woff?wy8ylc') format('woff'),
-    url('../fonts/h5p-hub-publish.svg?wy8ylc#h5p-hub') format('svg');
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
-}
+/* Fonts removed because files are missing */
 
 html.h5p-iframe,
 html.h5p-iframe>body {
@@ -207,7 +184,7 @@ div.h5p-fullscreen {
 .h5p-iframe-wrapper iframe.h5p-iframe {
   width: 10px;
   min-width: 100%;
-  *width: 100%;
+  /* *width: 100%; removed */
   height: 100%;
   z-index: 10;
   overflow: hidden;
@@ -445,8 +422,9 @@ div.h5p-fullscreen {
 
 .h5p-popup-dialog .h5p-scroll-content::-webkit-scrollbar-thumb {
   box-shadow: 0 0 10px #000 inset;
-  border-radius: 1rem;
+  border-radius: 16px;
 }
+
 
 .h5p-popup-dialog .h5p-close {
   cursor: pointer;
@@ -579,8 +557,9 @@ div.h5p-fullscreen {
   text-align: left;
   border: 1px solid #dedede;
   background: linear-gradient(#ffffff, #f1f1f2);
-  border-radius: 1rem;
+  border-radius: 16px;
 }
+
 
 .h5p-big-button:before {
   font-family: 'h5p';
@@ -644,8 +623,9 @@ div.h5p-fullscreen {
   position: absolute;
   padding: 0 0.5em;
   line-height: 2;
-  border-radius: 1rem;
+  border-radius: 16px;
   white-space: nowrap;
+
   pointer-events: none;
   top: 0;
   opacity: 1;
@@ -662,9 +642,10 @@ div.h5p-fullscreen {
 .h5peditor code {
   color: #3d3d3d;
   background: #e0e0e0;
-  border-radius: 1rem;
+  border-radius: 16px;
   padding: 0 5px;
 }
+
 
 .h5p-content pre>code,
 .h5peditor pre>code {
@@ -837,9 +818,10 @@ button.h5p-confirmation-dialog-exit:hover {
 
 .h5p-core-button.h5p-confirmation-dialog-confirm-button {
   @media screen and (max-width: 576px) {
-    padding-left: 1.5rem;
+    padding-left: 24px;
 
     span {
+
       display: none;
     }
   }
@@ -945,7 +927,8 @@ button.h5p-core-button {
   font-size: 1em;
   line-height: 1.2;
   padding: 0.5em 1.25em;
-  border-radius: 1rem;
+  border-radius: 16px;
+
 
   background: #2579c6;
   color: #fff;
@@ -1010,12 +993,13 @@ button.h5p-core-cancel-button:focus {
 
   z-index: 110;
 
-  font-size: 0.8rem;
+  font-size: 13px;
   line-height: 1.2;
   text-align: left;
 
-  padding: 0.25rem 0.5rem;
+  padding: 4px 8px;
   white-space: normal;
+
   width: max-content;
   max-width: min(300px, 90%);
 

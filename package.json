@@ -1,23 +1,26 @@
 {
   "name": "lms360hack",
-  "version": "6.1.0",
-  "description": "LMS360 Hack",
-  "main": "index.html",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "clean": "rm -rf dist",
-    "dev:css": "tailwindcss -i ./css/input.css -o ./css/style_compiled.css --watch",
-    "build:css": "mkdir -p dist/css && tailwindcss -i ./css/input.css -o ./dist/css/style_compiled.css --minify && esbuild css/style.css css/style_dark.css css/h5p-editor.css --minify --outdir=dist/css",
-    "build:js": "esbuild js/*.js --minify --outdir=dist/js",
-    "build:html": "html-minifier-terser index.html -o dist/index.html --collapse-whitespace --remove-comments --minify-js true --minify-css true && html-minifier-terser advanced.html -o dist/advanced.html --collapse-whitespace --remove-comments --minify-js true --minify-css true",
-    "build:assets": "cp -r advanced_libs h5p-preview-lib favicon.ico robots.txt sitemap.xml _headers dist/ 2>/dev/null || true",
-    "build": "run-s clean build:css build:js build:html build:assets",
-    "watch": "npm run dev:css"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/lexend": "^5.2.11",
+    "highlight.js": "^11.11.1",
+    "jszip": "^3.10.1"
   },
   "devDependencies": {
-    "esbuild": "^0.27.2",
-    "html-minifier-terser": "^7.2.0",
-    "npm-run-all": "^4.1.5",
-    "sharp-cli": "^5.2.0",
-    "tailwindcss": "^3.4.17"
+    "@types/node": "^25.2.3",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "vite-plugin-pwa": "^1.2.0",
+    "vite-plugin-singlefile": "^2.3.0"
   }
 }

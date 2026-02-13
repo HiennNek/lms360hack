@@ -1,9 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
     content: [
-        "./index.html",
-        "./advanced.html",
-        "./js/**/*.js"
+        "./src/**/*.{html,js,ts,jsx,tsx}",
     ],
     darkMode: "class",
     theme: {
@@ -16,15 +14,16 @@ module.exports = {
                 "accent-gold": "#f59e0b",
             },
             fontFamily: {
-                "display": ["Lexend", "sans-serif"]
+                "display": ["Lexend", "sans-serif"],
             },
             borderRadius: {
-                "DEFAULT": "1rem",
-                "lg": "1rem",
-                "xl": "1rem",
-                "full": "1rem"
+                "DEFAULT": "var(--r-mid)",
+                "lg": "var(--r-mid)",
+                "xl": "var(--r-mid)",
+                "full": "9999px",
             },
+
         },
     },
     plugins: [],
-}
+};
