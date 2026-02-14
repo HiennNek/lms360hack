@@ -11,7 +11,7 @@
 </h1>
 
 <p align="center">
-<img width="90%" alt="image" src="https://github.com/user-attachments/assets/824a944f-3696-4ce9-a9ae-0f0922e6ad94" />
+<img width="80%" alt="image" src="https://github.com/user-attachments/assets/e7ba13de-d0cd-412d-940b-6a788a27bb8f" />
 </p>
 
 #
