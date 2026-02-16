@@ -25,7 +25,7 @@
 > ```bash
 > git switch front-end
 > ```
-> #### Cài đặt dependency bằng: 
+> #### Cài đặt dependencies bằng: 
 > ```bash
 > npm install
 > ```
