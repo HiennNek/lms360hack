@@ -1,18 +1,21 @@
-# Chào mừng đến với code back-end của LMS360 Hack :)
+# LMS360 Hack - Mã nguồn back-end
 
 > [!NOTE]
-> ## Cách build và chạy LMS360 Hack
+> ## Cách build và chạy LMS360 Hack (back-end)
 > ### Đầu tiên, bạn phải có `Node.js` và `npm`
-> ### Back-end
-> #### Đầu tiên, bạn cần chuyển qua branch back-end
+> #### Tiếp theo, bạn cần chuyển qua branch back-end
 > ```bash
 > git switch back-end
 > ```
-> #### (Optional) Chạy development server bằng
+> #### Cài đặt dependency bằng: 
+> ```bash
+> npm install
+> ```
+> #### Chạy development server bằng
 > ```bash
 > npm run dev
 > ```
-> #### (Optional) Hoặc upload lên Cloudflare Workers và chạy production server
+> #### Hoặc upload lên Cloudflare Workers và chạy production server
 > ```bash
 > npm run deploy
 > ```
