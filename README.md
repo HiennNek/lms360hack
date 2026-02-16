@@ -29,18 +29,21 @@
 > ```bash
 > npm install
 > ```
-> #### Build:
-> ```bash
-> npm run build
-> ```
-> #### (Optional) chạy local server:
-> ```bash
-> cd ./dist
-> ```
-> ```bash
-> npx serve
-> ```
-> #### Hoặc chạy từ `./dist/index.html`
+> #### Chạy server development:
+> > ```bash
+> >npm run dev
+> >```
+> #### Hoặc chạy server production:
+> > #### Build:
+> > ```bash
+> > npm run build
+> > ```
+> > #### _Output directory: ```./dist```_
+> > #### Và mở server bằng phần mềm yêu thích của bạn (Apache, nginx,...)
+> > #### Hoặc chạy thử production server bằng
+> > ```bash
+> > npm run preview
+> > ```
 
 #
 
