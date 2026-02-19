@@ -28,11 +28,21 @@
   --accent-gradient-end: #3b82f6;
 }
 
-
+@media (max-width: 640px) {
+  :root {
+    --r-outer: 16px;
+    --p-outer: 16px;
+    --r-mid: 12px;
+    --p-mid: 16px;
+    --r-inner: 10px;
+    --p-inner: 12px;
+    --p-safe: 16px;
+  }
+}
 
 @layer base {
   body {
-    font-family: 'Lexend', sans-serif;
+    font-family: sans-serif;
     @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300;
   }
 }
@@ -41,7 +51,7 @@
   .glass-card {
     border-radius: var(--r-outer);
     padding: var(--p-outer);
-    @apply bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-white/10 transition-all duration-300;
+    @apply bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-white/10;
   }
 
   .glass-card:hover {
@@ -73,12 +83,18 @@
   }
 
   .advanced-tabs {
-    @apply flex gap-2 border-b-2 border-slate-200 dark:border-white/10 overflow-x-auto pb-0 mb-8;
+    @apply flex gap-1 border-b-2 border-slate-200 dark:border-white/10 overflow-x-auto pb-0 mb-6 md:mb-8;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .advanced-tabs::-webkit-scrollbar {
+    display: none;
   }
 
   .advanced-tab {
     border-radius: var(--r-mid) var(--r-mid) 0 0;
-    @apply px-8 py-4 font-semibold text-slate-500 dark:text-white/40 border-b-2 border-transparent transition-all hover:text-primary dark:hover:text-primary hover:bg-slate-100 dark:hover:bg-white/5 whitespace-nowrap;
+    @apply px-4 md:px-8 py-3 md:py-4 font-semibold text-slate-500 dark:text-white/40 border-b-2 border-transparent  hover:text-primary dark:hover:text-primary hover:bg-slate-100 dark:hover:bg-white/5 whitespace-nowrap text-sm md:text-base;
   }
 
   .advanced-tab.active {
@@ -87,13 +103,12 @@
 
   .advanced-sub-tabs {
     border-radius: var(--r-mid);
-    padding: 6px;
-    @apply flex bg-slate-200/50 dark:bg-white/5 w-fit;
+    @apply flex bg-slate-200/50 dark:bg-white/5 w-fit p-1 md:p-1.5;
   }
 
   .advanced-sub-tab {
-    border-radius: calc(var(--r-mid) - 6px);
-    @apply px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-white/40 transition-all hover:text-slate-700 dark:hover:hover:text-white/70 whitespace-nowrap;
+    border-radius: calc(var(--r-mid) - 4px);
+    @apply px-3 md:px-4 py-1.5 md:py-2 text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-white/40  hover:text-slate-700 dark:hover:hover:text-white/70 whitespace-nowrap;
   }
 
 
@@ -103,7 +118,7 @@
 
   .upload-zone {
     border-radius: var(--r-mid);
-    @apply border-2 border-dashed border-primary/30 p-[var(--p-outer)] text-center cursor-pointer transition-all hover:border-primary hover:bg-primary/5 hover:scale-[1.01] active:scale-[0.99];
+    @apply border-2 border-dashed border-primary/30 p-6 md:p-[var(--p-outer)] text-center cursor-pointer  hover:border-primary hover:bg-primary/5 hover:scale-[1.01] active:scale-[0.99];
   }
 
 
@@ -114,11 +129,11 @@
 
   .code-editor-wrapper {
     border-radius: var(--r-inner);
-    @apply border border-slate-200 dark:border-white/10 overflow-hidden bg-white dark:bg-slate-950 transition-all focus-within:ring-2 focus-within:ring-primary/50;
+    @apply border border-slate-200 dark:border-white/10 overflow-hidden bg-white dark:bg-slate-950  focus-within:ring-2 focus-within:ring-primary/50;
   }
 
   .code-editor {
-    @apply w-full min-h-[300px] p-8 font-mono text-sm focus:outline-none bg-transparent dark:text-slate-300;
+    @apply w-full min-h-[250px] md:min-h-[300px] p-4 md:p-8 font-mono text-xs md:text-sm focus:outline-none bg-transparent dark:text-slate-300;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-y: auto;
@@ -127,7 +142,7 @@
   .info-card {
     border-radius: var(--r-mid);
     padding: var(--p-mid);
-    @apply bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 transition-all hover:-translate-y-1 hover:shadow-md;
+    @apply bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5  hover:-translate-y-1 hover:shadow-md;
   }
 
   .preview-container {
@@ -140,8 +155,6 @@
     border-radius: var(--r-mid);
     @apply p-4 px-6 mb-4 font-semibold text-sm shadow-lg backdrop-blur-md animate-slide-up flex items-center gap-4 border;
   }
-
-
 
   .h5p-alert-success {
     @apply bg-emerald-50/80 text-emerald-800 border-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800/30;
