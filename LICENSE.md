@@ -9,9 +9,6 @@
         - Nếu bạn đang, đã và sẽ sử dụng công cụ này cho những mục đích kể trên (không liêm chính / vi phạm pháp luật / gian lận / vi phạm nội quy thi cử, nhà trường / ...), bạn hãy ngưng sử dụng ngay lập tức.
         - Chúng tôi sẽ thu thập những thông tin người dùng sau đây khi sử dụng lms360hack.pages.dev:
             1. ID bài giảng bạn điền vào ô "Link LMS360"
-            2. Hệ điều hành
-            3. Trình duyệt sử dụng
-            4. Quốc gia truy cập
         - Những dữ liệu được thu thập này nhằm mục đích cải thiện và phát triển dịch vụ, LMS360 Hack KHÔNG bán thông tin cho bên thứ ba, cũng như đảm bảo bảo mật tuyệt đối cho thông tin người dùng.
 
     II. Điều khoản phân phối - Áp dụng cho cả front-end và back-end
@@ -33,3 +30,4 @@
         - Tôi xin tuyên bố TỪ CHỐI TOÀN BỘ trách nhiệm về hành vi vi phạm pháp luật, vi phạm nội quy nhà trường, vi phạm nội quy thi cử, vi phạm điều khoản của LMS360 do người dùng gây ra.
         - TOÀN BỘ trách nhiệm nếu sử dụng công cụ này sai mục đích ‌/ trái với những điều trên sẽ do người sử dụng chịu trách nhiệm
         - Tôi CÓ quyền sửa đổi các điều khoản phân phối, các tuyên bố từ chối trách nhiệm và các chính sách sử dụng mà không có sự báo trước cho người sử dụng.
+
