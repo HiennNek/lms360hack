@@ -14,7 +14,7 @@ export default {
                 "accent-gold": "#f59e0b",
             },
             fontFamily: {
-                "display": ["Lexend", "sans-serif"],
+                "display": ["sans-serif"],
             },
             borderRadius: {
                 "DEFAULT": "var(--r-mid)",
