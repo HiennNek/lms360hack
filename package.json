@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/fira-code": "^5.2.7",
+    "@fontsource-variable/material-symbols-outlined": "^5.2.35",
     "@fontsource/roboto": "^5.2.9",
     "highlight.js": "^11.11.1",
     "jszip": "^3.10.1"
@@ -20,7 +22,6 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
     "vite": "^6.1.0",
-    "vite-plugin-pwa": "^1.2.0",
-    "vite-plugin-singlefile": "^2.3.0"
+    "vite-plugin-pwa": "^1.2.0"
   }
 }

@@ -1,7 +1,9 @@
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
+import '@fontsource-variable/fira-code';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import '@fontsource-variable/material-symbols-outlined';
 import './styles/main.css';
 
 import lightThemeUrl from './styles/stackoverflow-light.css?url';
