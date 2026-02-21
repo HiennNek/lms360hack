@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fontsource-variable/lexend": "^5.2.11",
     "highlight.js": "^11.11.1",
     "jszip": "^3.10.1"
   },
