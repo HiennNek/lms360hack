@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/roboto": "^5.2.9",
     "highlight.js": "^11.11.1",
     "jszip": "^3.10.1"
   },

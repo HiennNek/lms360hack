@@ -14,7 +14,8 @@ export default {
                 "accent-gold": "#f59e0b",
             },
             fontFamily: {
-                "display": ["sans-serif"],
+                "sans": ["Roboto", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Helvetica", "Arial"],
+                "display": ["Roboto", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Helvetica", "Arial"],
             },
             borderRadius: {
                 "DEFAULT": "var(--r-mid)",
