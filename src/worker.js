@@ -274,13 +274,13 @@ function process_h5p_questions(json, options = {}) {
     );
   } else if (lib.startsWith('H5P.DragText')) {
     let t = (params.textField || '')
-      .split('\\n')
+      .split(/\r?\n|\\n/)
       .map((l) =>
         l
           .replace(/‾\t/g, '')
           .trim()
           .replace(/<(?!br\s*\/?>)[^>]+>/gi, '')
-          .replace(/\*(.*?)\*/g, '<span class="highlight">$1</span><br>'),
+          .replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>'),
       )
       .join('<br>');
     if (params.distractors)
