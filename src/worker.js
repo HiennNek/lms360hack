@@ -246,8 +246,12 @@ function process_h5p_questions(json, options = {}) {
       if (opts) addResult(`${(c.question || '').replace(/<\/?p>/g, '').trim()}<ul>${opts}</ul>`);
     });
   } else if (lib.startsWith('H5P.Blanks')) {
+    const mediaImage = getMediaImage(params);
+    const titleHtml = params.text ? `<strong>${params.text.replace(/<\/?p>/g, '').trim()}</strong><br><br>` : '';
+    const title = mediaImage + titleHtml;
     (params.questions || json.questions || []).forEach((q) =>
       addResult(
+        title +
         q
           .replace(/<\/p>/gi, '<br>')
           .replace(/<p>/gi, '')
