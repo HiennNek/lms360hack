@@ -300,7 +300,7 @@ function process_h5p_questions(json, options = {}) {
     let t = (params.taskDescription || params.question || 'Tự luận').replace(/<\/?p>/g, '').trim();
     const ks = (params.keywords || []).map((k) => (k.keyword || '').replace(/•/g, '<br>•').trim()).filter((k) => k.length > 0);
     if (ks.length) t += `<br><br><strong>Gợi ý:</strong><div style="margin-left:20px;">${ks.join('<br><br>')}</div>`;
-    addResult(`${t}<br><em>(Câu hỏi tự luận)</em>`);
+    addResult(`${t}<br><em>(Câu hỏi tự luận không có đáp án sẵn)</em>`);
   } else if (lib.startsWith('H5P.Summary')) {
     const groups = (params.summaries || [])
       .map((g) => {
