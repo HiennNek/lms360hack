@@ -15,7 +15,22 @@
 </p>
 
 #
-## Mã nguồn back-end: [github.com/HiennNek/lms360hack/tree/back-end](https://github.com/HiennNek/lms360hack/tree/back-end)
+
+### FAQ (câu hỏi thường gặp)
+> **Cái này có illegal (bất hợp pháp) không?**
+- Không :) Miễn có sự đồng ý của giáo viên, người có thẩm quyền.
+> **Web này có virus không?**
+- Không :) Bạn có thể check mã nguồn của website ngay trên trang GitHub này!
+> **Web này có miễn phí không?**
+- Có :) 100% miễn phí và mã nguồn mở
+> **LMS360 Hack có thể được ứng dụng vào việc gì?**
+- Bạn có thể sử dụng để kiểm tra đáp án bài làm (nếu có sự cho phép), và thậm chí giáo viên cũng có thể sử dụng công cụ này để check xem bài LMS của mình trông có ổn không mà không cần kiểm tra lại từng câu (GVCN của mình cũng thế)
+- Ngoài ra, nếu sử dụng Advanced mode, bạn còn có thể xem lại và làm những bài tập đã bị khóa / hết hạn! (Nhưng sẽ không tính điểm trên hệ thống LMS360 cho bạn đâu)
+> **Dự án này hay thế :O**
+- Cho mình một ⭐ đi :3
+
+#
+### Mã nguồn back-end: [github.com/HiennNek/lms360hack/tree/back-end](https://github.com/HiennNek/lms360hack/tree/back-end)
 
 > [!NOTE]
 > ## Cách build và chạy mã nguồn (code) LMS360 Hack
@@ -47,18 +62,8 @@
 
 #
 
-### FAQ (câu hỏi thường gặp)
-> **Cái này có illegal (bất hợp pháp) không?**
-- Không :) Miễn có sự đồng ý của giáo viên, người có thẩm quyền.
-> **Web này có virus không?**
-- Không :) Bạn có thể check mã nguồn của website ngay trên trang GitHub này!
-> **Web này có miễn phí không?**
-- Có :) 100% miễn phí và mã nguồn mở
-> **LMS360 Hack có thể được ứng dụng vào việc gì?**
-- Bạn có thể sử dụng để kiểm tra đáp án bài làm (nếu có sự cho phép), và thậm chí giáo viên cũng có thể sử dụng công cụ này để check xem bài LMS của mình trông có ổn không mà không cần kiểm tra lại từng câu (GVCN của mình cũng thế)
-- Ngoài ra, nếu sử dụng Advanced mode, bạn còn có thể xem lại và làm những bài tập đã bị khóa / hết hạn! (Nhưng sẽ không tính điểm trên hệ thống LMS360 cho bạn đâu)
-> **Dự án này hay thế :O**
-- Cho mình một ⭐ đi :3
+### Cách LMS360 Hack hoạt động:
+<img width="5512" height="8192" alt="image" src="https://github.com/user-attachments/assets/9c4204d6-6785-45f7-8b82-17e311202161" />
 
 #
 
