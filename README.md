@@ -33,9 +33,8 @@
 ### Mã nguồn back-end: [github.com/HiennNek/lms360hack/tree/back-end](https://github.com/HiennNek/lms360hack/tree/back-end)
 
 > [!NOTE]
-> ## Cách build và chạy mã nguồn (code) LMS360 Hack
+> ## Cách build và chạy mã nguồn (code) LMS360 Hack (front-end)
 > ### Đầu tiên, bạn phải có `Node.js` và `npm`
-> ### Front-end
 > #### Hãy đảm bảo rằng bạn đang ở branch front-end
 > ```bash
 > git switch front-end
