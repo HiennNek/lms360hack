@@ -270,7 +270,7 @@ function process_h5p_questions(json, options = {}) {
     const labels = [params.l10n?.trueText || 'Đúng', params.l10n?.falseText || 'Sai'];
     const correct = params.correct === 'true' ? labels[0] : labels[1];
     addResult(
-      `${getMediaImage(params)}${qText}<ul><li class="${params.correct === 'true' ? 'highlight' : ''}">${labels[0]}</li><li class="${params.correct === 'false' ? 'highlight' : ''}">${labels[1]}</li></ul><p><em>(Đáp án đúng: ${correct})</em></p>`,
+      `${getMediaImage(params)}${qText}<ul><li class="${params.correct === 'true' ? 'highlight' : ''}">${labels[0]}</li><li class="${params.correct === 'false' ? 'highlight' : ''}">${labels[1]}</li></ul>`,
     );
   } else if (lib.startsWith('H5P.DragText')) {
     let t = (params.textField || '')
@@ -403,7 +403,8 @@ function process_h5p_questions(json, options = {}) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const FEATURE_FLAGS = {
-  ENABLE_CORS: true,
+  ENABLE_CORS: true, // only allow requests from lms360hack.pages.dev,
+//                      disable it if you want to test from localhost or other origin
   ENABLE_RATE_LIMIT: true,
 };
 
