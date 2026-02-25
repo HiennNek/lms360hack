@@ -284,10 +284,10 @@ function process_h5p_questions(json, options = {}) {
       )
       .join('<br>');
     if (params.distractors)
-      t += `<br><strong>Từ không có trong đáp án:</strong> ${params.distractors
+      t += `<br><em>(Từ không có trong đáp án: ${params.distractors
         .match(/\*(.*?)\*/g)
         ?.map((d) => d.replace(/\*/g, ''))
-        .join(', ')}`;
+        .join(', ')})</em>`;
     addResult(t);
   } else if (lib.startsWith('H5P.MarkTheWords')) {
     addResult(
@@ -403,7 +403,7 @@ function process_h5p_questions(json, options = {}) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const FEATURE_FLAGS = {
-  ENABLE_CORS: false,
+  ENABLE_CORS: true,
   ENABLE_RATE_LIMIT: true,
 };
 
