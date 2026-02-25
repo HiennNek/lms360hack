@@ -270,7 +270,7 @@ function process_h5p_questions(json, options = {}) {
     const labels = [params.l10n?.trueText || 'Đúng', params.l10n?.falseText || 'Sai'];
     const correct = params.correct === 'true' ? labels[0] : labels[1];
     addResult(
-      `${getMediaImage(params)}${qText}<ul><li class="${params.correct === 'true' ? 'highlight' : ''}">${labels[0]}</li><li class="${params.correct === 'false' ? 'highlight' : ''}">${labels[1]}</li></ul><p><em>Đáp án đúng: ${correct}</em></p>`,
+      `${getMediaImage(params)}${qText}<ul><li class="${params.correct === 'true' ? 'highlight' : ''}">${labels[0]}</li><li class="${params.correct === 'false' ? 'highlight' : ''}">${labels[1]}</li></ul><p><em>(Đáp án đúng: ${correct})</em></p>`,
     );
   } else if (lib.startsWith('H5P.DragText')) {
     let t = (params.textField || '')
@@ -299,7 +299,7 @@ function process_h5p_questions(json, options = {}) {
   } else if (lib.startsWith('H5P.Essay') || lib.startsWith('H5P.FreeTextQuestion')) {
     let t = (params.taskDescription || params.question || 'Tự luận').replace(/<\/?p>/g, '').trim();
     const ks = (params.keywords || []).map((k) => (k.keyword || '').replace(/•/g, '<br>•').trim()).filter((k) => k.length > 0);
-    if (ks.length) t += `<br><br><strong>Gợi ý:</strong><div style="margin-left:20px;">${ks.join('<br><br>')}</div>`;
+    if (ks.length) t += `<br><br><em><strong>Gợi ý:</strong><em><div style="margin-left:20px;">${ks.join('<br><br>')}</div>`;
     addResult(`${t}<br><em>(Câu hỏi tự luận không có đáp án sẵn)</em>`);
   } else if (lib.startsWith('H5P.Summary')) {
     const groups = (params.summaries || [])
