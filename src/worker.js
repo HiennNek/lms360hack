@@ -403,7 +403,7 @@ function process_h5p_questions(json, options = {}) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const FEATURE_FLAGS = {
-  ENABLE_CORS: true, // only allow requests from lms360hack.pages.dev,
+  ENABLE_CORS: false, // only allow requests from lms360hack.pages.dev,
 //                      disable it if you want to test from localhost or other origin
   ENABLE_RATE_LIMIT: true,
 };
