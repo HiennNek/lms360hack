@@ -250,8 +250,9 @@ function patchContent(data) {
 
 function proxyUrl(url, workerUrl) {
   if (!url) return url;
-  if (url.startsWith('https://cdnc.lms360.vn/') || url.startsWith('https://h5p.lms360.vn/')) {
-    return `${workerUrl.origin}/proxy?url=${encodeURIComponent(url)}`;
+  if (url.startsWith('https://')) {
+    const p = url.replace('https://', '');
+    return `${workerUrl.origin}/proxy/https/${p}`;
   }
   return url;
 }
@@ -492,7 +493,7 @@ function process_h5p_questions(json, options = {}) {
 const FEATURE_FLAGS = {
   ENABLE_CORS: false, // only allow requests from lms360hack.pages.dev,
   //                      disable it if you want to test from localhost or other origin
-  ENABLE_RATE_LIMIT: true,
+  ENABLE_RATE_LIMIT: false,
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -640,21 +641,26 @@ export default {
       const url = new URL(request.url);
       const randomUA = user_agent_list[Math.floor(Math.random() * user_agent_list.length)];
 
-      if (url.pathname === '/proxy') {
-        const targetUrl = url.searchParams.get('url');
-        if (!targetUrl) return new Response('Missing URL', { status: 400 });
+      if (url.pathname.startsWith('/proxy/')) {
+        const match = url.pathname.match(/^\/proxy\/(https|http)\/(.+)$/);
+        if (match) {
+          const protocol = match[1];
+          const remaining = match[2];
+          let targetUrl = `${protocol}://${remaining}`;
+          if (url.search) targetUrl += url.search;
 
-        const assetResponse = await fetch(targetUrl, {
-          headers: { 'User-Agent': randomUA, 'Referer': 'https://lms360.vn/' }
-        });
+          const assetResponse = await fetch(targetUrl, {
+            headers: { 'User-Agent': randomUA, 'Referer': 'https://lms360.vn/' }
+          });
 
-        const headers = new Headers(assetResponse.headers);
-        headers.set('Access-Control-Allow-Origin', '*');
+          const headers = new Headers(assetResponse.headers);
+          headers.set('Access-Control-Allow-Origin', '*');
 
-        return new Response(assetResponse.body, {
-          status: assetResponse.status,
-          headers: headers
-        });
+          return new Response(assetResponse.body, {
+            status: assetResponse.status,
+            headers: headers
+          });
+        }
       }
 
       const contentId = url.searchParams.get('h5p_id');
@@ -718,7 +724,7 @@ export default {
     </style>
 </head>
 <body>
-    <div class="h5p-container"></div>
+    <div class="h5p-content" data-content-id="${contentId}"></div>
     <script>
         window.H5PIntegration = ${JSON.stringify({
             ...data.integration,
@@ -878,146 +884,177 @@ export default {
         );
       }
 
-      const questionId = url.searchParams.get('id');
-
-      const idPattern = /^[0-9a-f]{24}$/i;
-      if (!questionId || !idPattern.test(questionId)) {
-        return new Response('Eh?', { status: 400 });
-      }
-
-      if (FEATURE_FLAGS.ENABLE_RATE_LIMIT) {
-        const key = questionId;
-        const { success } = await env.ANTI_DDOS.limit({ key });
-        if (!success) {
-          const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
-          return new Response('What?', {
-            status: 429,
-            headers: {
-              'Retry-After': '60',
-              'Access-Control-Allow-Origin': corsOrigin,
-              'Access-Control-Allow-Methods': 'GET',
-              'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            },
-          });
-        }
-      }
-
-      // UUID format (as hex code):xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-      // Who created this???
-      const uuidP = generateUUID();
-      const uuidCs = generateUUID();
-      const refererUrl = `https://lms360.vn/xem-video?p=${uuidP}&c=${questionId}&cs=${uuidCs}&m=2&pa=1&sch=2`;
-
-      if (url.pathname === '/image') {
-        const imagePath = url.searchParams.get('path');
-        const contentId = url.searchParams.get('contentId');
-
-        if (!imagePath || !contentId) {
-          const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
-          return new Response('Uwgha!', {
-            status: 400,
-            headers: {
-              'Access-Control-Allow-Origin': corsOrigin,
-            },
-          });
+      if (url.pathname === '/') {
+        const questionId = url.searchParams.get('id');
+        const idPattern = /^[0-9a-f]{24}$/i;
+        if (!questionId || !idPattern.test(questionId)) {
+          return new Response('Eh?', { status: 400 });
         }
 
-        const imageUrl = `https://h5p.lms360.vn/${contentId}/${imagePath}`;
-
-        try {
-          const imageResponse = await fetch(imageUrl, {
-            headers: {
-              'User-Agent': randomUA,
-              Accept: 'image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5',
-              'Accept-Language': 'en-US,en;q=0.5',
-              'Accept-Encoding': 'gzip, deflate, br',
-              authorization: '',
-              Connection: 'keep-alive',
-              Referer: refererUrl,
-              'Sec-Fetch-Dest': 'empty',
-              'Sec-Fetch-Mode': 'cors',
-              'Sec-Fetch-Site': 'same-origin',
-              TE: 'trailers',
-            },
-          });
-
-          if (!imageResponse.ok) {
+        if (FEATURE_FLAGS.ENABLE_RATE_LIMIT) {
+          const key = questionId;
+          const { success } = await env.ANTI_DDOS.limit({ key });
+          if (!success) {
             const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
-            return new Response('where is it?', {
-              status: 404,
+            return new Response('What?', {
+              status: 429,
+              headers: {
+                'Retry-After': '60',
+                'Access-Control-Allow-Origin': corsOrigin,
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+              },
+            });
+          }
+        }
+
+        // UUID format (as hex code):xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        // Who created this???
+        const uuidP = generateUUID();
+        const uuidCs = generateUUID();
+        const refererUrl = `https://lms360.vn/xem-video?p=${uuidP}&c=${questionId}&cs=${uuidCs}&m=2&pa=1&sch=2`;
+
+        if (url.pathname === '/image') {
+          const imagePath = url.searchParams.get('path');
+          const contentId = url.searchParams.get('contentId');
+
+          if (!imagePath || !contentId) {
+            const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
+            return new Response('Uwgha!', {
+              status: 400,
               headers: {
                 'Access-Control-Allow-Origin': corsOrigin,
               },
             });
           }
 
-          const imageBuffer = await imageResponse.arrayBuffer();
+          const imageUrl = `https://h5p.lms360.vn/${contentId}/${imagePath}`;
 
-          const bytes = new Uint8Array(imageBuffer);
-          let binary = '';
-          const chunkSize = 8192;
-          for (let i = 0; i < bytes.length; i += chunkSize) {
-            const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
-            binary += String.fromCharCode.apply(null, chunk);
+          try {
+            const imageResponse = await fetch(imageUrl, {
+              headers: {
+                'User-Agent': randomUA,
+                Accept: 'image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate, br',
+                authorization: '',
+                Connection: 'keep-alive',
+                Referer: refererUrl,
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'same-origin',
+                TE: 'trailers',
+              },
+            });
+
+            if (!imageResponse.ok) {
+              const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
+              return new Response('where is it?', {
+                status: 404,
+                headers: {
+                  'Access-Control-Allow-Origin': corsOrigin,
+                },
+              });
+            }
+
+            const imageBuffer = await imageResponse.arrayBuffer();
+
+            const bytes = new Uint8Array(imageBuffer);
+            let binary = '';
+            const chunkSize = 8192;
+            for (let i = 0; i < bytes.length; i += chunkSize) {
+              const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+              binary += String.fromCharCode.apply(null, chunk);
+            }
+            const base64 = btoa(binary);
+
+            let contentType = imageResponse.headers.get('Content-Type');
+            if (!contentType) {
+              const ext = imagePath.split('.').pop()?.toLowerCase();
+              const mimeTypes = {
+                png: 'image/png',
+                jpg: 'image/jpeg',
+                jpeg: 'image/jpeg',
+                gif: 'image/gif',
+                webp: 'image/webp',
+                svg: 'image/svg+xml',
+              };
+              contentType = mimeTypes[ext] || 'image/png';
+            }
+
+            const dataUri = `data:${contentType};base64,${base64}`;
+
+            const headers = new Headers();
+            const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
+            headers.set('Access-Control-Allow-Origin', corsOrigin);
+            headers.set('Access-Control-Allow-Methods', 'GET');
+            headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            headers.set('Content-Type', 'application/json');
+            headers.set('Cache-Control', 'public, max-age=31536000');
+
+            return new Response(JSON.stringify({ dataUri }), { headers });
+          } catch (error) {
+            console.error('err', error);
+            const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
+            return new Response(JSON.stringify({ error: 'errr' }), {
+              status: 500,
+              headers: {
+                'Access-Control-Allow-Origin': corsOrigin,
+                'Content-Type': 'application/json',
+              },
+            });
           }
-          const base64 = btoa(binary);
+        }
 
-          let contentType = imageResponse.headers.get('Content-Type');
-          if (!contentType) {
-            const ext = imagePath.split('.').pop()?.toLowerCase();
-            const mimeTypes = {
-              png: 'image/png',
-              jpg: 'image/jpeg',
-              jpeg: 'image/jpeg',
-              gif: 'image/gif',
-              webp: 'image/webp',
-              svg: 'image/svg+xml',
-            };
-            contentType = mimeTypes[ext] || 'image/png';
-          }
+        const lms360Url = `https://lms360.vn/h5p/${encodeURIComponent(questionId)}/play`;
+        const response = await fetch(lms360Url, {
+          headers: {
+            'User-Agent': randomUA,
+            Accept: 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br',
+            authorization: '',
+            Connection: 'keep-alive',
+            Referer: refererUrl,
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+            TE: 'trailers',
+          },
+        });
 
-          const dataUri = `data:${contentType};base64,${base64}`;
-
+        if (!response.ok) {
           const headers = new Headers();
+          headers.set('Content-Type', 'application/json');
           const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
           headers.set('Access-Control-Allow-Origin', corsOrigin);
           headers.set('Access-Control-Allow-Methods', 'GET');
           headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-          headers.set('Content-Type', 'application/json');
-          headers.set('Cache-Control', 'public, max-age=31536000');
+          headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+          headers.set('X-Frame-Options', 'DENY');
+          headers.set('X-Content-Type-Options', 'nosniff');
+          headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+          headers.set('Permissions-Policy', 'interest-cohort=()');
+          headers.set('Content-Security-Policy', "default-src 'self';");
 
-          return new Response(JSON.stringify({ dataUri }), { headers });
-        } catch (error) {
-          console.error('err', error);
-          const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
-          return new Response(JSON.stringify({ error: 'errr' }), {
-            status: 500,
-            headers: {
-              'Access-Control-Allow-Origin': corsOrigin,
-              'Content-Type': 'application/json',
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: `whoops: ${response.status} ${response.statusText}`,
+              count: 0,
+              actualQuestionCount: 0,
+              questions: [],
+            }),
+            {
+              status: response.status,
+              headers,
             },
-          });
+          );
         }
-      }
 
-      const lms360Url = `https://lms360.vn/h5p/${encodeURIComponent(questionId)}/play`;
-      const response = await fetch(lms360Url, {
-        headers: {
-          'User-Agent': randomUA,
-          Accept: 'application/json, text/plain, */*',
-          'Accept-Language': 'en-US,en;q=0.5',
-          'Accept-Encoding': 'gzip, deflate, br',
-          authorization: '',
-          Connection: 'keep-alive',
-          Referer: refererUrl,
-          'Sec-Fetch-Dest': 'empty',
-          'Sec-Fetch-Mode': 'cors',
-          'Sec-Fetch-Site': 'same-origin',
-          TE: 'trailers',
-        },
-      });
+        const data = await response.json();
+        const processed = await process_questions(data, refererUrl);
 
-      if (!response.ok) {
         const headers = new Headers();
         headers.set('Content-Type', 'application/json');
         const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
@@ -1031,40 +1068,12 @@ export default {
         headers.set('Permissions-Policy', 'interest-cohort=()');
         headers.set('Content-Security-Policy', "default-src 'self';");
 
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: `whoops: ${response.status} ${response.statusText}`,
-            count: 0,
-            actualQuestionCount: 0,
-            questions: [],
-          }),
-          {
-            status: response.status,
-            headers,
-          },
-        );
+        return new Response(JSON.stringify(processed), {
+          headers,
+        });
       }
 
-      const data = await response.json();
-      const processed = await process_questions(data, refererUrl);
-
-      const headers = new Headers();
-      headers.set('Content-Type', 'application/json');
-      const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
-      headers.set('Access-Control-Allow-Origin', corsOrigin);
-      headers.set('Access-Control-Allow-Methods', 'GET');
-      headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
-      headers.set('X-Frame-Options', 'DENY');
-      headers.set('X-Content-Type-Options', 'nosniff');
-      headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-      headers.set('Permissions-Policy', 'interest-cohort=()');
-      headers.set('Content-Security-Policy', "default-src 'self';");
-
-      return new Response(JSON.stringify(processed), {
-        headers,
-      });
+      return new Response('Not Found', { status: 404 });
     } catch (error) {
       console.error('Nope:', error);
       const headers = new Headers();
