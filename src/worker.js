@@ -200,6 +200,87 @@ function buildImageUrl(contentUrl, filePath) {
   return `/image?path=${encodeURIComponent(path)}&contentId=${encodeURIComponent(contentId)}`;
 }
 
+function patchContent(data) {
+  if (!data || !data.integration || !data.integration.contents) return data;
+
+  const contentId = Object.keys(data.integration.contents)[0];
+  const content = data.integration.contents[contentId];
+  if (!content.jsonContent) return data;
+
+  let json;
+  try {
+    json = JSON.parse(content.jsonContent);
+  } catch (e) {
+    return data;
+  }
+
+  function overwriteProtection(obj) {
+    if (!obj || typeof obj !== 'object') return;
+
+    // Force enable solutions and retry
+    if (obj.enableSolutionsButton !== undefined) obj.enableSolutionsButton = true;
+    if (obj.enableRetry !== undefined) obj.enableRetry = true;
+    if (obj.enableCheckButton !== undefined) obj.enableCheckButton = true;
+    if (obj.showSolutionsRequiresInput !== undefined) obj.showSolutionsRequiresInput = false;
+    if (obj.checkButton !== undefined) obj.checkButton = true;
+
+    // Interactive Video specific overrides
+    if (obj.interactiveVideo && obj.interactiveVideo.summary && obj.interactiveVideo.summary.task) {
+      overwriteProtection(obj.interactiveVideo.summary.task);
+    }
+
+    // Recursively check all properties
+    Object.keys(obj).forEach(key => {
+      if (typeof obj[key] === 'object') {
+        overwriteProtection(obj[key]);
+      }
+    });
+  }
+
+  overwriteProtection(json);
+  if (json.disableBackwardsNavigation !== undefined) {
+    json.disableBackwardsNavigation = false;
+  }
+  // QuestionSet specific fixes
+  if (json.randomQuestions !== undefined) json.randomQuestions = false;
+
+  content.jsonContent = JSON.stringify(json);
+  return data;
+}
+
+function proxyUrl(url, workerUrl) {
+  if (!url) return url;
+  if (url.startsWith('https://cdnc.lms360.vn/') || url.startsWith('https://h5p.lms360.vn/')) {
+    return `${workerUrl.origin}/proxy?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
+function rewriteIntegrationUrls(data, workerUrl) {
+  if (!data || !data.integration) return data;
+  const integration = data.integration;
+
+  if (integration.scripts) {
+    integration.scripts = integration.scripts.map(s => proxyUrl(s, workerUrl));
+  }
+  if (integration.styles) {
+    integration.styles = integration.styles.map(s => proxyUrl(s, workerUrl));
+  }
+  if (integration.core && integration.core.scripts) {
+    integration.core.scripts = integration.core.scripts.map(s => proxyUrl(s, workerUrl));
+  }
+  if (integration.core && integration.core.styles) {
+    integration.core.styles = integration.core.styles.map(s => proxyUrl(s, workerUrl));
+  }
+  if (integration.contents) {
+    Object.values(integration.contents).forEach(content => {
+      if (content.scripts) content.scripts = content.scripts.map(s => proxyUrl(s, workerUrl));
+      if (content.styles) content.styles = content.styles.map(s => proxyUrl(s, workerUrl));
+    });
+  }
+  return data;
+}
+
 function process_h5p_questions(json, options = {}) {
   const lib = (json.library || json.__containerLibrary || '').toString();
   const params = json.params || json;
@@ -404,7 +485,7 @@ function process_h5p_questions(json, options = {}) {
 
 const FEATURE_FLAGS = {
   ENABLE_CORS: false, // only allow requests from lms360hack.pages.dev,
-//                      disable it if you want to test from localhost or other origin
+  //                      disable it if you want to test from localhost or other origin
   ENABLE_RATE_LIMIT: true,
 };
 
@@ -581,6 +662,113 @@ export default {
         const uuidP = generateUUID();
         const uuidCs = generateUUID();
         const refererUrl = `https://lms360.vn/xem-video?p=${uuidP}&c=${contentId}&cs=${uuidCs}&m=2&pa=1&sch=2`;
+
+        if (url.pathname === '/player') {
+          const lms360Url = `https://lms360.vn/h5p/${encodeURIComponent(contentId)}/play`;
+          const response = await fetch(lms360Url, {
+            headers: {
+              'User-Agent': randomUA,
+              'Referer': refererUrl
+            }
+          });
+          if (!response.ok) return new Response('Failed to fetch player data', { status: response.status });
+
+          let data = await response.json();
+          data = patchContent(data);
+          data = rewriteIntegrationUrls(data, url);
+
+          const html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>H5P Player Proxy</title>
+    ${data.integration.core.styles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
+    ${data.integration.styles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: transparent; }
+        .h5p-container { height: 100vh; width: 100vw; }
+    </style>
+</head>
+<body>
+    <div class="h5p-container"></div>
+    <script>
+        window.H5PIntegration = ${JSON.stringify(data.integration)};
+    </script>
+    ${data.integration.core.scripts.map(s => `<script src="${s}"></script>`).join('\n')}
+    ${data.integration.scripts.map(s => `<script src="${s}"></script>`).join('\n')}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            H5P.externalDispatcher.on('initialized', () => {
+                console.log('H5P Initialized, triggering solve...');
+                setTimeout(revealAnswers, 1000);
+            });
+
+            function revealAnswers() {
+                const instances = H5P.instances || [];
+                function reveal(instance, depth = 0) {
+                    if (!instance) return;
+                    const name = instance.libraryInfo?.machineName || 'Unknown';
+                    
+                    if (typeof instance.showSolutions === 'function') {
+                        try { instance.showSolutions(); } catch (e) {}
+                    }
+
+                    if (name.includes('H5P.Essay') && instance.params && instance.params.keywords) {
+                        try {
+                            const keywords = instance.params.keywords.map(k => k.keyword).filter(k => !!k).join('; ');
+                            if (keywords) {
+                                if (instance.inputField && typeof instance.inputField.setText === 'function') {
+                                    instance.inputField.setText(keywords);
+                                } else if (instance.inputField && instance.inputField.$input) {
+                                    instance.inputField.$input.val(keywords);
+                                }
+                            }
+                        } catch (e) {}
+                    }
+
+                    if (typeof instance.getQuestions === 'function') {
+                        const qs = instance.getQuestions();
+                        if (Array.isArray(qs)) qs.forEach(c => reveal(c, depth + 1));
+                    }
+
+                    const children = [
+                        instance.questionInstances, instance.instances, instance.children,
+                        instance.interactions, instance.subContent, instance.pages,
+                        instance.chapters, instance.content, instance.slides, instance.sections
+                    ];
+
+                    children.forEach(group => {
+                        if (Array.isArray(group)) group.forEach(c => reveal(c, depth + 1));
+                        else if (group && typeof group === 'object' && group.libraryInfo) reveal(group, depth + 1);
+                    });
+                    if (instance.child) reveal(instance.child, depth + 1);
+                }
+                instances.forEach(i => reveal(i));
+            }
+        });
+    </script>
+</body>
+</html>`;
+          return new Response(html, { headers: { 'Content-Type': 'text/html' } });
+        }
+
+        if (url.pathname === '/proxy') {
+          const targetUrl = url.searchParams.get('url');
+          if (!targetUrl) return new Response('Missing URL', { status: 400 });
+
+          const assetResponse = await fetch(targetUrl, {
+            headers: { 'User-Agent': randomUA, 'Referer': 'https://lms360.vn/' }
+          });
+
+          const headers = new Headers(assetResponse.headers);
+          headers.set('Access-Control-Allow-Origin', '*');
+
+          return new Response(assetResponse.body, {
+            status: assetResponse.status,
+            headers: headers
+          });
+        }
 
         try {
           const downloadUrl = `https://lms360.vn/h5p/download/${contentId}`;
