@@ -638,11 +638,29 @@ export default {
 
     try {
       const url = new URL(request.url);
+      const randomUA = user_agent_list[Math.floor(Math.random() * user_agent_list.length)];
+
+      if (url.pathname === '/proxy') {
+        const targetUrl = url.searchParams.get('url');
+        if (!targetUrl) return new Response('Missing URL', { status: 400 });
+
+        const assetResponse = await fetch(targetUrl, {
+          headers: { 'User-Agent': randomUA, 'Referer': 'https://lms360.vn/' }
+        });
+
+        const headers = new Headers(assetResponse.headers);
+        headers.set('Access-Control-Allow-Origin', '*');
+
+        return new Response(assetResponse.body, {
+          status: assetResponse.status,
+          headers: headers
+        });
+      }
 
       const contentId = url.searchParams.get('h5p_id');
       if (contentId) {
         const idPattern = /^[0-9a-f]{24}$/i;
-        if (!contentId || !idPattern.test(contentId)) {
+        if (!idPattern.test(contentId)) {
           return new Response('Wrong!', { status: 400 });
         }
 
@@ -663,8 +681,6 @@ export default {
           }
         }
 
-        const randomUA = user_agent_list[Math.floor(Math.random() * user_agent_list.length)];
-
         const uuidP = generateUUID();
         const uuidCs = generateUUID();
         const refererUrl = `https://lms360.vn/xem-video?p=${uuidP}&c=${contentId}&cs=${uuidCs}&m=2&pa=1&sch=2`;
@@ -683,10 +699,10 @@ export default {
           data = patchContent(data);
           data = rewriteIntegrationUrls(data, url);
 
-          const coreStyles = (data.core?.styles || data.integration.core?.styles || []);
-          const mainStyles = (data.integration.styles || []);
-          const coreScripts = (data.core?.scripts || data.integration.core?.scripts || []);
-          const mainScripts = (data.integration.scripts || []);
+          const coreStyles = (data.core?.styles || data.integration?.core?.styles || []);
+          const mainStyles = (data.integration?.styles || []);
+          const coreScripts = (data.core?.scripts || data.integration?.core?.scripts || []);
+          const mainScripts = (data.integration?.scripts || []);
 
           const html = `
 <!DOCTYPE html>
@@ -766,23 +782,6 @@ export default {
 </body>
 </html>`;
           return new Response(html, { headers: { 'Content-Type': 'text/html' } });
-        }
-
-        if (url.pathname === '/proxy') {
-          const targetUrl = url.searchParams.get('url');
-          if (!targetUrl) return new Response('Missing URL', { status: 400 });
-
-          const assetResponse = await fetch(targetUrl, {
-            headers: { 'User-Agent': randomUA, 'Referer': 'https://lms360.vn/' }
-          });
-
-          const headers = new Headers(assetResponse.headers);
-          headers.set('Access-Control-Allow-Origin', '*');
-
-          return new Response(assetResponse.body, {
-            status: assetResponse.status,
-            headers: headers
-          });
         }
 
         try {
@@ -902,8 +901,6 @@ export default {
           });
         }
       }
-
-      const randomUA = user_agent_list[Math.floor(Math.random() * user_agent_list.length)];
 
       // UUID format (as hex code):xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
       // Who created this???
