@@ -254,38 +254,34 @@ function proxyUrl(url, workerUrl) {
     const p = url.replace('https://', '');
     return `${workerUrl.origin}/proxy/https/${p}`;
   }
+  if (url.startsWith('http://')) {
+    const p = url.replace('http://', '');
+    return `${workerUrl.origin}/proxy/http/${p}`;
+  }
+  if (url.startsWith('//')) {
+    return `${workerUrl.origin}/proxy/https/${url.slice(2)}`;
+  }
   return url;
 }
 
-function rewriteIntegrationUrls(data, workerUrl) {
-  if (!data) return data;
+function rewriteAllUrls(obj, workerUrl) {
+  if (!obj || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(v => rewriteAllUrls(v, workerUrl));
 
-  // Handle core if it's at top level
-  if (data.core) {
-    if (data.core.scripts) data.core.scripts = data.core.scripts.map(s => proxyUrl(s, workerUrl));
-    if (data.core.styles) data.core.styles = data.core.styles.map(s => proxyUrl(s, workerUrl));
+  const newObj = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      if ((value.startsWith('http') || value.startsWith('//')) &&
+        (value.includes('lms360.vn') || value.includes('h5p.lms360.vn'))) {
+        newObj[key] = proxyUrl(value.startsWith('//') ? 'https:' + value : value, workerUrl);
+      } else {
+        newObj[key] = value;
+      }
+    } else {
+      newObj[key] = rewriteAllUrls(value, workerUrl);
+    }
   }
-
-  if (!data.integration) return data;
-  const integration = data.integration;
-
-  if (integration.scripts) {
-    integration.scripts = integration.scripts.map(s => proxyUrl(s, workerUrl));
-  }
-  if (integration.styles) {
-    integration.styles = integration.styles.map(s => proxyUrl(s, workerUrl));
-  }
-  if (integration.core) {
-    if (integration.core.scripts) integration.core.scripts = integration.core.scripts.map(s => proxyUrl(s, workerUrl));
-    if (integration.core.styles) integration.core.styles = integration.core.styles.map(s => proxyUrl(s, workerUrl));
-  }
-  if (integration.contents) {
-    Object.values(integration.contents).forEach(content => {
-      if (content.scripts) content.scripts = content.scripts.map(s => proxyUrl(s, workerUrl));
-      if (content.styles) content.styles = content.styles.map(s => proxyUrl(s, workerUrl));
-    });
-  }
-  return data;
+  return newObj;
 }
 
 function process_h5p_questions(json, options = {}) {
@@ -663,6 +659,32 @@ export default {
         }
       }
 
+      // Catch-all for assets that bypass proxy in CSS/JS or core requests
+      if (url.pathname.includes('.') &&
+        (url.pathname.endsWith('.js') || url.pathname.endsWith('.css') ||
+          url.pathname.endsWith('.woff') || url.pathname.endsWith('.woff2') ||
+          url.pathname.endsWith('.ttf') || url.pathname.endsWith('.png') ||
+          url.pathname.endsWith('.jpg') || url.pathname.endsWith('.svg'))) {
+
+        let targetUrl = '';
+        if (url.pathname.startsWith('/core/') || url.pathname.startsWith('/libraries/')) {
+          targetUrl = `https://cdnc.lms360.vn/elearning/p24/h5p${url.pathname}${url.search}`;
+        } else {
+          // Try core styles as fallback for root-level fonts/css mentioned in logs
+          targetUrl = `https://cdnc.lms360.vn/elearning/p24/h5p/core/styles${url.pathname}${url.search}`;
+        }
+
+        const assetResponse = await fetch(targetUrl, {
+          headers: { 'User-Agent': randomUA, 'Referer': 'https://lms360.vn/' }
+        });
+
+        if (assetResponse.ok) {
+          const headers = new Headers(assetResponse.headers);
+          headers.set('Access-Control-Allow-Origin', '*');
+          return new Response(assetResponse.body, { headers });
+        }
+      }
+
       const contentId = url.searchParams.get('h5p_id');
       if (contentId) {
         const idPattern = /^[0-9a-f]{24}$/i;
@@ -703,12 +725,21 @@ export default {
 
           let data = await response.json();
           data = patchContent(data);
-          data = rewriteIntegrationUrls(data, url);
+          data = rewriteAllUrls(data, url);
 
-          const coreStyles = (data.core?.styles || data.integration?.core?.styles || []);
-          const mainStyles = (data.integration?.styles || []);
-          const coreScripts = (data.core?.scripts || data.integration?.core?.scripts || []);
-          const mainScripts = (data.integration?.scripts || []);
+          const styles = [
+            ...(data.core?.styles || data.integration?.core?.styles || []),
+            ...(data.integration?.styles || []),
+            ...(data.integration?.contents ? Object.values(data.integration.contents).flatMap(c => c.styles || []) : [])
+          ];
+          const uniqueStyles = [...new Set(styles)];
+
+          const scripts = [
+            ...(data.core?.scripts || data.integration?.core?.scripts || []),
+            ...(data.integration?.scripts || []),
+            ...(data.integration?.contents ? Object.values(data.integration.contents).flatMap(c => c.scripts || []) : [])
+          ];
+          const uniqueScripts = [...new Set(scripts)];
 
           const html = `
 <!DOCTYPE html>
@@ -716,8 +747,7 @@ export default {
 <head>
     <meta charset="utf-8">
     <title>H5P Player Proxy</title>
-    ${coreStyles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
-    ${mainStyles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
+    ${uniqueStyles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: transparent; }
         .h5p-container { height: 100vh; width: 100vw; }
@@ -728,12 +758,11 @@ export default {
     <script>
         window.H5PIntegration = ${JSON.stringify({
             ...data.integration,
-            core: data.core || data.integration.core,
-            l10n: data.l10n || data.integration.l10n
+            core: data.core || data.integration?.core,
+            l10n: data.l10n || data.integration?.l10n
           })};
     </script>
-    ${coreScripts.map(s => `<script src="${s}"></script>`).join('\n')}
-    ${mainScripts.map(s => `<script src="${s}"></script>`).join('\n')}
+    ${uniqueScripts.map(s => `<script src="${s}"></script>`).join('\n')}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             H5P.externalDispatcher.on('initialized', () => {
