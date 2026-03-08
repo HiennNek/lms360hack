@@ -116,6 +116,11 @@ function hackDaAnswer(): void {
     hackerButton.disabled = true;
     hackerButton.textContent = 'Loading...';
 
+    const isDetailedMode = (document.getElementById('mode-toggle') as HTMLInputElement)?.checked;
+    const playerSection = document.getElementById('player-section');
+    const playerContainer = document.getElementById('player-container');
+    const questionsContainer = document.getElementById('questions');
+
     try {
         const parsed = new URL(inputUrl);
         const questionId = parsed.searchParams.get('c');
@@ -127,7 +132,29 @@ function hackDaAnswer(): void {
             return;
         }
 
-        const backendUrl = `https://lms360hack-backend.hiennek1.workers.dev?id=${encodeURIComponent(questionId)}`;
+        const backendBase = `https://lms360hack-backend.hiennek1.workers.dev`;
+
+        if (isDetailedMode) {
+            // Detailed Mode: Load H5P Player
+            if (playerSection && playerContainer) {
+                playerSection.classList.remove('hidden');
+                playerSection.scrollIntoView({ behavior: 'smooth' });
+
+                // Hide basic questions if showing player
+                if (questionsContainer) questionsContainer.innerHTML = '';
+                if (statusMessage) statusMessage.innerHTML = '';
+
+                const playerUrl = `${backendBase}/player?h5p_id=${encodeURIComponent(questionId)}`;
+                playerContainer.innerHTML = `<iframe src="${playerUrl}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>`;
+
+                hackerButton.disabled = false;
+                hackerButton.textContent = 'Lấy đáp án';
+                return;
+            }
+        }
+
+        // Basic Mode: Existing logic
+        const backendUrl = `${backendBase}?id=${encodeURIComponent(questionId)}`;
 
         fetch(backendUrl)
             .then((res) => {
@@ -147,6 +174,7 @@ function hackDaAnswer(): void {
                 return res.json();
             })
             .then((data: BackendResponse) => {
+                if (playerSection) playerSection.classList.add('hidden');
                 renderQuestions(data);
                 hackerButton.disabled = false;
                 hackerButton.textContent = 'Lấy đáp án';
@@ -216,7 +244,31 @@ function initForm(): void {
     }
 }
 
+function initPlayerControls(): void {
+    const closeButton = document.getElementById('close-player');
+    const playerSection = document.getElementById('player-section');
+    const playerContainer = document.getElementById('player-container');
+
+    if (closeButton && playerSection && playerContainer) {
+        closeButton.addEventListener('click', () => {
+            playerSection.classList.add('hidden');
+            playerContainer.innerHTML = ''; // Stop the iframe
+        });
+    }
+
+    const modeToggle = document.getElementById('mode-toggle') as HTMLInputElement;
+    if (modeToggle) {
+        modeToggle.addEventListener('change', () => {
+            if (!modeToggle.checked && playerSection) {
+                playerSection.classList.add('hidden');
+                playerContainer!.innerHTML = '';
+            }
+        });
+    }
+}
+
 export function initProcessQuestionType(): void {
     initEula();
     initForm();
+    initPlayerControls();
 }
