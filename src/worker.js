@@ -257,7 +257,15 @@ function proxyUrl(url, workerUrl) {
 }
 
 function rewriteIntegrationUrls(data, workerUrl) {
-  if (!data || !data.integration) return data;
+  if (!data) return data;
+
+  // Handle core if it's at top level
+  if (data.core) {
+    if (data.core.scripts) data.core.scripts = data.core.scripts.map(s => proxyUrl(s, workerUrl));
+    if (data.core.styles) data.core.styles = data.core.styles.map(s => proxyUrl(s, workerUrl));
+  }
+
+  if (!data.integration) return data;
   const integration = data.integration;
 
   if (integration.scripts) {
@@ -266,11 +274,9 @@ function rewriteIntegrationUrls(data, workerUrl) {
   if (integration.styles) {
     integration.styles = integration.styles.map(s => proxyUrl(s, workerUrl));
   }
-  if (integration.core && integration.core.scripts) {
-    integration.core.scripts = integration.core.scripts.map(s => proxyUrl(s, workerUrl));
-  }
-  if (integration.core && integration.core.styles) {
-    integration.core.styles = integration.core.styles.map(s => proxyUrl(s, workerUrl));
+  if (integration.core) {
+    if (integration.core.scripts) integration.core.scripts = integration.core.scripts.map(s => proxyUrl(s, workerUrl));
+    if (integration.core.styles) integration.core.styles = integration.core.styles.map(s => proxyUrl(s, workerUrl));
   }
   if (integration.contents) {
     Object.values(integration.contents).forEach(content => {
@@ -677,14 +683,19 @@ export default {
           data = patchContent(data);
           data = rewriteIntegrationUrls(data, url);
 
+          const coreStyles = (data.core?.styles || data.integration.core?.styles || []);
+          const mainStyles = (data.integration.styles || []);
+          const coreScripts = (data.core?.scripts || data.integration.core?.scripts || []);
+          const mainScripts = (data.integration.scripts || []);
+
           const html = `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>H5P Player Proxy</title>
-    ${data.integration.core.styles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
-    ${data.integration.styles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
+    ${coreStyles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
+    ${mainStyles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: transparent; }
         .h5p-container { height: 100vh; width: 100vw; }
@@ -693,10 +704,14 @@ export default {
 <body>
     <div class="h5p-container"></div>
     <script>
-        window.H5PIntegration = ${JSON.stringify(data.integration)};
+        window.H5PIntegration = ${JSON.stringify({
+            ...data.integration,
+            core: data.core || data.integration.core,
+            l10n: data.l10n || data.integration.l10n
+          })};
     </script>
-    ${data.integration.core.scripts.map(s => `<script src="${s}"></script>`).join('\n')}
-    ${data.integration.scripts.map(s => `<script src="${s}"></script>`).join('\n')}
+    ${coreScripts.map(s => `<script src="${s}"></script>`).join('\n')}
+    ${mainScripts.map(s => `<script src="${s}"></script>`).join('\n')}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             H5P.externalDispatcher.on('initialized', () => {
