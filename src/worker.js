@@ -217,7 +217,6 @@ function patchContent(data, workerUrl) {
   function overwriteProtection(obj) {
     if (!obj || typeof obj !== 'object') return;
 
-    // Force enable solutions and retry
     if (obj.enableSolutionsButton !== undefined) obj.enableSolutionsButton = true;
     if (obj.enableRetry !== undefined) obj.enableRetry = true;
     if (obj.enableCheckButton !== undefined) obj.enableCheckButton = true;
@@ -768,8 +767,6 @@ export default {
         document.addEventListener('DOMContentLoaded', () => {
             H5P.externalDispatcher.on('initialized', () => {
                 console.log('H5P Initialized, triggering solve...');
-                // Run once after a brief delay to ensure DOM is ready.
-                // We removed setInterval to avoid breaking slide/book jumping behavior.
                 setTimeout(revealAnswers, 500);
             });
 
@@ -778,7 +775,7 @@ export default {
                 const visited = new Set([window, document, H5P]);
 
                 function isElementVisible(el) {
-                    if (!el || !(el instanceof Element)) return true; // Can't trace DOM
+                    if (!el || !(el instanceof Element)) return true;
                     if (el.offsetParent === null) return false;
                     const style = window.getComputedStyle(el);
                     return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
@@ -788,9 +785,6 @@ export default {
                     if (!obj || typeof obj !== 'object' || visited.has(obj)) return;
                     visited.add(obj);
 
-                    // For content types that have multiple slides/pages/steps (Presentation, Book, etc),
-                    // calling .showSolutions() on hidden slides forces the container to auto-jump.
-                    // To prevent jumping, we must check if the object's wrapper DOM element is visible.
                     let isCurrentlyVisible = true;
                     if (obj.wrapper) isCurrentlyVisible = isElementVisible(obj.wrapper[0] || obj.wrapper);
                     else if (obj.$wrapper) isCurrentlyVisible = isElementVisible(obj.$wrapper[0]);
