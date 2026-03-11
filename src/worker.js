@@ -768,27 +768,45 @@ export default {
         document.addEventListener('DOMContentLoaded', () => {
             H5P.externalDispatcher.on('initialized', () => {
                 console.log('H5P Initialized, triggering solve...');
-                setInterval(revealAnswers, 1500);
+                // Run once after a brief delay to ensure DOM is ready.
+                // We removed setInterval to avoid breaking slide/book jumping behavior.
+                setTimeout(revealAnswers, 500);
             });
 
             function revealAnswers() {
                 const instances = H5P.instances || [];
                 const visited = new Set([window, document, H5P]);
 
+                function isElementVisible(el) {
+                    if (!el || !(el instanceof Element)) return true; // Can't trace DOM
+                    if (el.offsetParent === null) return false;
+                    const style = window.getComputedStyle(el);
+                    return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+                }
+
                 function reveal(obj) {
                     if (!obj || typeof obj !== 'object' || visited.has(obj)) return;
                     visited.add(obj);
 
-                    if (typeof obj.showSolutions === 'function') {
-                        try { obj.showSolutions(); } catch (e) {}
+                    // For content types that have multiple slides/pages/steps (Presentation, Book, etc),
+                    // calling .showSolutions() on hidden slides forces the container to auto-jump.
+                    // To prevent jumping, we must check if the object's wrapper DOM element is visible.
+                    let isCurrentlyVisible = true;
+                    if (obj.wrapper) isCurrentlyVisible = isElementVisible(obj.wrapper[0] || obj.wrapper);
+                    else if (obj.$wrapper) isCurrentlyVisible = isElementVisible(obj.$wrapper[0]);
+                    else if (obj.$container) isCurrentlyVisible = isElementVisible(obj.$container[0]);
+
+                    if (isCurrentlyVisible && typeof obj.showSolutions === 'function' && !obj.__hacked_solution) {
+                        try { obj.showSolutions(); obj.__hacked_solution = true; } catch (e) {}
                     }
 
-                    if (obj.libraryInfo?.machineName && obj.libraryInfo.machineName.includes('H5P.Essay') && obj.params && obj.params.keywords) {
+                    if (isCurrentlyVisible && obj.libraryInfo?.machineName && obj.libraryInfo.machineName.includes('H5P.Essay') && obj.params && obj.params.keywords && !obj.__hacked_essay) {
                         try {
                             const keywords = obj.params.keywords.map(k => k.keyword).filter(k => !!k).join('; ');
                             if (keywords && obj.inputField) {
                                 if (typeof obj.inputField.setText === 'function') obj.inputField.setText(keywords);
                                 else if (obj.inputField.$input) obj.inputField.$input.val(keywords);
+                                obj.__hacked_essay = true;
                             }
                         } catch (e) {}
                     }
@@ -814,9 +832,12 @@ export default {
                 instances.forEach(i => reveal(i));
 
                 try {
-                    const buttons = document.querySelectorAll('.h5p-question-check-answer:not([disabled]), .h5p-actions .h5p-button.h5p-show-solutions:not([disabled]), .h5p-joubelui-button[aria-label="Check"]');
+                    const buttons = document.querySelectorAll('.h5p-question-check-answer:not([disabled]):not([data-hacked]), .h5p-actions .h5p-button.h5p-show-solutions:not([disabled]):not([data-hacked]), .h5p-joubelui-button[aria-label="Check"]:not([data-hacked])');
                     buttons.forEach(b => {
-                        if (b.offsetParent !== null) b.click();
+                        if (b.offsetParent !== null) {
+                            b.click();
+                            b.setAttribute('data-hacked', 'true');
+                        }
                     });
                 } catch(e) {}
             }
