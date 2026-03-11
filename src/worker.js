@@ -200,7 +200,7 @@ function buildImageUrl(contentUrl, filePath) {
   return `/image?path=${encodeURIComponent(path)}&contentId=${encodeURIComponent(contentId)}`;
 }
 
-function patchContent(data) {
+function patchContent(data, workerUrl) {
   if (!data || !data.integration || !data.integration.contents) return data;
 
   const contentId = Object.keys(data.integration.contents)[0];
@@ -223,13 +223,13 @@ function patchContent(data) {
     if (obj.enableCheckButton !== undefined) obj.enableCheckButton = true;
     if (obj.showSolutionsRequiresInput !== undefined) obj.showSolutionsRequiresInput = false;
     if (obj.checkButton !== undefined) obj.checkButton = true;
+    if (obj.disableShowSolutions !== undefined) obj.disableShowSolutions = false;
+    if (obj.showSolution !== undefined) obj.showSolution = true;
 
-    // Interactive Video specific overrides
     if (obj.interactiveVideo && obj.interactiveVideo.summary && obj.interactiveVideo.summary.task) {
       overwriteProtection(obj.interactiveVideo.summary.task);
     }
 
-    // Recursively check all properties
     Object.keys(obj).forEach(key => {
       if (typeof obj[key] === 'object') {
         overwriteProtection(obj[key]);
@@ -238,11 +238,16 @@ function patchContent(data) {
   }
 
   overwriteProtection(json);
+
+  if (json.randomQuestions !== undefined) json.randomQuestions = false;
+  if (json.poolSize !== undefined) delete json.poolSize;
   if (json.disableBackwardsNavigation !== undefined) {
     json.disableBackwardsNavigation = false;
   }
-  // QuestionSet specific fixes
-  if (json.randomQuestions !== undefined) json.randomQuestions = false;
+
+  if (workerUrl) {
+    json = rewriteAllUrls(json, workerUrl);
+  }
 
   content.jsonContent = JSON.stringify(json);
   return data;
@@ -265,21 +270,19 @@ function proxyUrl(url, workerUrl) {
 }
 
 function rewriteAllUrls(obj, workerUrl) {
+  if (typeof obj === 'string') {
+    if ((obj.startsWith('http') || obj.startsWith('//')) &&
+      (obj.includes('lms360.vn') || obj.includes('h5p.lms360.vn'))) {
+      return proxyUrl(obj.startsWith('//') ? 'https:' + obj : obj, workerUrl);
+    }
+    return obj;
+  }
   if (!obj || typeof obj !== 'object') return obj;
   if (Array.isArray(obj)) return obj.map(v => rewriteAllUrls(v, workerUrl));
 
   const newObj = {};
   for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === 'string') {
-      if ((value.startsWith('http') || value.startsWith('//')) &&
-        (value.includes('lms360.vn') || value.includes('h5p.lms360.vn'))) {
-        newObj[key] = proxyUrl(value.startsWith('//') ? 'https:' + value : value, workerUrl);
-      } else {
-        newObj[key] = value;
-      }
-    } else {
-      newObj[key] = rewriteAllUrls(value, workerUrl);
-    }
+    newObj[key] = rewriteAllUrls(value, workerUrl);
   }
   return newObj;
 }
@@ -659,7 +662,6 @@ export default {
         }
       }
 
-      // Catch-all for assets that bypass proxy in CSS/JS or core requests
       if (url.pathname.includes('.') &&
         (url.pathname.endsWith('.js') || url.pathname.endsWith('.css') ||
           url.pathname.endsWith('.woff') || url.pathname.endsWith('.woff2') ||
@@ -670,7 +672,6 @@ export default {
         if (url.pathname.startsWith('/core/') || url.pathname.startsWith('/libraries/')) {
           targetUrl = `https://cdnc.lms360.vn/elearning/p24/h5p${url.pathname}${url.search}`;
         } else {
-          // Try core styles as fallback for root-level fonts/css mentioned in logs
           targetUrl = `https://cdnc.lms360.vn/elearning/p24/h5p/core/styles${url.pathname}${url.search}`;
         }
 
@@ -724,7 +725,7 @@ export default {
           if (!response.ok) return new Response('Failed to fetch player data', { status: response.status });
 
           let data = await response.json();
-          data = patchContent(data);
+          data = patchContent(data, url);
           data = rewriteAllUrls(data, url);
 
           const styles = [
@@ -749,8 +750,8 @@ export default {
     <title>H5P Player Proxy</title>
     ${uniqueStyles.map(s => `<link rel="stylesheet" href="${s}">`).join('\n')}
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: transparent; }
-        .h5p-container { height: 100vh; width: 100vw; }
+        body { margin: 0; padding: 5px; box-sizing: border-box; background: #FFFFFF; min-height: 100vh; overflow: hidden !important; }
+        html { background: #FFFFFF; margin: 0; padding: 0; overflow: hidden !important; }
     </style>
 </head>
 <body>
@@ -767,50 +768,85 @@ export default {
         document.addEventListener('DOMContentLoaded', () => {
             H5P.externalDispatcher.on('initialized', () => {
                 console.log('H5P Initialized, triggering solve...');
-                setTimeout(revealAnswers, 1000);
+                setInterval(revealAnswers, 1500);
             });
 
             function revealAnswers() {
                 const instances = H5P.instances || [];
-                function reveal(instance, depth = 0) {
-                    if (!instance) return;
-                    const name = instance.libraryInfo?.machineName || 'Unknown';
-                    
-                    if (typeof instance.showSolutions === 'function') {
-                        try { instance.showSolutions(); } catch (e) {}
+                const visited = new Set([window, document, H5P]);
+
+                function reveal(obj) {
+                    if (!obj || typeof obj !== 'object' || visited.has(obj)) return;
+                    visited.add(obj);
+
+                    if (typeof obj.showSolutions === 'function') {
+                        try { obj.showSolutions(); } catch (e) {}
                     }
 
-                    if (name.includes('H5P.Essay') && instance.params && instance.params.keywords) {
+                    if (obj.libraryInfo?.machineName && obj.libraryInfo.machineName.includes('H5P.Essay') && obj.params && obj.params.keywords) {
                         try {
-                            const keywords = instance.params.keywords.map(k => k.keyword).filter(k => !!k).join('; ');
-                            if (keywords) {
-                                if (instance.inputField && typeof instance.inputField.setText === 'function') {
-                                    instance.inputField.setText(keywords);
-                                } else if (instance.inputField && instance.inputField.$input) {
-                                    instance.inputField.$input.val(keywords);
-                                }
+                            const keywords = obj.params.keywords.map(k => k.keyword).filter(k => !!k).join('; ');
+                            if (keywords && obj.inputField) {
+                                if (typeof obj.inputField.setText === 'function') obj.inputField.setText(keywords);
+                                else if (obj.inputField.$input) obj.inputField.$input.val(keywords);
                             }
                         } catch (e) {}
                     }
 
-                    if (typeof instance.getQuestions === 'function') {
-                        const qs = instance.getQuestions();
-                        if (Array.isArray(qs)) qs.forEach(c => reveal(c, depth + 1));
+                    if (typeof obj.getQuestions === 'function') {
+                        try {
+                            const qs = obj.getQuestions();
+                            if (Array.isArray(qs)) qs.forEach(c => reveal(c));
+                        } catch (e) {}
                     }
 
-                    const children = [
-                        instance.questionInstances, instance.instances, instance.children,
-                        instance.interactions, instance.subContent, instance.pages,
-                        instance.chapters, instance.content, instance.slides, instance.sections
-                    ];
-
-                    children.forEach(group => {
-                        if (Array.isArray(group)) group.forEach(c => reveal(c, depth + 1));
-                        else if (group && typeof group === 'object' && group.libraryInfo) reveal(group, depth + 1);
-                    });
-                    if (instance.child) reveal(instance.child, depth + 1);
+                    for (const key in obj) {
+                        try {
+                            const val = obj[key];
+                            if (!val || typeof val !== 'object') continue;
+                            if (val instanceof Element || (val && val.jquery)) continue;
+                            if (key === 'parent' || key === 'parentVideo') continue;
+                            reveal(val);
+                        } catch (e) {}
+                    }
                 }
+
                 instances.forEach(i => reveal(i));
+
+                try {
+                    const buttons = document.querySelectorAll('.h5p-question-check-answer:not([disabled]), .h5p-actions .h5p-button.h5p-show-solutions:not([disabled]), .h5p-joubelui-button[aria-label="Check"]');
+                    buttons.forEach(b => {
+                        if (b.offsetParent !== null) b.click();
+                    });
+                } catch(e) {}
+            }
+            
+            function sendHeight() {
+
+                let bestHeight = 0;
+                
+                const h5pContainer = document.querySelector('.h5p-container');
+                if (h5pContainer) {
+                    bestHeight = Math.max(bestHeight, h5pContainer.scrollHeight, h5pContainer.getBoundingClientRect().height);
+                }
+                
+                const h5pContent = document.querySelector('.h5p-content');
+                if (h5pContent) {
+                    bestHeight = Math.max(bestHeight, h5pContent.scrollHeight, h5pContent.getBoundingClientRect().height);
+                }
+
+                if (bestHeight > 0) {
+                    window.parent.postMessage({ type: 'h5p-resize', height: bestHeight + 40 }, '*');
+                }
+            }
+            
+            const ro = new ResizeObserver(sendHeight);
+            ro.observe(document.body);
+            
+            setInterval(sendHeight, 1000);
+            
+            if (H5P && H5P.externalDispatcher) {
+                H5P.externalDispatcher.on('resize', sendHeight);
             }
         });
     </script>
