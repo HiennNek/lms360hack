@@ -67,24 +67,74 @@
 #
 
 ### Changelog:
-- v6.2: Tối ưu hóa giao diện. Chuyển qua sử dụng ViteJS + TypeScript cho code mượt hơn.
-- v6.1: Tối ưu hóa code production
-- v6: Giao diện mới, tốc độ loading nhanh hơn + giao diện mượt hơn nhờ Tailwind CSS, hiển thị câu hỏi dạng grid.
-- v5.3: Đã thêm tính năng preview cho trình duyệt Chromium-based
-- v5.2: Thêm tính năng Preview cho Advanced mode, chỉnh một số vấn đề nhỏ.
-- v5.1: Redesign giao diện, fix error handler, thêm auto save vào advanced mode.
-- v5.0: Thêm LMS360 Hack Advanced. Xem, chỉnh sửa và tải về bài giảng LMS360.
-- v4.3.2: Tối ưu hóa độ mượt của giao diện + tối ưu hóa màu sắc giao diện.
-- v4.3.1: Đã thêm tính năng search cho bài tập có bằng hoặc trên 10 câu hỏi + Thêm hiển thị số câu hỏi thật nếu như bài có random.
-- v4.3: Đã chuyển toàn bộ thuật toán xử lý câu hỏi sang backend. Tối ưu hóa tốc độ load + bảo mật
-- v4.2.2: Fix lại giao diện + fix lỗi scroll trên thiết bị di động
-- v4.2.1: Một bản fix nhỏ cho v4.2, đã fix lỗi thứ tự câu trong Interactive video
-- v4.2: Giao diện mới, sử dụng backend mới, fix lỗi ~~sắp xếp thứ tự và~~ số thứ tự trong list câu hỏi (sau khi fix cái sắp xếp thứ tự câu hỏi thì nó mọc thêm đống bug nữa)
-- v4.1: Đã fix lỗi khi mà lms360hack.pages.dev hiển thị câu hỏi trống khi sử dụng
-- v4.0: Phiên bản xịn nhất của LMS360 Hack :D, đang hỗ trợ (và có thể hơn) 11 dạng bài tập
-- v3.0: Bản improvement cho v2.0, hỗ trợ nhiều chế độ với câu hỏi trắc nghiệm một đáp án
-- v2.0: Bản improvement cho v1.0, có chế độ hiển thị thêm dấu chấm cuối câu cho đáp án đúng (trắc nghiệm một đáp án)
-- v1.0: (Không có trên GitHub) Ngày đầu tiên tôi sử dụng LMS360 và cảm thấy hệ thống này thật tệ :)
+
+<details>
+  <summary>2026.1</summary>
+  Thêm tính năng live preview cho những dạng bài phức tạp
+</details>
+
+*Kể từ bản 2026.1, định dạng version sẽ là YEAR.RELEASE*
+<details>
+  <summary>Changelog cũ</summary>
+    <details>
+    <summary>v6.2</summary>
+    Tối ưu hóa giao diện. Chuyển qua sử dụng ViteJS + TypeScript cho code mượt hơn.
+    </details>
+    <details>
+    <summary>v6.1</summary>
+    Tối ưu hóa code production
+    </details>
+    <details>
+    <summary>v6.0</summary>
+    Giao diện mới, tốc độ loading nhanh hơn + giao diện mượt hơn nhờ Tailwind CSS, hiển thị câu hỏi dạng grid.
+    </details>
+    <details>
+    <summary>v5.3</summary>
+    Đã thêm tính năng preview cho trình duyệt Chromium-based
+    </details>
+    <details>
+    <summary>v5.2</summary>
+    Thêm tính năng Preview cho Advanced mode, chỉnh một số vấn đề nhỏ.
+    </details>
+    <details>
+    <summary>v5.1</summary>
+    Redesign giao diện, fix error handler, thêm auto save vào advanced mode.
+    </details>
+    <details>
+    <summary>v5.0</summary>
+    Thêm LMS360 Hack Advanced. Xem, chỉnh sửa và tải về bài giảng LMS360.
+    </details>
+    <details>
+    <summary>v4.3.2</summary>
+    Tối ưu hóa độ mượt của giao diện + tối ưu hóa màu sắc giao diện.
+    </details>
+    <details>
+    <summary>v4.3.1</summary>
+    Đã thêm tính năng search cho bài tập có bằng hoặc trên 10 câu hỏi + Thêm hiển thị số câu hỏi thật nếu như bài có random.
+    </details>
+    <details>
+    <summary>v4.3</summary>
+    Đã chuyển toàn bộ thuật toán xử lý câu hỏi sang backend. Tối ưu hóa tốc độ load + bảo mật
+    </details>
+    <details>
+    <summary>v4.2.2</summary>
+    Fix lại giao diện + fix lỗi scroll trên thiết bị di động</details>
+    <details>
+    <summary>v4.2.1</summary>
+    Một bản fix nhỏ cho v4.2, đã fix lỗi thứ tự câu trong Interactive video
+    </details>
+    <details>
+    <summary>v4.2</summary>
+    Giao diện mới, sử dụng backend mới, fix lỗi ~~sắp xếp thứ tự và~~ số thứ tự trong list câu hỏi (sau khi fix cái sắp xếp thứ tự câu hỏi thì nó mọc thêm đống bug nữa)</details>
+    <details>
+    <summary>v4.1</summary>
+    Đã fix lỗi khi mà lms360hack.pages.dev hiển thị câu hỏi trống khi sử dụng
+    </details>
+    <details>
+    <summary>v4.0</summary>
+    Sự khởi đầu của phiên bản web LMS360 Hack!
+    </details>
+</details>
 
 #
 

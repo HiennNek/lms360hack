@@ -12,6 +12,22 @@ interface BackendResponse {
     count?: number;
 }
 
+let lastH5PId: string | null = null;
+
+function updateVisibility(): void {
+    const isDetailedMode = (document.getElementById('mode-toggle') as HTMLInputElement)?.checked;
+    const playerSection = document.getElementById('player-section');
+    const basicSection = document.getElementById('basic-section');
+
+    if (isDetailedMode) {
+        playerSection?.classList.remove('hidden');
+        basicSection?.classList.add('hidden');
+    } else {
+        playerSection?.classList.add('hidden');
+        basicSection?.classList.remove('hidden');
+    }
+}
+
 function renderQuestions(backendResponse: BackendResponse): void {
     const container = document.getElementById('questions')!;
     const statusMessage = document.getElementById('status-message');
@@ -116,10 +132,12 @@ function hackDaAnswer(): void {
     hackerButton.disabled = true;
     hackerButton.textContent = 'Loading...';
 
+    document.getElementById('mode-toggle-container')?.classList.remove('hidden');
+
     const isDetailedMode = (document.getElementById('mode-toggle') as HTMLInputElement)?.checked;
     const playerSection = document.getElementById('player-section');
     const playerContainer = document.getElementById('player-container');
-    const questionsContainer = document.getElementById('questions');
+    const basicSection = document.getElementById('basic-section');
 
     try {
         const parsed = new URL(inputUrl);
@@ -132,64 +150,59 @@ function hackDaAnswer(): void {
             return;
         }
 
-        const backendBase = `https://lms360hack-backend.hiennek1.workers.dev`;
+        const backendBase = `http://localhost:8787`;
 
-        if (isDetailedMode) {
-            // Detailed Mode: Load H5P Player
-            if (playerSection && playerContainer) {
-                playerSection.classList.remove('hidden');
-                playerSection.scrollIntoView({ behavior: 'smooth' });
+        if (questionId !== lastH5PId) {
+            lastH5PId = questionId;
 
-                // Hide basic questions if showing player
-                if (questionsContainer) questionsContainer.innerHTML = '';
-                if (statusMessage) statusMessage.innerHTML = '';
-
+            if (playerContainer) {
                 const playerUrl = `${backendBase}/player?h5p_id=${encodeURIComponent(questionId)}`;
                 playerContainer.innerHTML = `<iframe src="${playerUrl}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>`;
-
-                hackerButton.disabled = false;
-                hackerButton.textContent = 'Lấy đáp án';
-                return;
             }
-        }
 
-        // Basic Mode: Existing logic
-        const backendUrl = `${backendBase}?id=${encodeURIComponent(questionId)}`;
+            if (container) container.innerHTML = '<div class="text-center p-8"><span class="material-symbols-outlined text-4xl text-primary animate-spin">sync</span></div>';
+            if (statusMessage) statusMessage.innerHTML = '';
 
-        fetch(backendUrl)
-            .then((res) => {
-                if (res.status === 429) {
-                    throw new Error('Từ từ, không sập server!');
-                }
-                if (!res.ok) {
-                    return res
-                        .json()
-                        .then((data: { error?: string }) => {
+            const backendUrl = `${backendBase}?id=${encodeURIComponent(questionId)}`;
+            fetch(backendUrl)
+                .then((res) => {
+                    if (res.status === 429) throw new Error('Từ từ, không sập server!');
+                    if (!res.ok) {
+                        return res.json().then((data: { error?: string }) => {
                             throw new Error(data.error || `HTTP ${res.status}: ${res.statusText}`);
-                        })
-                        .catch(() => {
+                        }).catch(() => {
                             throw new Error(`HTTP ${res.status}: ${res.statusText}`);
                         });
-                }
-                return res.json();
-            })
-            .then((data: BackendResponse) => {
-                if (playerSection) playerSection.classList.add('hidden');
-                renderQuestions(data);
-                hackerButton.disabled = false;
-                hackerButton.textContent = 'Lấy đáp án';
-            })
-            .catch((err: Error) => {
-                console.error(err);
-                const errorHTML = `<div class='error-message'>❌ Lỗi: ${err.message}</div>`;
-                if (statusMessage) {
-                    statusMessage.innerHTML = errorHTML;
-                } else {
-                    container.innerHTML = errorHTML;
-                }
-                hackerButton.disabled = false;
-                hackerButton.textContent = 'Lấy đáp án';
-            });
+                    }
+                    return res.json();
+                })
+                .then((data: BackendResponse) => {
+                    renderQuestions(data);
+                })
+                .catch((err: Error) => {
+                    console.error(err);
+                    const errorHTML = `<div class='error-message'>❌ Lỗi: ${err.message}</div>`;
+                    if (statusMessage) statusMessage.innerHTML = errorHTML;
+                    else container.innerHTML = errorHTML;
+                })
+                .finally(() => {
+                    hackerButton.disabled = false;
+                    hackerButton.textContent = 'Lấy đáp án';
+                });
+        } else {
+            hackerButton.disabled = false;
+            hackerButton.textContent = 'Lấy đáp án';
+        }
+
+        updateVisibility();
+
+        if (isDetailedMode && playerSection) {
+            playerSection.classList.remove('hidden');
+            playerSection.scrollIntoView({ behavior: 'smooth' });
+        } else if (basicSection) {
+            basicSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
     } catch {
         alert('Cái link gì đây? (URL không hợp lệ - có thể do thiếu https:// hoặc http://)');
         hackerButton.disabled = false;
@@ -248,23 +261,39 @@ function initPlayerControls(): void {
     const closeButton = document.getElementById('close-player');
     const playerSection = document.getElementById('player-section');
     const playerContainer = document.getElementById('player-container');
+    const refreshButton = document.getElementById('refresh-player');
 
     if (closeButton && playerSection && playerContainer) {
         closeButton.addEventListener('click', () => {
             playerSection.classList.add('hidden');
-            playerContainer.innerHTML = ''; // Stop the iframe
+            playerContainer.innerHTML = '';
+        });
+    }
+
+    if (refreshButton && playerContainer) {
+        refreshButton.addEventListener('click', () => {
+            const iframe = playerContainer.querySelector('iframe');
+            if (iframe) {
+                iframe.src = iframe.src;
+            }
         });
     }
 
     const modeToggle = document.getElementById('mode-toggle') as HTMLInputElement;
     if (modeToggle) {
         modeToggle.addEventListener('change', () => {
-            if (!modeToggle.checked && playerSection) {
-                playerSection.classList.add('hidden');
-                playerContainer!.innerHTML = '';
-            }
+            updateVisibility();
         });
     }
+
+    window.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'h5p-resize' && event.data.height) {
+            const iframe = document.querySelector('#player-container iframe') as HTMLIFrameElement;
+            if (iframe) {
+                iframe.style.height = `${event.data.height}px`;
+            }
+        }
+    });
 }
 
 export function initProcessQuestionType(): void {

@@ -93,7 +93,7 @@
           <img src="/favicon.ico" class="size-6 md:size-8 object-contain" alt="Logo">
         </div>
         <h2 class="text-lg md:text-xl font-bold tracking-tight">LMS360 Hack <span
-            class="font-normal opacity-50 xs:inline">v6.2</span></h2>
+            class="text-sm opacity-50 xs:inline">2026.1</span></h2>
       </div>
       <div class="flex items-center gap-6 md:gap-8">
         <a class="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-white/70 hover:text-primary dark:hover:text-primary transition-colors"
@@ -128,12 +128,10 @@
         </div>
         <div>
           <p class="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-            Giới thiệu chế độ nâng cao
-            <span
-              class="inline-flex items-center rounded-full bg-indigo-100 dark:bg-indigo-900/50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">NEW</span>
+            Bạn muốn xem, chỉnh sửa và tải về dạng bài?
           </p>
-          <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400">
-            Bạn muốn xem, chỉnh sửa và tải về <strong>tất cả</strong> dạng bài?
+          <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400 ">
+            Thử ngay chế độ nâng cao
           </p>
         </div>
       </div>
@@ -185,45 +183,51 @@
           Lấy đáp án
         </button>
 
-        <!-- Mode Toggle -->
-        <div class="flex items-center justify-center gap-4 mt-6">
-          <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Basic Mode</span>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="mode-toggle" class="sr-only peer">
-            <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
-          </label>
-          <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Detailed Mode</span>
-        </div>
       </form>
     </div>
 
-    <!-- H5P Player Container (Detailed Mode) -->
-    <div id="player-section" class="w-full max-w-6xl mt-16 hidden">
+    <div id="mode-toggle-container" class="flex items-center justify-center gap-6 mt-10 hidden animate-slide-up"
+      style="animation-delay: 0.5s;">
+      <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 opacity-80">Chế
+        độ cơ bản</span>
+      <label class="relative inline-flex items-center cursor-pointer group">
+        <input type="checkbox" id="mode-toggle" class="sr-only peer">
+        <div
+          class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all after:shadow-md peer-checked:after:translate-x-6 transition-all duration-300 border border-black/5 dark:border-white/10 peer-focus:ring-4 peer-focus:ring-indigo-500/20">
+        </div>
+      </label>
+      <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 opacity-80">Live
+        preview</span>
+    </div>
+
+    <div id="player-section" class="w-full max-w-[99%] mt-10 hidden">
       <div class="glass-card overflow-hidden shadow-2xl relative">
-          <div class="absolute top-4 right-4 z-10">
-              <button id="close-player" class="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all">
-                  <span class="material-symbols-outlined">close</span>
-              </button>
+        <div class="absolute top-6 right-6 z-10 flex gap-2">
+          <button id="refresh-player"
+            class="flex items-center justify-center size-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-slate-800 hover:scale-105 transition-all shadow-lg"
+            title="Làm mới bài tập">
+            <span class="material-symbols-outlined">refresh</span>
+          </button>
+        </div>
+        <div id="player-container"
+          class="w-full min-h-[300px] flex items-center justify-center bg-slate-100/50 dark:bg-slate-900/50 transition-all duration-300">
+          <div class="text-center p-8">
+            <span class="material-symbols-outlined text-5xl text-primary animate-spin mb-4">settings</span>
+            <p class="text-slate-600 dark:text-slate-400 font-medium">Đang tải trình phát...</p>
           </div>
-          <div id="player-container" class="w-full aspect-video min-h-[400px] md:min-h-[600px] flex items-center justify-center bg-slate-100/50 dark:bg-slate-900/50">
-              <div class="text-center p-8">
-                  <span class="material-symbols-outlined text-5xl text-primary animate-spin mb-4">settings</span>
-                  <p class="text-slate-600 dark:text-slate-400 font-medium">Đang tải trình phát...</p>
-              </div>
-          </div>
+        </div>
       </div>
     </div>
 
     <!-- Phần hiển thị câu hỏi -->
-    <div class="w-full max-w-[94%] mt-16 empty:hidden">
+    <div id="basic-section" class="w-full max-w-[94%] mt-10 empty:hidden">
       <div id="search-container" class="mb-8 md:mb-12 space-y-4 md:space-y-6 mx-auto max-w-[700px]"
         style="display: none;">
         <div class="flex items-center gap-3 md:gap-4 px-2">
           <div class="h-px flex-grow bg-slate-200 dark:bg-white/10"></div>
           <span
-            class="text-slate-400 dark:text-white/30 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em]">Bộ
-            lọc bài
-            giảng</span>
+            class="text-slate-400 dark:text-white/30 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em]">Tìm
+            kiếm & tùy chỉnh</span>
           <div class="h-px flex-grow bg-slate-200 dark:bg-white/10"></div>
         </div>
         <div class="flex gap-3 md:gap-4">
