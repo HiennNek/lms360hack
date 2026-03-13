@@ -62,7 +62,8 @@
 #
 
 ### Cách LMS360 Hack hoạt động:
-<img width="5512" height="8192" alt="image" src="https://github.com/user-attachments/assets/9c4204d6-6785-45f7-8b82-17e311202161" />
+<img width="5718" height="8192" alt="2026.1" src="https://github.com/user-attachments/assets/1d0a36ad-44c9-41a8-afd4-9121023ea26a" />
+
 
 #
 
