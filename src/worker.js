@@ -114,7 +114,6 @@ function generateUUID() {
 // image > base64 (better security, I guess?)
 async function fetchImageAsBase64(contentUrl, filePath, refererUrl) {
   if (!filePath || !contentUrl) return null;
-
   try {
     // image url
     const baseUrl = contentUrl.replace(/\/$/, '');
