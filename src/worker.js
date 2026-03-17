@@ -647,12 +647,25 @@ export default {
           let targetUrl = `${protocol}://${remaining}`;
           if (url.search) targetUrl += url.search;
 
+          const upstreamHeaders = {
+            'User-Agent': randomUA,
+            'Referer': 'https://lms360.vn/'
+          };
+
+          const rangeHeader = request.headers.get('Range');
+          if (rangeHeader) {
+            upstreamHeaders['Range'] = rangeHeader;
+          }
+
           const assetResponse = await fetch(targetUrl, {
-            headers: { 'User-Agent': randomUA, 'Referer': 'https://lms360.vn/' }
+            headers: upstreamHeaders
           });
 
           const headers = new Headers(assetResponse.headers);
           headers.set('Access-Control-Allow-Origin', '*');
+          if (!headers.has('Accept-Ranges')) {
+            headers.set('Accept-Ranges', 'bytes');
+          }
 
           return new Response(assetResponse.body, {
             status: assetResponse.status,
