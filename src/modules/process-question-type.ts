@@ -160,7 +160,7 @@ function hackDaAnswer(): void {
                 playerContainer.innerHTML = `<iframe src="${playerUrl}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>`;
             }
 
-            if (container) container.innerHTML = '<div class="text-center p-8"><span class="material-symbols-outlined text-4xl text-primary animate-spin">sync</span></div>';
+            if (container) container.innerHTML = '';
             if (statusMessage) statusMessage.innerHTML = '';
 
             const backendUrl = `${backendBase}?id=${encodeURIComponent(questionId)}`;
