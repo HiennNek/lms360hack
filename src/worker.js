@@ -321,7 +321,7 @@ function process_h5p_questions(json, options = {}) {
     const qText = (params.question || 'Câu hỏi').replace(/<\/?p>/g, '').trim();
     const image = getMediaImage(params);
     const opts = (params.answers || params.alternatives || [])
-      .map((ans) => `<li class="${ans.correct ? 'highlight' : ''}">${(ans.text || ans).replace(/<\/?p>/g, '').trim()}</li>`)
+      .map((ans) => `<li class="${ans.correct ? 'highlight' : ''}">${String(ans.text != null ? ans.text : typeof ans === 'string' ? ans : '').replace(/<\/?p>/g, '').trim()}</li>`)
       .join('');
     if (opts) addResult(`${image}${qText}<ul>${opts}</ul>`);
   } else if (lib.startsWith('H5P.SingleChoiceSet')) {
