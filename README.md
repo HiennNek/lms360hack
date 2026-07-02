@@ -16,6 +16,13 @@
 
 #
 
+> [!IMPORTANT]
+> - **Dự án này đã được tạm ngưng phát triển**. Tuy vậy, website và server vẫn sẽ tiếp tục duy trì, điều đó có nghĩa là bạn vẫn có thể sử dụng LMS360 Hack
+> - Bản 2026.1 sẽ là phiên bản cuối cùng của dự án, sẽ không có phiên bản mới được ra trong tương lai và các lỗi có thể không được sửa
+> - Bạn hoàn toàn có thể fork repo này và làm ra một dự án LMS360 Hack mới ;)
+
+#
+
 ### FAQ (câu hỏi thường gặp)
 > **Cái này có illegal (bất hợp pháp) không?**
 - Không :) Miễn có sự đồng ý của giáo viên, người có thẩm quyền.
