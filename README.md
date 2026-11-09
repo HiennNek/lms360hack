@@ -1,5 +1,5 @@
 > [!WARNING]
-> ## LMS360 HIỆN TẠI ĐÃ SỬA LỖ HỔNG NÀY! WEBSITE CỦA LMS360HACK SẼ KHÔNG CÒN HOẠT ĐỘNG.
+> ## LMS360 HIỆN TẠI ĐÃ SỬA LỖ HỔNG NÀY! TUY VẬY, MỘT SỐ BÀI GIẢNG CŨ/BÀI GIẢNG PUBLIC VẪN SẼ HOẠT ĐỘNG
 
 > [!NOTE]
 >## Hướng dẫn sử dụng:
