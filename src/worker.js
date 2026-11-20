@@ -594,6 +594,7 @@ async function handleLogin(request, origin) {
   const token = payload?.data?.access_token;
   if (!authResponse.ok || !token) {
     const error =
+      payload?.errors?.[0]?.message ||
       payload?.message ||
       payload?.error ||
       payload?.data?.message ||
