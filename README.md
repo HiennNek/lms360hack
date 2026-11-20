@@ -57,6 +57,11 @@
 > > ```bash
 > >npm run dev
 > >```
+> #### Nếu muốn test với back-end chạy local (branch `back-end`, `npm run dev` -> http://127.0.0.1:8787):
+> > ```bash
+> > VITE_BACKEND_URL=http://127.0.0.1:8787 npm run dev
+> >```
+> > (hoặc tạo file `.env.local` chứa `VITE_BACKEND_URL=http://127.0.0.1:8787`)
 > #### Hoặc chạy server production:
 > > #### Build:
 > > ```bash

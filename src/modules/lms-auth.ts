@@ -1,6 +1,7 @@
 // Đăng nhập LMS360: lưu access_token trong trình duyệt và gửi lại cho backend mỗi lần gọi.
 
-export const BACKEND_BASE = 'https://lms360hack-backend.hiennek1.workers.dev';
+export const BACKEND_BASE =
+    import.meta.env.VITE_BACKEND_URL || 'https://lms360hack-backend.hiennek1.workers.dev';
 
 const TOKEN_KEY = 'lms360_access_token';
 
