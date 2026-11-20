@@ -99,6 +99,10 @@
     display: flex;
   }
 
+  html.modal-open .animate-float {
+    animation-play-state: paused;
+  }
+
   .advanced-tabs {
     @apply flex gap-1 border-b-2 border-slate-200 dark:border-white/10 overflow-x-auto pb-0 mb-6 md:mb-8;
     -ms-overflow-style: none;

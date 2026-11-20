@@ -99,6 +99,10 @@
     display: flex;
   }
 
+  html.modal-open .animate-float {
+    animation-play-state: paused;
+  }
+
   .question {
     animation: fadeIn 0.5s ease-out forwards;
     opacity: 0;

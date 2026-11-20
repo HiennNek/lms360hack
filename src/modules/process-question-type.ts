@@ -240,18 +240,21 @@ function initEula(): void {
 
     if (!accepted) {
         if (modal) modal.classList.add('show');
+        document.documentElement.classList.add('modal-open');
     }
 
     if (showEula && modal) {
         showEula.addEventListener('click', (e) => {
             e.preventDefault();
             modal.classList.add('show');
+            document.documentElement.classList.add('modal-open');
         });
     }
 
     if (closeEula && modal) {
         closeEula.addEventListener('click', () => {
             modal.classList.remove('show');
+            document.documentElement.classList.remove('modal-open');
             localStorage.setItem('bro_da_accept_chua_cham_hoi', 'true');
         });
     }

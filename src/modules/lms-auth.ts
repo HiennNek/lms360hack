@@ -37,6 +37,8 @@ function syncLoginUI(): void {
 export function initLoginUI(): void {
     syncLoginUI();
 
+    if (!modal) modal = createModal();
+
     const button = document.getElementById('login-button');
     if (!button) return;
 
@@ -62,8 +64,10 @@ let modal: LoginModal | null = null;
 function createModal(): LoginModal {
     const root = document.createElement('div');
     root.style.display = 'none';
+    // khong dung backdrop-blur: blur ca man hinh bi lam moi moi khung hinh khi
+    // cac blob xanh phia sau chay animation -> lag
     root.className =
-        'fixed inset-0 z-[100] items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm';
+        'fixed inset-0 z-[100] items-center justify-center p-6 bg-slate-900/70';
     root.innerHTML = `
     <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-[var(--r-outer)] shadow-2xl border border-white/10 overflow-hidden">
       <div class="p-[var(--p-outer)]">
@@ -135,10 +139,12 @@ export function requestLogin(): Promise<string> {
     m.explain.classList.add('hidden');
     m.whyIcon.textContent = 'expand_more';
     m.root.style.display = 'flex';
+    document.documentElement.classList.add('modal-open');
 
     return new Promise<string>((resolve, reject) => {
         const close = () => {
             m.root.style.display = 'none';
+            document.documentElement.classList.remove('modal-open');
             m.submit.removeEventListener('click', onSubmit);
             m.cancel.removeEventListener('click', onCancel);
         };
