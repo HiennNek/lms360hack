@@ -10,6 +10,8 @@ import h5pMainBundleUrl from '../h5p-preview-lib/main.bundle.js?url';
 import h5pFrameBundleUrl from '../h5p-preview-lib/frame.bundle.js?url';
 import h5pCssUrl from '../h5p-preview-lib/h5p.css?url';
 
+import { BACKEND_BASE, authHeaders, requestLogin } from './lms-auth';
+
 declare global {
     interface Window {
         H5PStandalone?: {
@@ -138,9 +140,16 @@ async function fetchH5P(contentId: string): Promise<Blob | null> {
     }, 20000);
 
     try {
-        const response = await fetch(
-            `https://lms360hack-backend.hiennek1.workers.dev?h5p_id=${contentId}`
-        );
+        const downloadUrl = `${BACKEND_BASE}?h5p_id=${contentId}`;
+        let response = await fetch(downloadUrl, { headers: authHeaders() });
+
+        if (response.status === 403) {
+            const data = await response.json().catch(() => null);
+            if (data?.needsAuth) {
+                const token = await requestLogin();
+                response = await fetch(downloadUrl, { headers: { 'X-Access-Token': token } });
+            }
+        }
 
         if (!response.ok) {
             showAlert(`Không thể tải file: ${response.status} ${response.statusText}`, 'error');

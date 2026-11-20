@@ -1,4 +1,5 @@
 import { updateQuestionSearch, registerSearchItems } from './func';
+import { BACKEND_BASE, authHeaders, getAccessToken, requestLogin } from './lms-auth';
 
 interface BackendQuestion {
     text: string;
@@ -7,6 +8,7 @@ interface BackendQuestion {
 interface BackendResponse {
     success?: boolean;
     error?: string;
+    needsAuth?: boolean;
     questions?: BackendQuestion[];
     actualQuestionCount?: number;
     count?: number;
@@ -117,6 +119,42 @@ function renderQuestions(backendResponse: BackendResponse): void {
     renderChunk();
 }
 
+function renderPlayer(questionId: string): void {
+    const playerContainer = document.getElementById('player-container');
+    if (!playerContainer) return;
+
+    const params = new URLSearchParams({ h5p_id: questionId });
+    const token = getAccessToken();
+    if (token) params.set('access_token', token);
+
+    playerContainer.innerHTML = `<iframe src="${BACKEND_BASE}/player?${params.toString()}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>`;
+}
+
+// Gọi backend, nếu bài cần đăng nhập (403) thì hỏi tài khoản rồi thử lại.
+async function fetchLesson(questionId: string, token?: string): Promise<BackendResponse> {
+    const backendUrl = `${BACKEND_BASE}?id=${encodeURIComponent(questionId)}`;
+    const headers = token ? { 'X-Access-Token': token } : authHeaders();
+    const res = await fetch(backendUrl, { headers });
+
+    if (res.status === 403) {
+        const data = (await res.json().catch(() => null)) as BackendResponse | null;
+        if (!data?.needsAuth) {
+            throw new Error(data?.error || `HTTP ${res.status}: ${res.statusText}`);
+        }
+        const newToken = await requestLogin();
+        renderPlayer(questionId);
+        return fetchLesson(questionId, newToken);
+    }
+
+    if (res.status === 429) throw new Error('Từ từ, không sập server!');
+    if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as BackendResponse | null;
+        throw new Error(data?.error || `HTTP ${res.status}: ${res.statusText}`);
+    }
+
+    return (await res.json()) as BackendResponse;
+}
+
 function hackDaAnswer(): void {
     const linkInput = document.getElementById('link_lms360') as HTMLInputElement;
     const hackerButton = document.getElementById('hecker_button') as HTMLButtonElement;
@@ -136,7 +174,6 @@ function hackDaAnswer(): void {
 
     const isDetailedMode = (document.getElementById('mode-toggle') as HTMLInputElement)?.checked;
     const playerSection = document.getElementById('player-section');
-    const playerContainer = document.getElementById('player-container');
     const basicSection = document.getElementById('basic-section');
 
     try {
@@ -150,32 +187,15 @@ function hackDaAnswer(): void {
             return;
         }
 
-        const backendBase = `https://lms360hack-backend.hiennek1.workers.dev`;
-
         if (questionId !== lastH5PId) {
             lastH5PId = questionId;
 
-            if (playerContainer) {
-                const playerUrl = `${backendBase}/player?h5p_id=${encodeURIComponent(questionId)}`;
-                playerContainer.innerHTML = `<iframe src="${playerUrl}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>`;
-            }
+            renderPlayer(questionId);
 
             if (container) container.innerHTML = '';
             if (statusMessage) statusMessage.innerHTML = '';
 
-            const backendUrl = `${backendBase}?id=${encodeURIComponent(questionId)}`;
-            fetch(backendUrl)
-                .then((res) => {
-                    if (res.status === 429) throw new Error('Từ từ, không sập server!');
-                    if (!res.ok) {
-                        return res.json().then((data: { error?: string }) => {
-                            throw new Error(data.error || `HTTP ${res.status}: ${res.statusText}`);
-                        }).catch(() => {
-                            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-                        });
-                    }
-                    return res.json();
-                })
+            fetchLesson(questionId)
                 .then((data: BackendResponse) => {
                     renderQuestions(data);
                 })
