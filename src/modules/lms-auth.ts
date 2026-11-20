@@ -67,7 +67,7 @@ function createModal(): LoginModal {
     root.innerHTML = `
     <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-[var(--r-outer)] shadow-2xl border border-white/10 overflow-hidden">
       <div class="p-[var(--p-outer)]">
-        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Nội dung cần đăng nhập</h2>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Đăng nhập</h2>
         <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Nhập tài khoản LMS360 để tải nội dung này.</p>
         <button id="lms-login-why" type="button"
           class="flex items-center gap-1 text-sm font-semibold text-primary hover:underline transition-colors mb-4">
@@ -79,6 +79,7 @@ function createModal(): LoginModal {
             LMS360 Hack đăng nhập giúp bạn một lần để lấy access_token, sau đó token sẽ được lưu trong trình duyệt
             và tái sử dụng cho những bài sau. A.k.a cách bypass lỗi 403</p>
           <p>Mật khẩu chỉ được gửi tới máy chủ LMS360 và không được lưu lại ở bất kỳ đâu.</p>
+          <p>Nếu bạn không tin tưởng trang web này, bạn có thể sử dụng <a href="https://github.com/HiennNek/lms360hack/tree/lms360hack_next" target="_blank" class="text-primary hover:underline">LMS360Hack Next</a></p>
         </div>
         <input id="lms-login-username" type="text" autocomplete="username" placeholder="Mã số định danh học sinh (số tài khoản)"
           class="w-full bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-[var(--r-mid)] h-12 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50" />
@@ -88,7 +89,7 @@ function createModal(): LoginModal {
         <div class="flex items-start gap-2 mt-4 p-3 text-xs leading-relaxed text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-[var(--r-mid)]">
           <span class="material-symbols-outlined text-amber-500">info</span>
           <p>Việc đăng nhập lại có thể khiến phiên đăng nhập LMS360 hiện tại của bạn (trên web hoặc app) bị đăng xuất.
-            Điều này là bình thường và bạn vẫn có thể tiếp tục sử dụng LMS360 sau khi login lại.</p>
+            Điều này là bình thường và bạn vẫn có thể tiếp tục sử dụng LMS360 sau khi login lại. <span class="font-bold">Tiến trình làm bài sẽ bị mất nếu như bạn không login trước!<span class="font-bold"></p>
         </div>
         <div class="flex gap-3 mt-6">
           <button id="lms-login-cancel"
