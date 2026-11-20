@@ -27,6 +27,9 @@ interface LoginModal {
     error: HTMLElement;
     submit: HTMLButtonElement;
     cancel: HTMLButtonElement;
+    why: HTMLButtonElement;
+    whyIcon: HTMLElement;
+    explain: HTMLElement;
 }
 
 let modal: LoginModal | null = null;
@@ -40,12 +43,28 @@ function createModal(): LoginModal {
     <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-[var(--r-outer)] shadow-2xl border border-white/10 overflow-hidden">
       <div class="p-[var(--p-outer)]">
         <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Bài học cần đăng nhập</h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Nhập tài khoản LMS360 (học sinh) để tải nội dung này.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Nhập tài khoản LMS360 (học sinh) để tải nội dung này.</p>
+        <button id="lms-login-why" type="button"
+          class="flex items-center gap-1 text-sm font-semibold text-primary hover:underline transition-colors mb-4">
+          <span>Tại sao tôi cần đăng nhập?</span>
+          <span class="material-symbols-outlined text-base" id="lms-login-why-icon">expand_more</span>
+        </button>
+        <div id="lms-login-explain" class="hidden mb-4 text-xs leading-relaxed text-slate-500 dark:text-slate-400 space-y-2">
+          <p>Bài học này được LMS360 bảo vệ, nên cần một phiên đăng nhập hợp lệ mới tải được nội dung.
+            LMS360 Hack đăng nhập giúp bạn một lần để lấy access_token, sau đó token đó được lưu trong trình duyệt
+            và dùng lại cho những bài sau.</p>
+          <p>Mật khẩu chỉ được gửi tới máy chủ LMS360 và không được lưu lại ở bất cứ đâu.</p>
+        </div>
         <input id="lms-login-username" type="text" autocomplete="username" placeholder="Tài khoản (mã học sinh)"
           class="w-full bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-[var(--r-mid)] h-12 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50" />
         <input id="lms-login-password" type="password" autocomplete="current-password" placeholder="Mật khẩu"
           class="w-full mt-3 bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-[var(--r-mid)] h-12 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50" />
         <p id="lms-login-error" class="error-message mt-3 text-sm"></p>
+        <div class="flex items-start gap-2 mt-4 p-3 text-xs leading-relaxed text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-[var(--r-mid)]">
+          <span class="material-symbols-outlined text-amber-500">info</span>
+          <p>Việc đăng nhập lại có thể khiến phiên đăng nhập LMS360 hiện tại của bạn (trên web hoặc app) bị đăng xuất.
+            Điều này là bình thường, sau đó mọi thứ vẫn hoạt động bình thường.</p>
+        </div>
         <div class="flex gap-3 mt-6">
           <button id="lms-login-cancel"
             class="flex-1 h-12 rounded-[var(--r-mid)] bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white font-bold hover:bg-slate-200 dark:hover:bg-white/10 transition-all">Hủy</button>
@@ -56,6 +75,15 @@ function createModal(): LoginModal {
     </div>`;
     document.body.appendChild(root);
 
+    const why = root.querySelector('#lms-login-why') as HTMLButtonElement;
+    const whyIcon = root.querySelector('#lms-login-why-icon') as HTMLElement;
+    const explain = root.querySelector('#lms-login-explain') as HTMLElement;
+
+    why.addEventListener('click', () => {
+        const hidden = explain.classList.toggle('hidden');
+        whyIcon.textContent = hidden ? 'expand_more' : 'expand_less';
+    });
+
     return {
         root,
         username: root.querySelector('#lms-login-username') as HTMLInputElement,
@@ -63,6 +91,9 @@ function createModal(): LoginModal {
         error: root.querySelector('#lms-login-error') as HTMLElement,
         submit: root.querySelector('#lms-login-submit') as HTMLButtonElement,
         cancel: root.querySelector('#lms-login-cancel') as HTMLButtonElement,
+        why,
+        whyIcon,
+        explain,
     };
 }
 
@@ -75,6 +106,8 @@ export function requestLogin(): Promise<string> {
     m.password.value = '';
     m.error.textContent = '';
     m.submit.disabled = false;
+    m.explain.classList.add('hidden');
+    m.whyIcon.textContent = 'expand_more';
     m.root.style.display = 'flex';
 
     return new Promise<string>((resolve, reject) => {
