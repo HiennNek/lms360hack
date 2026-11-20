@@ -76,14 +76,12 @@
 
 #
 
-### Cách LMS360 Hack hoạt động:
-<img width="5718" height="8192" alt="2026.1" src="https://github.com/user-attachments/assets/1d0a36ad-44c9-41a8-afd4-9121023ea26a" />
-
-
-#
-
 ### Changelog:
 
+<details>
+  <summary>2026.2</summary>
+  Thêm tính năng login để xem & tải về bài giảng có yêu cầu login (Fix lỗi 403)
+</details>
 <details>
   <summary>2026.1</summary>
   Thêm tính năng live preview cho những dạng bài phức tạp
