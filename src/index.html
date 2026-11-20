@@ -105,6 +105,11 @@
             class="text-sm opacity-50 xs:inline">2026.1</span></h2>
       </div>
       <div class="flex items-center gap-6 md:gap-8">
+        <button id="login-button"
+          class="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-white/70 hover:text-primary dark:hover:text-primary transition-colors">
+          <span class="material-symbols-outlined text-lg">login</span>
+          <span id="login-button-label" class="hidden sm:inline">Đăng nhập</span>
+        </button>
         <a class="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-white/70 hover:text-primary dark:hover:text-primary transition-colors"
           href="https://github.com/HiennNek/lms360hack" target="_blank">
           <span class="material-symbols-outlined text-lg">code</span>
@@ -182,6 +187,15 @@
             <input id="link_lms360"
               class="w-full bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-[var(--r-mid)] h-14 md:h-16 pl-12 md:pl-14 pr-4 md:pr-6 text-sm md:text-base text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300"
               placeholder="Link LMS360 (https://lms360.vn/...)" type="text" />
+          </div>
+        </div>
+        <div id="login-notice" class="hidden">
+          <div
+            class="flex items-start gap-3 p-4 rounded-[var(--r-mid)] text-sm text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50">
+            <span class="material-symbols-outlined text-amber-500">info</span>
+            <p><span class="font-bold">Hãy đăng nhập trước khi lấy đáp án.</span>
+              Nếu đăng nhập LMS360 lúc đang làm bài, tài khoản của bạn có thể bị đăng xuất giữa chừng và mất tiến độ.
+              Bấm nút <span class="font-bold">Đăng nhập</span> trên thanh điều hướng để đăng nhập trước nhé.</p>
           </div>
         </div>
         <button id="hecker_button"

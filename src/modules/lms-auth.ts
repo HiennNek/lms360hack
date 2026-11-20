@@ -20,6 +20,31 @@ export function authHeaders(): Record<string, string> {
     return token ? { 'X-Access-Token': token } : {};
 }
 
+// Cập nhật nút đăng nhập trên thanh trên cùng + thông báo "đăng nhập trước".
+function syncLoginUI(): void {
+    const loggedIn = !!getAccessToken();
+
+    const label = document.getElementById('login-button-label');
+    if (label) label.textContent = loggedIn ? 'Đã đăng nhập' : 'Đăng nhập';
+
+    const icon = document.querySelector('#login-button .material-symbols-outlined');
+    if (icon) icon.textContent = loggedIn ? 'how_to_reg' : 'login';
+
+    const notice = document.getElementById('login-notice');
+    if (notice) notice.classList.toggle('hidden', loggedIn);
+}
+
+export function initLoginUI(): void {
+    syncLoginUI();
+
+    const button = document.getElementById('login-button');
+    if (!button) return;
+
+    button.addEventListener('click', () => {
+        requestLogin().catch(() => {}); // người dùng bấm Hủy -> im lặng
+    });
+}
+
 interface LoginModal {
     root: HTMLElement;
     username: HTMLInputElement;
@@ -42,20 +67,20 @@ function createModal(): LoginModal {
     root.innerHTML = `
     <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-[var(--r-outer)] shadow-2xl border border-white/10 overflow-hidden">
       <div class="p-[var(--p-outer)]">
-        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Bài học cần đăng nhập</h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Nhập tài khoản LMS360 (học sinh) để tải nội dung này.</p>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Nội dung cần đăng nhập</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Nhập tài khoản LMS360 để tải nội dung này.</p>
         <button id="lms-login-why" type="button"
           class="flex items-center gap-1 text-sm font-semibold text-primary hover:underline transition-colors mb-4">
           <span>Tại sao tôi cần đăng nhập?</span>
           <span class="material-symbols-outlined text-base" id="lms-login-why-icon">expand_more</span>
         </button>
         <div id="lms-login-explain" class="hidden mb-4 text-xs leading-relaxed text-slate-500 dark:text-slate-400 space-y-2">
-          <p>Bài học này được LMS360 bảo vệ, nên cần một phiên đăng nhập hợp lệ mới tải được nội dung.
-            LMS360 Hack đăng nhập giúp bạn một lần để lấy access_token, sau đó token đó được lưu trong trình duyệt
-            và dùng lại cho những bài sau.</p>
-          <p>Mật khẩu chỉ được gửi tới máy chủ LMS360 và không được lưu lại ở bất cứ đâu.</p>
+          <p>LMS360 yêu cầu authentication cho bài học này, nên cần một phiên đăng nhập hợp lệ mới có thể tải được nội dung.
+            LMS360 Hack đăng nhập giúp bạn một lần để lấy access_token, sau đó token sẽ được lưu trong trình duyệt
+            và tái sử dụng cho những bài sau. A.k.a cách bypass lỗi 403</p>
+          <p>Mật khẩu chỉ được gửi tới máy chủ LMS360 và không được lưu lại ở bất kỳ đâu.</p>
         </div>
-        <input id="lms-login-username" type="text" autocomplete="username" placeholder="Tài khoản (mã học sinh)"
+        <input id="lms-login-username" type="text" autocomplete="username" placeholder="Mã số định danh học sinh (số tài khoản)"
           class="w-full bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-[var(--r-mid)] h-12 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50" />
         <input id="lms-login-password" type="password" autocomplete="current-password" placeholder="Mật khẩu"
           class="w-full mt-3 bg-white dark:bg-background-dark/50 border border-slate-200 dark:border-white/10 rounded-[var(--r-mid)] h-12 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50" />
@@ -63,7 +88,7 @@ function createModal(): LoginModal {
         <div class="flex items-start gap-2 mt-4 p-3 text-xs leading-relaxed text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-[var(--r-mid)]">
           <span class="material-symbols-outlined text-amber-500">info</span>
           <p>Việc đăng nhập lại có thể khiến phiên đăng nhập LMS360 hiện tại của bạn (trên web hoặc app) bị đăng xuất.
-            Điều này là bình thường, sau đó mọi thứ vẫn hoạt động bình thường.</p>
+            Điều này là bình thường và bạn vẫn có thể tiếp tục sử dụng LMS360 sau khi login lại.</p>
         </div>
         <div class="flex gap-3 mt-6">
           <button id="lms-login-cancel"
@@ -150,6 +175,7 @@ export function requestLogin(): Promise<string> {
                 }
 
                 localStorage.setItem(TOKEN_KEY, token);
+                syncLoginUI();
                 close();
                 resolve(token);
             } catch {

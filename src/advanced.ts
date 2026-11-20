@@ -17,6 +17,8 @@ if (darkLink) darkLink.href = darkThemeUrl;
 
 import { initThemeToggle } from './modules/theme-toggle';
 import { initH5PEditor } from './modules/h5p-editor';
+import { initLoginUI } from './modules/lms-auth';
 
 initThemeToggle();
+initLoginUI();
 initH5PEditor();

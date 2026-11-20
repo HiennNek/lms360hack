@@ -5,6 +5,8 @@ import '@fontsource-variable/material-symbols-outlined';
 import './styles/index.css';
 import { initThemeToggle } from './modules/theme-toggle';
 import { initProcessQuestionType } from './modules/process-question-type';
+import { initLoginUI } from './modules/lms-auth';
 
 initThemeToggle();
+initLoginUI();
 initProcessQuestionType();
