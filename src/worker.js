@@ -112,7 +112,7 @@ function generateUUID() {
 }
 
 // image > base64 (better security, I guess?)
-async function fetchImageAsBase64(contentUrl, filePath, refererUrl) {
+async function fetchImageAsBase64(contentUrl, filePath, refererUrl, accessToken) {
   if (!filePath || !contentUrl) return null;
   try {
     // image url
@@ -123,19 +123,23 @@ async function fetchImageAsBase64(contentUrl, filePath, refererUrl) {
     // fetch image
     const randomUA = user_agent_list[Math.floor(Math.random() * user_agent_list.length)];
     const imageResponse = await fetch(imageUrl, {
-      headers: {
-        'User-Agent': randomUA,
-        Accept: 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        authorization: '',
-        Connection: 'keep-alive',
-        Referer: refererUrl,
-        'Sec-Fetch-Dest': 'empty',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Site': 'same-origin',
-        TE: 'trailers',
-      },
+      headers: attachAccessToken(
+        {
+          'User-Agent': randomUA,
+          Accept: 'application/json, text/plain, */*',
+          'Accept-Language': 'en-US,en;q=0.5',
+          'Accept-Encoding': 'gzip, deflate, br',
+          authorization: '',
+          Connection: 'keep-alive',
+          Referer: refererUrl,
+          'Sec-Fetch-Dest': 'empty',
+          'Sec-Fetch-Mode': 'cors',
+          'Sec-Fetch-Site': 'same-origin',
+          TE: 'trailers',
+        },
+        accessToken,
+        imageUrl,
+      ),
     });
 
     if (!imageResponse.ok) {
@@ -495,7 +499,119 @@ const FEATURE_FLAGS = {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-async function process_questions(data, refererUrl) {
+const ALLOWED_ORIGIN = 'https://lms360hack.pages.dev';
+const LMS360_LOGIN_URL = 'https://lms360.vn/api/gd/v3/hcm_login_v3';
+
+// access_token do frontend gui len (header, query hoac cookie)
+function getAccessToken(request, url) {
+  const header = request.headers.get('x-access-token');
+  if (header) return header.trim();
+
+  const query = url?.searchParams.get('access_token');
+  if (query) return query.trim();
+
+  const cookie = request.headers.get('cookie') || '';
+  const match = cookie.match(/(?:^|;\s*)access_token=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
+// gui kem cookie access_token khi goi lms360
+function attachAccessToken(headers, token, targetUrl) {
+  if (token && targetUrl && targetUrl.includes('lms360.vn')) {
+    headers['Cookie'] = `access_token=${token}`;
+  }
+  return headers;
+}
+
+function corsHeaders(origin, extra = {}) {
+  const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? ALLOWED_ORIGIN : origin || '*';
+  return {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Access-Token',
+    'Content-Type': 'application/json',
+    ...extra,
+  };
+}
+
+// dang nhap LMS360, tra ve access_token cho frontend
+async function handleLogin(request, origin) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return new Response(JSON.stringify({ success: false, error: 'Body khong hop le.' }), {
+      status: 400,
+      headers: corsHeaders(origin),
+    });
+  }
+
+  const username = body?.username;
+  const password = body?.password;
+  if (!username || !password) {
+    return new Response(JSON.stringify({ success: false, error: 'Thieu tai khoan hoac mat khau.' }), {
+      status: 400,
+      headers: corsHeaders(origin),
+    });
+  }
+
+  const randomUA = user_agent_list[Math.floor(Math.random() * user_agent_list.length)];
+  let authResponse;
+  try {
+    authResponse = await fetch(LMS360_LOGIN_URL, {
+      method: 'POST',
+      headers: {
+        'User-Agent': randomUA,
+        Accept: 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br, zstd',
+        'Content-Type': 'application/json;charset=utf-8',
+        Origin: 'https://lms360.vn',
+        Connection: 'keep-alive',
+        Referer: 'https://lms360.vn/dang-nhap-hoc-sinh-hcm',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        Priority: 'u=0',
+        TE: 'trailers',
+      },
+      body: JSON.stringify({ username, password, loai: 'hoc_sinh' }),
+    });
+  } catch (error) {
+    console.error('Dang nhap that bai:', error);
+    return new Response(JSON.stringify({ success: false, error: 'Khong ket noi duoc toi LMS360.' }), {
+      status: 502,
+      headers: corsHeaders(origin),
+    });
+  }
+
+  const raw = await authResponse.text();
+  let payload = null;
+  try {
+    payload = JSON.parse(raw);
+  } catch {}
+
+  const token = payload?.data?.access_token;
+  if (!authResponse.ok || !token) {
+    const error =
+      payload?.message ||
+      payload?.error ||
+      payload?.data?.message ||
+      `Dang nhap that bai (HTTP ${authResponse.status}).`;
+    return new Response(JSON.stringify({ success: false, error }), {
+      status: 401,
+      headers: corsHeaders(origin),
+    });
+  }
+
+  return new Response(JSON.stringify({ success: true, access_token: token }), {
+    headers: corsHeaders(origin),
+  });
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+async function process_questions(data, refererUrl, accessToken) {
   try {
     let jsonContent;
     let outerLib = '';
@@ -559,7 +675,7 @@ async function process_questions(data, refererUrl) {
 
     // parallel image fetcher (very efficient, I think?)
     const imagePromises = Array.from(imagePaths).map(async (filePath) => {
-      const base64 = await fetchImageAsBase64(contentUrl, filePath, refererUrl);
+      const base64 = await fetchImageAsBase64(contentUrl, filePath, refererUrl, accessToken);
       return { filePath, base64 };
     });
 
@@ -610,7 +726,7 @@ async function process_questions(data, refererUrl) {
 
 export default {
   async fetch(request, env, ctx) {
-    const allowedOrigin = 'https://lms360hack.pages.dev';
+    const allowedOrigin = ALLOWED_ORIGIN;
     const origin = request.headers.get('Origin');
 
     if (FEATURE_FLAGS.ENABLE_CORS) {
@@ -620,14 +736,16 @@ export default {
     }
 
     if (request.method === 'OPTIONS') {
-      const corsOrigin = FEATURE_FLAGS.ENABLE_CORS ? allowedOrigin : origin || '*';
       return new Response(null, {
-        headers: {
-          'Access-Control-Allow-Origin': corsOrigin,
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
+        headers: corsHeaders(origin, { 'Access-Control-Max-Age': '86400' }),
       });
+    }
+
+    if (request.method === 'POST') {
+      if (new URL(request.url).pathname === '/login') {
+        return handleLogin(request, origin);
+      }
+      return new Response('Hmm', { status: 405 });
     }
 
     if (request.method !== 'GET') {
@@ -637,6 +755,7 @@ export default {
     try {
       const url = new URL(request.url);
       const randomUA = user_agent_list[Math.floor(Math.random() * user_agent_list.length)];
+      const accessToken = getAccessToken(request, url);
 
       if (url.pathname.startsWith('/proxy/')) {
         const match = url.pathname.match(/^\/proxy\/(https|http)\/(.+)$/);
@@ -646,10 +765,14 @@ export default {
           let targetUrl = `${protocol}://${remaining}`;
           if (url.search) targetUrl += url.search;
 
-          const upstreamHeaders = {
-            'User-Agent': randomUA,
-            'Referer': 'https://lms360.vn/'
-          };
+          const upstreamHeaders = attachAccessToken(
+            {
+              'User-Agent': randomUA,
+              'Referer': 'https://lms360.vn/'
+            },
+            accessToken,
+            targetUrl,
+          );
 
           const rangeHeader = request.headers.get('Range');
           if (rangeHeader) {
@@ -687,7 +810,11 @@ export default {
         }
 
         const assetResponse = await fetch(targetUrl, {
-          headers: { 'User-Agent': randomUA, 'Referer': 'https://lms360.vn/' }
+          headers: attachAccessToken(
+            { 'User-Agent': randomUA, 'Referer': 'https://lms360.vn/' },
+            accessToken,
+            targetUrl,
+          )
         });
 
         if (assetResponse.ok) {
@@ -728,10 +855,14 @@ export default {
         if (url.pathname === '/player') {
           const lms360Url = `https://lms360.vn/h5p/${encodeURIComponent(contentId)}/play`;
           const response = await fetch(lms360Url, {
-            headers: {
-              'User-Agent': randomUA,
-              'Referer': refererUrl
-            }
+            headers: attachAccessToken(
+              {
+                'User-Agent': randomUA,
+                'Referer': refererUrl
+              },
+              accessToken,
+              lms360Url,
+            )
           });
           if (!response.ok) return new Response('Failed to fetch player data', { status: response.status });
 
@@ -885,19 +1016,23 @@ export default {
         try {
           const downloadUrl = `https://lms360.vn/h5p/download/${contentId}`;
           const fileResponse = await fetch(downloadUrl, {
-            headers: {
-              'User-Agent': randomUA,
-              Accept: '*/*',
-              'Accept-Language': 'en-US,en;q=0.5',
-              'Accept-Encoding': 'gzip, deflate, br',
-              Connection: 'keep-alive',
-              Origin: 'https://lms360.vn',
-              Referer: 'https://lms360.vn/',
-              'Sec-Fetch-Dest': 'document',
-              'Sec-Fetch-Mode': 'navigate',
-              'Sec-Fetch-Site': 'same-origin',
-              TE: 'trailers',
-            },
+            headers: attachAccessToken(
+              {
+                'User-Agent': randomUA,
+                Accept: '*/*',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate, br',
+                Connection: 'keep-alive',
+                Origin: 'https://lms360.vn',
+                Referer: 'https://lms360.vn/',
+                'Sec-Fetch-Dest': 'document',
+                'Sec-Fetch-Mode': 'navigate',
+                'Sec-Fetch-Site': 'same-origin',
+                TE: 'trailers',
+              },
+              accessToken,
+              downloadUrl,
+            ),
           });
 
           if (!fileResponse.ok) {
@@ -906,6 +1041,7 @@ export default {
               JSON.stringify({
                 success: false,
                 error: `Wha!: ${fileResponse.status}`,
+                needsAuth: fileResponse.status === 401 || fileResponse.status === 403,
               }),
               {
                 status: fileResponse.status,
@@ -1024,19 +1160,23 @@ export default {
 
           try {
             const imageResponse = await fetch(imageUrl, {
-              headers: {
-                'User-Agent': randomUA,
-                Accept: 'image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5',
-                'Accept-Language': 'en-US,en;q=0.5',
-                'Accept-Encoding': 'gzip, deflate, br',
-                authorization: '',
-                Connection: 'keep-alive',
-                Referer: refererUrl,
-                'Sec-Fetch-Dest': 'empty',
-                'Sec-Fetch-Mode': 'cors',
-                'Sec-Fetch-Site': 'same-origin',
-                TE: 'trailers',
-              },
+              headers: attachAccessToken(
+                {
+                  'User-Agent': randomUA,
+                  Accept: 'image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5',
+                  'Accept-Language': 'en-US,en;q=0.5',
+                  'Accept-Encoding': 'gzip, deflate, br',
+                  authorization: '',
+                  Connection: 'keep-alive',
+                  Referer: refererUrl,
+                  'Sec-Fetch-Dest': 'empty',
+                  'Sec-Fetch-Mode': 'cors',
+                  'Sec-Fetch-Site': 'same-origin',
+                  TE: 'trailers',
+                },
+                accessToken,
+                imageUrl,
+              ),
             });
 
             if (!imageResponse.ok) {
@@ -1100,19 +1240,23 @@ export default {
 
         const lms360Url = `https://lms360.vn/h5p/${encodeURIComponent(questionId)}/play`;
         const response = await fetch(lms360Url, {
-          headers: {
-            'User-Agent': randomUA,
-            Accept: 'application/json, text/plain, */*',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate, br',
-            authorization: '',
-            Connection: 'keep-alive',
-            Referer: refererUrl,
-            'Sec-Fetch-Dest': 'empty',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-origin',
-            TE: 'trailers',
-          },
+          headers: attachAccessToken(
+            {
+              'User-Agent': randomUA,
+              Accept: 'application/json, text/plain, */*',
+              'Accept-Language': 'en-US,en;q=0.5',
+              'Accept-Encoding': 'gzip, deflate, br',
+              authorization: '',
+              Connection: 'keep-alive',
+              Referer: refererUrl,
+              'Sec-Fetch-Dest': 'empty',
+              'Sec-Fetch-Mode': 'cors',
+              'Sec-Fetch-Site': 'same-origin',
+              TE: 'trailers',
+            },
+            accessToken,
+            lms360Url,
+          ),
         });
 
         if (!response.ok) {
@@ -1133,6 +1277,7 @@ export default {
             JSON.stringify({
               success: false,
               error: `whoops: ${response.status} ${response.statusText}`,
+              needsAuth: response.status === 401 || response.status === 403,
               count: 0,
               actualQuestionCount: 0,
               questions: [],
@@ -1145,7 +1290,7 @@ export default {
         }
 
         const data = await response.json();
-        const processed = await process_questions(data, refererUrl);
+        const processed = await process_questions(data, refererUrl, accessToken);
 
         const headers = new Headers();
         headers.set('Content-Type', 'application/json');
