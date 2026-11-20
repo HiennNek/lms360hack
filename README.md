@@ -1,10 +1,10 @@
-> [!WARNING]
-> ## LMS360 HIỆN TẠI ĐÃ SỬA LỖ HỔNG NÀY! TUY VẬY, MỘT SỐ BÀI GIẢNG CŨ/BÀI GIẢNG PUBLIC VẪN SẼ HOẠT ĐỘNG
-
 > [!NOTE]
 >## Hướng dẫn sử dụng:
 >- ### Xin hãy sử dụng website [lms360hack.pages.dev](https://lms360hack.pages.dev/)
 >- ### Điền URL (đường link) của bài tập LMS360 vào ô *Link LMS360*, sau đó bấm nút *Lấy đáp án*
+
+> [!WARNING]
+> ### Nếu bài giảng của bạn yêu cầu login để tải nội dung, bạn sẽ phải login bằng tài khoản LMS360 của bạn trong LMS360Hack. Nếu bạn không muốn nhập password của mình cho LMS360Hack, bạn có thể sử dụng [LMS360Hack Next](https://github.com/HiennNek/lms360hack/tree/lms360hack_next)
 
 #
 
