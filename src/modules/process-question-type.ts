@@ -201,6 +201,7 @@ function hackDaAnswer(): void {
                 })
                 .catch((err: Error) => {
                     console.error(err);
+                    lastH5PId = null; // cho phep thu lai
                     const errorHTML = `<div class='error-message'>❌ Lỗi: ${err.message}</div>`;
                     if (statusMessage) statusMessage.innerHTML = errorHTML;
                     else container.innerHTML = errorHTML;
