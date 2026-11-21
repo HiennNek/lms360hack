@@ -83,6 +83,7 @@ function createModal(): LoginModal {
             LMS360 Hack đăng nhập giúp bạn một lần để lấy access_token, sau đó token sẽ được lưu trong trình duyệt
             và tái sử dụng cho những bài sau. A.k.a cách bypass lỗi 403</p>
           <p>Mật khẩu chỉ được gửi tới máy chủ LMS360 và không được lưu lại ở bất kỳ đâu.</p>
+          <a href="https://github.com/HiennNek/lms360hack/blob/front-end/EXPLANATION.md" target="_blank" class="text-primary hover:underline">Tôi cần giải thích rõ hơn</a>
           <p>Nếu bạn không tin tưởng trang web này, bạn có thể sử dụng <a href="https://github.com/HiennNek/lms360hack/tree/lms360hack_next" target="_blank" class="text-primary hover:underline">LMS360Hack Next</a></p>
         </div>
         <input id="lms-login-username" type="text" autocomplete="username" placeholder="Mã số định danh học sinh (số tài khoản)"
