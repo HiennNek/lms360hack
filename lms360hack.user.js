@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LMS360 Hack Next
 // @namespace    https://github.com/HiennNek/lms360hack
-// @version      1.0.0
+// @version      1.0.1
 // @description  Tìm kiếm nội dung và đáp án bài giảng LMS360.
 // @author       HiennNek
 // @license      https://raw.githubusercontent.com/HiennNek/lms360hack/refs/heads/front-end/LICENSE.md
@@ -1091,7 +1091,7 @@
 
         if (!payload) {
             body.innerHTML =
-                `<div class="empty"><b>Không tìm thấy nội dung được hỗ trợ trong trang này!</b><br>`
+                `<div class="empty"><b>Không tìm thấy nội dung được hỗ trợ trong trang này!</b><br></div>`;
             return;
         }
 
@@ -1105,7 +1105,8 @@
 
         if (!out.questions.length) {
             body.innerHTML =
-                `<div class="status err">Dạng nội dung này chưa được hỗ trợ (${esc(payload.id)}).</div>`;
+                `<div class="empty"><b>Kiểu nội dung này chưa được hỗ trợ!</b><br>` +
+                `/h5p/${esc(payload.id)}/play</div>`;
             return;
         }
 
