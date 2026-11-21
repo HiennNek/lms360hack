@@ -1091,7 +1091,7 @@
 
         if (!payload) {
             body.innerHTML =
-                `<div class="empty"><b>Không tìm thấy nội dung được hỗ trợ trong trang này!</b><br>` +
+                `<div class="empty"><b>Không tìm thấy nội dung được hỗ trợ trong trang này!</b><br>`
             return;
         }
 
