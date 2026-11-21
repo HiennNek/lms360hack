@@ -72,6 +72,10 @@
 ### Changelog:
 
 <details>
+  <summary>2026.2a</summary>
+  Fix LMS360Hack không tự update lên version mới mỗi lần ra mắt
+</details>
+<details>
   <summary>2026.2</summary>
   Thêm tính năng login để xem & tải về bài giảng có yêu cầu login (Fix lỗi 403)
 </details>
