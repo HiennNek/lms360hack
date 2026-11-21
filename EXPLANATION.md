@@ -62,7 +62,7 @@ User ----> LMS360Hack ----> LMS360Hack (back-end) ----> LMS360 (Trình duyệt c
 
 **Vậy nếu mật khẩu của bạn được gửi qua LMS360Hack (back-end) trước khi đến được LMS360 thật thì có ổn không?**
 
-Như đã đề cập như trên, back-end của LMS360Hack hoàn toàn mã nguồn mở và không lưu lại mật khẩu người dùng.
+Như đã đề cập ở trên, back-end của LMS360Hack hoàn toàn mã nguồn mở và không lưu lại mật khẩu người dùng.
 
 Ngoài ra, dashboard của Cloudflare Worker không lưu lại request body hay respond body (không lưu lại những thứ bạn gửi) nên tôi cũng không thể soi được mật khẩu của bạn.
 
