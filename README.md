@@ -5,6 +5,7 @@
 
 > [!WARNING]
 > ### Nếu bài giảng của bạn yêu cầu login để tải nội dung, bạn sẽ phải login bằng tài khoản LMS360 của bạn trong LMS360Hack. Nếu bạn không muốn nhập password của mình cho LMS360Hack, bạn có thể sử dụng [LMS360Hack Next](https://github.com/HiennNek/lms360hack/tree/lms360hack_next)
+> ### Giải thích tại [đây](https://github.com/HiennNek/lms360hack/blob/front-end/EXPLANATION.md)
 
 #
 
