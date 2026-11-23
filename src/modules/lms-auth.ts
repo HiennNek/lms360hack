@@ -48,20 +48,20 @@ export function initLoginUI(): void {
 
 interface LoginModal {
     root: HTMLElement;
-    why: HTMLButtonElement;
-    whyIcon: HTMLElement;
-    explain: HTMLElement;
-    student: HTMLElement;
-    other: HTMLElement;
+    why: HTMLButtonElement | null;
+    whyIcon: HTMLElement | null;
+    explain: HTMLElement | null;
+    student: HTMLElement | null;
+    other: HTMLElement | null;
     username: HTMLInputElement;
     password: HTMLInputElement;
     showPassword: HTMLButtonElement;
     error: HTMLElement;
     submit: HTMLButtonElement;
     cancel: HTMLButtonElement;
-    otherLink: HTMLButtonElement;
-    studentRole: HTMLButtonElement;
-    otherSubmit: HTMLButtonElement;
+    otherLink: HTMLButtonElement | null;
+    studentRole: HTMLButtonElement | null;
+    otherSubmit: HTMLButtonElement | null;
 }
 
 let modal: LoginModal | null = null;
@@ -69,7 +69,7 @@ let modal: LoginModal | null = null;
 function createModal(): LoginModal {
     const root = document.createElement('div');
     root.style.display = 'none';
-    root.className = 'fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto p-6 bg-slate-900/70';
+    root.className = 'fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto p-6 bg-slate-900/70';
     root.innerHTML = `
     <div class="w-full max-w-md my-auto bg-white dark:bg-slate-900 rounded-[var(--r-outer)] shadow-2xl border border-white/10 overflow-hidden">
       <div class="p-[var(--p-outer)]">
@@ -162,16 +162,17 @@ function createModal(): LoginModal {
     </div>`;
     document.body.appendChild(root);
 
-    const why = root.querySelector('#lms-login-why') as HTMLButtonElement;
-    const whyIcon = root.querySelector('#lms-login-why-icon') as HTMLElement;
-    const explain = root.querySelector('#lms-login-explain') as HTMLElement;
-    why.addEventListener('click', () => {
+    const why = root.querySelector('#lms-login-why') as HTMLButtonElement | null;
+    const whyIcon = root.querySelector('#lms-login-why-icon') as HTMLElement | null;
+    const explain = root.querySelector('#lms-login-explain') as HTMLElement | null;
+    why?.addEventListener('click', () => {
+        if (!explain || !whyIcon) return;
         const hidden = explain.classList.toggle('hidden');
         whyIcon.textContent = hidden ? 'expand_more' : 'expand_less';
     });
 
-    const roles = root.querySelector('#lms-login-roles') as HTMLElement;
-    roles.addEventListener('click', (e) => {
+    const roles = root.querySelector('#lms-login-roles') as HTMLElement | null;
+    roles?.addEventListener('click', (e) => {
         const target = (e.target as HTMLElement).closest('.lms-role');
         if (!target) return;
         roles.querySelectorAll('.lms-role').forEach((el) => el.classList.remove('active'));
@@ -208,10 +209,10 @@ export function requestLogin(): Promise<string> {
     if (eye) eye.textContent = 'visibility_off';
     m.error.textContent = '';
     m.submit.disabled = false;
-    m.explain.classList.add('hidden');
-    m.whyIcon.textContent = 'expand_more';
-    m.student.style.display = '';
-    m.other.style.display = 'none';
+    m.explain?.classList.add('hidden');
+    if (m.whyIcon) m.whyIcon.textContent = 'expand_more';
+    if (m.student) m.student.style.display = '';
+    if (m.other) m.other.style.display = 'none';
     m.root.style.display = 'flex';
     document.documentElement.classList.add('modal-open');
 
@@ -221,9 +222,9 @@ export function requestLogin(): Promise<string> {
             document.documentElement.classList.remove('modal-open');
             m.cancel.removeEventListener('click', onCancel);
             m.root.removeEventListener('click', onBackdrop);
-            m.otherLink.removeEventListener('click', onOther);
-            m.studentRole.removeEventListener('click', onStudent);
-            m.otherSubmit.removeEventListener('click', onStudent);
+            m.otherLink?.removeEventListener('click', onOther);
+            m.studentRole?.removeEventListener('click', onStudent);
+            m.otherSubmit?.removeEventListener('click', onStudent);
             m.showPassword.removeEventListener('click', onTogglePassword);
             m.submit.removeEventListener('click', onSubmit);
             m.username.removeEventListener('keydown', onEnter);
@@ -240,13 +241,13 @@ export function requestLogin(): Promise<string> {
         };
 
         const onOther = () => {
-            m.student.style.display = 'none';
-            m.other.style.display = '';
+            if (m.student) m.student.style.display = 'none';
+            if (m.other) m.other.style.display = '';
         };
 
         const onStudent = () => {
-            m.other.style.display = 'none';
-            m.student.style.display = '';
+            if (m.other) m.other.style.display = 'none';
+            if (m.student) m.student.style.display = '';
             m.username.focus();
         };
 
@@ -301,9 +302,9 @@ export function requestLogin(): Promise<string> {
 
         m.cancel.addEventListener('click', onCancel);
         m.root.addEventListener('click', onBackdrop);
-        m.otherLink.addEventListener('click', onOther);
-        m.studentRole.addEventListener('click', onStudent);
-        m.otherSubmit.addEventListener('click', onStudent);
+        m.otherLink?.addEventListener('click', onOther);
+        m.studentRole?.addEventListener('click', onStudent);
+        m.otherSubmit?.addEventListener('click', onStudent);
         m.showPassword.addEventListener('click', onTogglePassword);
         m.submit.addEventListener('click', onSubmit);
         m.username.addEventListener('keydown', onEnter);
