@@ -3,6 +3,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import '@fontsource-variable/material-symbols-outlined';
 import './styles/index.css';
+import './styles/lms-login.css';
 import { initThemeToggle } from './modules/theme-toggle';
 import { initProcessQuestionType } from './modules/process-question-type';
 import { initLoginUI } from './modules/lms-auth';

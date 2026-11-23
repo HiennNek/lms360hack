@@ -5,6 +5,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import '@fontsource-variable/material-symbols-outlined';
 import './styles/main.css';
+import './styles/lms-login.css';
 
 import lightThemeUrl from './styles/stackoverflow-light.css?url';
 import darkThemeUrl from './styles/stackoverflow-dark.css?url';
