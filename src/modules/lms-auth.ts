@@ -1,76 +1,76 @@
 // Đăng nhập LMS360: lưu access_token trong trình duyệt và gửi lại cho backend mỗi lần gọi.
 
 export const BACKEND_BASE =
-    import.meta.env.VITE_BACKEND_URL || 'https://lms360hack-backend.hiennek1.workers.dev';
+  import.meta.env.VITE_BACKEND_URL || 'https://lms360hack-backend.hiennek1.workers.dev';
 
 const TOKEN_KEY = 'lms360_access_token';
 
 interface LoginResponse {
-    success?: boolean;
-    access_token?: string;
-    error?: string;
+  success?: boolean;
+  access_token?: string;
+  error?: string;
 }
 
 export function getAccessToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY);
 }
 
 export function authHeaders(): Record<string, string> {
-    const token = getAccessToken();
-    return token ? { 'X-Access-Token': token } : {};
+  const token = getAccessToken();
+  return token ? { 'X-Access-Token': token } : {};
 }
 
 function syncLoginUI(): void {
-    const loggedIn = !!getAccessToken();
+  const loggedIn = !!getAccessToken();
 
-    const label = document.getElementById('login-button-label');
-    if (label) label.textContent = loggedIn ? 'Đã đăng nhập' : 'Đăng nhập';
+  const label = document.getElementById('login-button-label');
+  if (label) label.textContent = loggedIn ? 'Đã đăng nhập' : 'Đăng nhập';
 
-    const icon = document.querySelector('#login-button .material-symbols-outlined');
-    if (icon) icon.textContent = loggedIn ? 'how_to_reg' : 'login';
+  const icon = document.querySelector('#login-button .material-symbols-outlined');
+  if (icon) icon.textContent = loggedIn ? 'how_to_reg' : 'login';
 
-    const notice = document.getElementById('login-notice');
-    if (notice) notice.classList.toggle('hidden', loggedIn);
+  const notice = document.getElementById('login-notice');
+  if (notice) notice.classList.toggle('hidden', loggedIn);
 }
 
 export function initLoginUI(): void {
-    syncLoginUI();
+  syncLoginUI();
 
-    if (!modal) modal = createModal();
+  if (!modal) modal = createModal();
 
-    const button = document.getElementById('login-button');
-    if (!button) return;
+  const button = document.getElementById('login-button');
+  if (!button) return;
 
-    button.addEventListener('click', () => {
-        requestLogin().catch(() => {});
-    });
+  button.addEventListener('click', () => {
+    requestLogin().catch(() => { });
+  });
 }
 
 interface LoginModal {
-    root: HTMLElement;
-    why: HTMLButtonElement | null;
-    whyIcon: HTMLElement | null;
-    explain: HTMLElement | null;
-    student: HTMLElement | null;
-    other: HTMLElement | null;
-    username: HTMLInputElement;
-    password: HTMLInputElement;
-    showPassword: HTMLButtonElement;
-    error: HTMLElement;
-    submit: HTMLButtonElement;
-    cancel: HTMLButtonElement;
-    otherLink: HTMLButtonElement | null;
-    studentRole: HTMLButtonElement | null;
-    otherSubmit: HTMLButtonElement | null;
+  root: HTMLElement;
+  why: HTMLButtonElement | null;
+  whyIcon: HTMLElement | null;
+  explain: HTMLElement | null;
+  student: HTMLElement | null;
+  other: HTMLElement | null;
+  username: HTMLInputElement;
+  password: HTMLInputElement;
+  showPassword: HTMLButtonElement;
+  error: HTMLElement;
+  submit: HTMLButtonElement;
+  cancel: HTMLButtonElement;
+  otherLink: HTMLButtonElement | null;
+  studentRole: HTMLButtonElement | null;
+  otherSubmit: HTMLButtonElement | null;
 }
 
 let modal: LoginModal | null = null;
 
 function createModal(): LoginModal {
-    const root = document.createElement('div');
-    root.style.display = 'none';
-    root.className = 'fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto p-6 bg-slate-900/70';
-    root.innerHTML = `
+  const root = document.createElement('div');
+  root.style.display = 'none';
+  root.className = 'fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto p-6 bg-slate-900/70';
+  root.innerHTML = `
     <div class="w-full max-w-md my-auto bg-white dark:bg-slate-900 rounded-[var(--r-outer)] shadow-2xl border border-white/10 overflow-hidden">
       <div class="p-[var(--p-outer)]">
         <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Đăng nhập</h2>
@@ -160,155 +160,155 @@ function createModal(): LoginModal {
         </div>
       </div>
     </div>`;
-    document.body.appendChild(root);
+  document.body.appendChild(root);
 
-    const why = root.querySelector('#lms-login-why') as HTMLButtonElement | null;
-    const whyIcon = root.querySelector('#lms-login-why-icon') as HTMLElement | null;
-    const explain = root.querySelector('#lms-login-explain') as HTMLElement | null;
-    why?.addEventListener('click', () => {
-        if (!explain || !whyIcon) return;
-        const hidden = explain.classList.toggle('hidden');
-        whyIcon.textContent = hidden ? 'expand_more' : 'expand_less';
-    });
+  const why = root.querySelector('#lms-login-why') as HTMLButtonElement | null;
+  const whyIcon = root.querySelector('#lms-login-why-icon') as HTMLElement | null;
+  const explain = root.querySelector('#lms-login-explain') as HTMLElement | null;
+  why?.addEventListener('click', () => {
+    if (!explain || !whyIcon) return;
+    const hidden = explain.classList.toggle('hidden');
+    whyIcon.textContent = hidden ? 'expand_more' : 'expand_less';
+  });
 
-    const roles = root.querySelector('#lms-login-roles') as HTMLElement | null;
-    roles?.addEventListener('click', (e) => {
-        const target = (e.target as HTMLElement).closest('.lms-role');
-        if (!target) return;
-        roles.querySelectorAll('.lms-role').forEach((el) => el.classList.remove('active'));
-        target.classList.add('active');
-    });
+  const roles = root.querySelector('#lms-login-roles') as HTMLElement | null;
+  roles?.addEventListener('click', (e) => {
+    const target = (e.target as HTMLElement).closest('.lms-role');
+    if (!target) return;
+    roles.querySelectorAll('.lms-role').forEach((el) => el.classList.remove('active'));
+    target.classList.add('active');
+  });
 
-    return {
-        root,
-        why,
-        whyIcon,
-        explain,
-        student: root.querySelector('#lms-login-student') as HTMLElement,
-        other: root.querySelector('#lms-login-other-panel') as HTMLElement,
-        username: root.querySelector('#lms-login-username') as HTMLInputElement,
-        password: root.querySelector('#lms-login-password') as HTMLInputElement,
-        showPassword: root.querySelector('#lms-login-show-password') as HTMLButtonElement,
-        error: root.querySelector('#lms-login-error') as HTMLElement,
-        submit: root.querySelector('#lms-login-submit') as HTMLButtonElement,
-        cancel: root.querySelector('#lms-login-cancel') as HTMLButtonElement,
-        otherLink: root.querySelector('#lms-login-other') as HTMLButtonElement,
-        studentRole: root.querySelector('#lms-login-student-role') as HTMLButtonElement,
-        otherSubmit: root.querySelector('#lms-login-other-submit') as HTMLButtonElement,
-    };
+  return {
+    root,
+    why,
+    whyIcon,
+    explain,
+    student: root.querySelector('#lms-login-student') as HTMLElement,
+    other: root.querySelector('#lms-login-other-panel') as HTMLElement,
+    username: root.querySelector('#lms-login-username') as HTMLInputElement,
+    password: root.querySelector('#lms-login-password') as HTMLInputElement,
+    showPassword: root.querySelector('#lms-login-show-password') as HTMLButtonElement,
+    error: root.querySelector('#lms-login-error') as HTMLElement,
+    submit: root.querySelector('#lms-login-submit') as HTMLButtonElement,
+    cancel: root.querySelector('#lms-login-cancel') as HTMLButtonElement,
+    otherLink: root.querySelector('#lms-login-other') as HTMLButtonElement,
+    studentRole: root.querySelector('#lms-login-student-role') as HTMLButtonElement,
+    otherSubmit: root.querySelector('#lms-login-other-submit') as HTMLButtonElement,
+  };
 }
 
 export function requestLogin(): Promise<string> {
-    if (!modal) modal = createModal();
-    const m = modal;
+  if (!modal) modal = createModal();
+  const m = modal;
 
-    m.username.value = '';
-    m.password.value = '';
-    m.password.type = 'password';
-    const eye = m.showPassword.querySelector('.material-symbols-outlined');
-    if (eye) eye.textContent = 'visibility_off';
-    m.error.textContent = '';
-    m.submit.disabled = false;
-    m.explain?.classList.add('hidden');
-    if (m.whyIcon) m.whyIcon.textContent = 'expand_more';
-    if (m.student) m.student.style.display = '';
-    if (m.other) m.other.style.display = 'none';
-    m.root.style.display = 'flex';
-    document.documentElement.classList.add('modal-open');
+  m.username.value = '';
+  m.password.value = '';
+  m.password.type = 'password';
+  const eye = m.showPassword.querySelector('.material-symbols-outlined');
+  if (eye) eye.textContent = 'visibility_off';
+  m.error.textContent = '';
+  m.submit.disabled = false;
+  m.explain?.classList.add('hidden');
+  if (m.whyIcon) m.whyIcon.textContent = 'expand_more';
+  if (m.student) m.student.style.display = '';
+  if (m.other) m.other.style.display = 'none';
+  m.root.style.display = 'flex';
+  document.documentElement.classList.add('modal-open');
 
-    return new Promise<string>((resolve, reject) => {
-        const close = () => {
-            m.root.style.display = 'none';
-            document.documentElement.classList.remove('modal-open');
-            m.cancel.removeEventListener('click', onCancel);
-            m.root.removeEventListener('click', onBackdrop);
-            m.otherLink?.removeEventListener('click', onOther);
-            m.studentRole?.removeEventListener('click', onStudent);
-            m.otherSubmit?.removeEventListener('click', onStudent);
-            m.showPassword.removeEventListener('click', onTogglePassword);
-            m.submit.removeEventListener('click', onSubmit);
-            m.username.removeEventListener('keydown', onEnter);
-            m.password.removeEventListener('keydown', onEnter);
-        };
+  return new Promise<string>((resolve, reject) => {
+    const close = () => {
+      m.root.style.display = 'none';
+      document.documentElement.classList.remove('modal-open');
+      m.cancel.removeEventListener('click', onCancel);
+      m.root.removeEventListener('click', onBackdrop);
+      m.otherLink?.removeEventListener('click', onOther);
+      m.studentRole?.removeEventListener('click', onStudent);
+      m.otherSubmit?.removeEventListener('click', onStudent);
+      m.showPassword.removeEventListener('click', onTogglePassword);
+      m.submit.removeEventListener('click', onSubmit);
+      m.username.removeEventListener('keydown', onEnter);
+      m.password.removeEventListener('keydown', onEnter);
+    };
 
-        const onCancel = () => {
-            close();
-            reject(new Error('Đã hủy đăng nhập.'));
-        };
+    const onCancel = () => {
+      close();
+      reject(new Error('Đã hủy đăng nhập.'));
+    };
 
-        const onBackdrop = (e: MouseEvent) => {
-            if (e.target === m.root) onCancel();
-        };
+    const onBackdrop = (e: MouseEvent) => {
+      if (e.target === m.root) onCancel();
+    };
 
-        const onOther = () => {
-            if (m.student) m.student.style.display = 'none';
-            if (m.other) m.other.style.display = '';
-        };
+    const onOther = () => {
+      if (m.student) m.student.style.display = 'none';
+      if (m.other) m.other.style.display = '';
+    };
 
-        const onStudent = () => {
-            if (m.other) m.other.style.display = 'none';
-            if (m.student) m.student.style.display = '';
-            m.username.focus();
-        };
+    const onStudent = () => {
+      if (m.other) m.other.style.display = 'none';
+      if (m.student) m.student.style.display = '';
+      m.username.focus();
+    };
 
-        const onTogglePassword = () => {
-            const show = m.password.type === 'password';
-            m.password.type = show ? 'text' : 'password';
-            const icon = m.showPassword.querySelector('.material-symbols-outlined');
-            if (icon) icon.textContent = show ? 'visibility' : 'visibility_off';
-            m.showPassword.title = show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu';
-        };
+    const onTogglePassword = () => {
+      const show = m.password.type === 'password';
+      m.password.type = show ? 'text' : 'password';
+      const icon = m.showPassword.querySelector('.material-symbols-outlined');
+      if (icon) icon.textContent = show ? 'visibility' : 'visibility_off';
+      m.showPassword.title = show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu';
+    };
 
-        const onSubmit = async () => {
-            const username = m.username.value.trim();
-            const password = m.password.value;
+    const onSubmit = async () => {
+      const username = m.username.value.trim();
+      const password = m.password.value;
 
-            if (!username || !password) {
-                m.error.textContent = 'Vui lòng nhập tài khoản và mật khẩu.';
-                return;
-            }
+      if (!username || !password) {
+        m.error.textContent = 'Vui lòng nhập tài khoản và mật khẩu.';
+        return;
+      }
 
-            m.submit.disabled = true;
-            m.error.textContent = 'Đang đăng nhập...';
+      m.submit.disabled = true;
+      m.error.textContent = 'Đang đăng nhập...';
 
-            try {
-                const res = await fetch(`${BACKEND_BASE}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password }),
-                });
-                const data = (await res.json().catch(() => null)) as LoginResponse | null;
-                const token = data?.access_token;
+      try {
+        const res = await fetch(`${BACKEND_BASE}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = (await res.json().catch(() => null)) as LoginResponse | null;
+        const token = data?.access_token;
 
-                if (!res.ok || !token) {
-                    m.error.textContent = data?.error || `Đăng nhập thất bại (HTTP ${res.status}).`;
-                    m.submit.disabled = false;
-                    return;
-                }
+        if (!res.ok || !token) {
+          m.error.textContent = data?.error || `Đăng nhập thất bại (HTTP ${res.status}).`;
+          m.submit.disabled = false;
+          return;
+        }
 
-                localStorage.setItem(TOKEN_KEY, token);
-                syncLoginUI();
-                close();
-                resolve(token);
-            } catch {
-                m.error.textContent = 'Không kết nối được tới máy chủ, thử lại.';
-                m.submit.disabled = false;
-            }
-        };
+        localStorage.setItem(TOKEN_KEY, token);
+        syncLoginUI();
+        close();
+        resolve(token);
+      } catch {
+        m.error.textContent = 'Không kết nối được tới máy chủ, thử lại.';
+        m.submit.disabled = false;
+      }
+    };
 
-        const onEnter = (e: KeyboardEvent) => {
-            if (e.key === 'Enter') onSubmit();
-        };
+    const onEnter = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') onSubmit();
+    };
 
-        m.cancel.addEventListener('click', onCancel);
-        m.root.addEventListener('click', onBackdrop);
-        m.otherLink?.addEventListener('click', onOther);
-        m.studentRole?.addEventListener('click', onStudent);
-        m.otherSubmit?.addEventListener('click', onStudent);
-        m.showPassword.addEventListener('click', onTogglePassword);
-        m.submit.addEventListener('click', onSubmit);
-        m.username.addEventListener('keydown', onEnter);
-        m.password.addEventListener('keydown', onEnter);
-        m.username.focus();
-    });
+    m.cancel.addEventListener('click', onCancel);
+    m.root.addEventListener('click', onBackdrop);
+    m.otherLink?.addEventListener('click', onOther);
+    m.studentRole?.addEventListener('click', onStudent);
+    m.otherSubmit?.addEventListener('click', onStudent);
+    m.showPassword.addEventListener('click', onTogglePassword);
+    m.submit.addEventListener('click', onSubmit);
+    m.username.addEventListener('keydown', onEnter);
+    m.password.addEventListener('keydown', onEnter);
+    m.username.focus();
+  });
 }
