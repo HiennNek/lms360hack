@@ -81,10 +81,8 @@ function createModal(): LoginModal {
           <span class="material-symbols-outlined text-base" id="lms-login-why-icon">expand_more</span>
         </button>
         <div id="lms-login-explain" class="hidden mb-4 text-xs leading-relaxed text-slate-500 dark:text-slate-400 space-y-2">
-          <p>LMS360 yêu cầu authentication cho bài học này, nên cần một phiên đăng nhập hợp lệ mới có thể tải được nội dung.
-            LMS360 Hack đăng nhập giúp bạn một lần để lấy access_token, sau đó token sẽ được lưu trong trình duyệt
-            và tái sử dụng cho những bài sau. A.k.a cách bypass lỗi 403</p>
-          <p>Mật khẩu chỉ được gửi tới máy chủ LMS360 và không được lưu lại ở bất kỳ đâu.</p>
+          <p>LMS360 yêu cầu đăng nhập để truy cập nội dung này, nên cần một phiên đăng nhập hợp lệ. Khi bạn đăng nhập, LMS360Hack sẽ chuyển tiếp mật khẩu của bạn đến LMS360 để lấy access_token, sau đó token sẽ được lưu trong trình duyệt và tái sử dụng cho những bài sau.</p>
+          <p>LMS360Hack hoàn toàn không thu thập và lưu trữ mật khẩu của bạn và không ai có thể xem được mật khẩu của bạn khi đi qua LMS360Hack (ngay cả tôi)</p>
           <a href="https://github.com/HiennNek/lms360hack/blob/front-end/EXPLANATION.md" target="_blank" class="text-primary hover:underline">Tôi cần giải thích rõ hơn</a>
           <p>Nếu bạn không tin tưởng trang web này, bạn có thể sử dụng <a href="https://github.com/HiennNek/lms360hack/tree/lms360hack_next" target="_blank" class="text-primary hover:underline">LMS360Hack Next</a></p>
         </div>
