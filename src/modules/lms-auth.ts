@@ -150,7 +150,7 @@ function createModal(): LoginModal {
           <span class="material-symbols-outlined text-amber-500">info</span>
           <p>Việc đăng nhập lại có thể khiến phiên đăng nhập LMS360 hiện tại của bạn (trên web hoặc app) bị đăng xuất.
             Điều này là bình thường và bạn vẫn có thể tiếp tục sử dụng LMS360 sau khi login lại.
-            <span class="font-bold">Tiến trình làm bài sẽ bị mất nếu như bạn không login trước!</span></p>
+            <span class="font-bold">Tiến trình làm bài sẽ bị mất nếu như bạn login khi đang làm!</span></p>
         </div>
         <div class="flex gap-3 mt-6">
           <button id="lms-login-cancel"
